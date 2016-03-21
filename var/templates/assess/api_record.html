@@ -1,0 +1,220 @@
+{% extends "assess/assess_base.html" %}
+
+
+{% block script %}
+<script>
+    function reset_data(module_id, scene_id){
+      var id = arguments[2] ? arguments[2] : "";
+      $("#id").val(id)
+      $("#name").val("");
+      $("#desc").val("");
+      $("#module_id").val(module_id);
+      $("#scene_id").val(scene_id);
+    }
+
+    function rm_api(id){
+        if(confirm("确定要删除该项吗？该操作将无法恢复！"))
+        {
+          post("/assess_mgr/rm/api", {"id": id})
+        }
+    }
+
+    function add_tr(){
+      var tr = $("#template_tr").clone()
+      tr[0].id=''
+      tr.css('display',"")
+      $("#tbody").append(tr)
+    }
+
+    function add_record(this_item, api_id){
+      var temp_id = String(Math.random()*100000).substr(0,5)
+      this_item.parentElement.parentElement.id = temp_id
+      var all_inputs = $("#" + temp_id).find("input")
+      $("#" + temp_id).removeAttr("id")
+
+      var post_data = {}
+      post_data['data'] = {}
+      for(var i=0;i<all_inputs.length;i++){
+        if (all_inputs[i].value == ""){
+          alert('所有信息不能为空')
+          return
+        }
+        if (all_inputs[i].name =='record_name'){
+          post_data['record_name'] = all_inputs[i].value;
+          continue;
+        }else if(all_inputs[i].name =='id'){
+          post_data['id'] = all_inputs[i].value
+        }else{
+          post_data['data'][all_inputs[i].name] = all_inputs[i].value
+        }
+      }
+      post_data['api_id'] = api_id
+
+      $.post(
+          "/assess_mgr/save/api_record",
+          JSON.stringify(post_data),
+          function(data,status){
+            if(status == 'success'){
+                if(data.data.id){
+                  alert('保存成功')
+                  location.reload()
+                }else{
+                  alert(data.data)
+                }
+                
+            }else{
+                alert('保存失败')
+            }
+          }
+        );
+      /*
+      var ret  = save_record(post_data)
+      console.log(ret)
+      new_id = ret.responseJSON.data.id
+      alert(ret.responseJSON)
+      console.log(new_id)
+      if($("#" + temp_id).find('input[name=id]').length == 0){
+        this_item.parentElement.parentElement.appendChild($("<input name='id' style='display:none'>"))
+        console.log('add input id')
+      }
+      */
+          
+
+    }
+
+    function save_record(post_data){
+      return 
+
+    }
+
+
+    function remove_record(this_item){
+      var temp_id = String(Math.random()*100000).substr(0,5)
+      this_item.parentElement.parentElement.id = temp_id
+      
+      if($("#" + temp_id).find('input[name=id]').length == 0){
+        this_item.parentNode.parentNode.remove();
+        $("#" + temp_id).removeAttr("id") 
+      }else{
+        var record_id = $("#" + temp_id + " input[name=id]").val()
+        $("#" + temp_id).removeAttr("id")  
+        var post_data = {'id':record_id}
+        $.post(
+            "/assess_mgr/delete/api_record",
+            JSON.stringify(post_data),
+            function(data,status){
+              if(status == 'success'){
+                  alert('删除成功')
+                  this_item.parentNode.parentNode.remove();
+              }else{
+                  alert('删除失败')
+              }
+            }
+          );
+      }
+      
+
+    }
+
+</script>
+{% endblock %}
+
+{% block specify %}
+<div class='row'>
+  <div class="panel panel-info">
+    <div class="panel-heading">记录列表
+      {% if data.public.auth.write != 1 %}
+        <a onclick='add_tr()' class="btn btn-xs btn-success right" disabled='disabled'>添加数据</a>
+      {% else %}
+        <a onclick='add_tr()' class="btn btn-xs btn-success right">添加数据</a>
+      {% endif %}
+    </div>
+    <table class='table' class="table table-striped table-bordered table-hover table-condensed">
+      <thead>
+        <tr>
+          <th>记录名</th>
+          <th>tps</th>
+          {% for i in data.resource %}
+            <th>{{i.name}}</th>
+          {% endfor %}
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id='tbody'>
+        
+          {% if data.records %}
+            {% for record in data.records %}
+              <tr> 
+                <td>
+                  <input name='record_name' value='{{record.record_name}}' class="form-control"/> 
+                  <input name='id' value='{{record.id}}' style='display:none'/> 
+                </td>
+                <td>
+                  <input name='tps' value='{{record.data.tps}}' class="form-control"/> 
+                </td>
+                {% for r in data.resource %}
+                  {% for k,v in record.data.items %}
+
+                    {% if k == r.name %}
+                    <td>
+                      <input name='{{k}}' value='{{v}}' class="form-control"/> 
+                    </td>
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+                <td>
+                {% if data.public.auth.write != 1 %}
+                  <button class='btn btn-xs btn-success' style='display:inline' onclick='add_record(this, {{data.api_id}})' disabled="disabled">保存</button>
+                  <button class='btn btn-xs btn-danger' style='display:inline' onclick='remove_record(this)' disabled="disabled">删除</button>
+                {% else %}
+                  <button class='btn btn-xs btn-success' style='display:inline' onclick='add_record(this, {{data.api_id}})' >保存</button>
+                  <button class='btn btn-xs btn-danger' style='display:inline' onclick='remove_record(this)' >删除</button>
+                {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td>
+                  <input name='record_name' class="form-control"/> 
+              </td>
+              <td>
+                <input name='tps' class="form-control"/> 
+              </td>
+              {% for resource in data.resource %}
+              <td>
+                <input name='{{resource.name}}' class="form-control"/>          
+              </td>
+              {% endfor %}
+              <td>
+                <button class='btn btn-xs btn-success' style='display:inline' onclick='add_record(this, {{data.api_id}})'>保存</button>
+                <button class='btn btn-xs btn-danger' style='display:inline' onclick='remove_record(this)'>删除</button>
+              </td>
+              
+            </tr>
+          {% endif %}
+
+          <tr id='template_tr' style='display:none'>
+              <td>
+                  <input name='record_name' value='{{record.record_name}}' class="form-control"/> 
+              </td>
+              <td>
+                <input name='tps' class="form-control"/> 
+              </td>
+              {% for resource in data.resource %}
+              <td>
+                <input name='{{resource.name}}' class="form-control"/>          
+              </td>
+              {% endfor %}
+              <td>
+                <button class='btn btn-xs btn-success' style='display:inline' onclick='add_record(this, {{data.api_id}})'>保存</button>
+                <button class='btn btn-xs btn-danger' style='display:inline' onclick='remove_record(this)'>删除</button>
+              </td>    
+          </tr>
+        
+      </tbody>
+    </table>
+</div>
+</div>
+
+{% endblock %}

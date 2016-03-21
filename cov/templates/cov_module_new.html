@@ -1,0 +1,42 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").removeClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").addClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li><a href="/cov/module">所有模块</a></li>
+        <li class="active"><a href="/cov/module/new">新建模块</a></li>
+    </ul>
+
+    <form class="form-horizontal" action="/cov/module/new" method="post">{% csrf_token %}
+        <div class="form-group">
+            <label for="module" class="col-sm-2 control-label">模块</label>
+            <div class="col-sm-4">
+                <input id="module" class="form-control input-sm" type="text" name="module" value=""/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="repos_type" class="col-sm-2 control-label">版本库类型</label>
+            <div class="col-sm-4">
+                <select id="repos_type" class="form-control input-sm" type="select" name="repos_type">
+                    <option value="svn" selected="selected">svn</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="repos_addr" class="col-sm-2 control-label">版本库地址</label>
+            <div class="col-sm-4">
+                <input id="repos_addr" class="form-control input-sm" type="text" name="repos_addr" value=""/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary col-md-offset-2">创建</button>
+    </form>
+{% endblock %}

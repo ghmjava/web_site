@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+   <head>
+    <meta charset="utf-8">
+ 
+    {% load staticfiles %}
+       <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+
+       <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-popover.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/modules/exporting.js' %}"></script>
+
+    <link rel="shortcut icon" href="{% static 'normal/img/favicon.ico' %}"/>
+
+    </head>
+    <script >
+        $(function(){
+            url = window.location.search
+            console.log(url)
+            if (url.search('sn=') != -1){
+                tmp_l = url.split("sn=")
+                sn = tmp_l[tmp_l.length - 1]
+                $("#testsheet").val(sn)
+            }
+        });
+
+
+        function addEvent(obj,type,handle){
+            try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+                obj.addEventListener(type,handle,false);
+            }catch(e){
+                try{  // IE8.0及其以下版本
+                    obj.attachEvent('on' + type,handle);
+                }catch(e){  // 早期浏览器
+                    obj['on' + type] = handle;
+                }
+            }
+        }
+        //DOM加载完毕,图片,js等未加载完成
+        $(document).ready(function(){
+            //转菊花,等待...
+            $("#loading").css("display", "block")
+            $("#content").css("display", "none")
+        });
+
+        //所有资源都加载完毕,移除转菊花...
+        $(window).load(function(){
+            //移除转菊花...
+            $("#loading").css("display", "none")
+            $("#content").css("display", "block")
+
+
+
+        });
+
+
+        function get_record_by_sn(){
+            var val = $("#testsheet").val();
+            window.location = window.location + "&sn=" + val 
+            
+        }
+    </script>
+  <body>
+    <div id="loading" style="margin: 40% 40%"> 正在加载... </div>
+    <div id="content" style="margin-top:-50px">
+        <!--form class="form-inline" style="float:right">
+          <div class="form-group" >
+            <label for="testsheet">提测单：</label>
+            <select class="form-control" style='width:100px;margin:10px' id="testsheet" onchange='get_record_by_sn()'>
+                    <option>all</option>
+                {% for i in sns %}
+                    <option>{{i}}</option>
+                {% endfor %}
+            </select>
+          </div>
+        </form-->
+        {% if data %}
+            <div class="accordion" id="accordion2">
+                
+                <table class="table" style='table-layout:fixed'  width="100%">
+                    <thead>
+                        <tr>
+                            <th style='width:100px'>SN</th>
+                            <th>递交纪录</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for k,v in data.items %}
+                        <tr>
+                            <td>
+                                <div style="margin-top:10px">
+                                    
+                                      {% if k == "no_sn" %}
+                                        <p style='color:red'><b>无SN</b></p>
+                                      {% else %}
+                                        {{k}} 
+                                      {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="accordion-group">
+                                  <div class="accordion-heading">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{k}}">
+                                      {% if k == "no_sn" %}
+                                        <p style='color:red'><b>共 {{v|length}} 个， 点击查看详情</b></p>
+                                      {% else %}
+                                        共 {{v|length}} 个递交纪录， 点击查看详情
+                                      {% endif %}
+                                    </a>
+                                  </div>
+                                  <div id="collapse{{k}}" class="accordion-body collapse" style="height: 0px; ">
+                                        <div class="accordion-inner">
+                                            <table class="table">
+
+                                                <tr>
+                                                    <th>version</th>
+                                                    <th>comment</th>
+                                                    <th>user</th>
+                                                    <th>time</th>
+
+                                                </tr>
+                                                {% for svn in v %}
+                                                    <tr>
+                                                        <td style="width: 50px;">{{svn.version}}</td>
+                                                        <td style="width: 300px;">{{svn.comment}}</td>
+                                                        <td>{{svn.user}}</td>
+                                                        <td style="width: 300px;">{{svn.time}}</td>
+
+                                                        
+                                                    </tr>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">没有这个模块的记录</div>
+        {% endif %}
+    </div>
+  </body>
+</html>

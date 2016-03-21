@@ -1,0 +1,1072 @@
+{% extends "data_mgr/data_base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(1)").parent().addClass("active")
+    });
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+$(function () {
+    {% if data.p_id %}
+    $("#promotion").val("{{data.p_id}}")
+    {% endif %}
+
+    //定时扫描building的job
+    check_status();
+
+});
+
+progress = 0
+
+// 刷新job的状态
+function check_status(){
+      if($(".job-building").length > 0){
+        console.log('building')
+        var pp = $(".job-building").parent().parent();
+        for(var i=0;i<pp.length;i++){
+          this_p = pp[i];
+          //获取table中同行的jobname
+          this_job = this_p.getElementsByTagName('td')[1].getElementsByTagName('a')[0].innerText;
+          if(this_job != 'unknown'){
+            $.get("/data_mgr/get/build/status?view=newlabs&name=" + this_job,
+                function(data, status){
+                    if(status == 'success'){
+                      if (data.data.building == false){
+                        // 更改相应的状态标示
+                        $(".job-building").addClass("job-" + data.data.status);
+                        $(".job-building").attr('titile', data.data.status);
+                        $(".job-building").attr('data-original-title', data.data.status);
+                        $(".job-building").removeClass("job-building");
+
+                      }
+                    }
+                }
+              ); 
+          }
+        }
+      }
+      else{
+        console.log("no building job")
+      }
+
+      if($(".job-fail").length > 0){
+        console.log('found fail')
+        var pp = $(".job-fail").parent().parent();
+        for(var i=0;i<pp.length;i++){
+          this_p = pp[i];
+          //获取table中同行的jobname
+          this_job = this_p.getElementsByTagName('td')[1].getElementsByTagName('a')[0].innerText;
+          console.log(this_job);
+          if(this_job != 'unknown'){
+            $.get("/data_mgr/get/build/status?view=newlabs&name=" + this_job,
+                function(data, status){
+                    if(status == 'success'){
+                      if (data.data.building == false){
+                        // 更改相应的状态标示
+                        $(".job-fail").addClass("job-" + data.data.status);
+                        $(".job-fail").attr('titile', data.data.status);
+                        $(".job-fail").attr('data-original-title', data.data.status);
+                        $(".job-fail").removeClass("job-fail");
+
+                      }
+                    }
+                }
+              ); 
+          }
+        }
+      }
+      else{
+        console.log("no building job")
+      }
+
+
+      setTimeout("check_status()",3000);
+}
+
+
+function progress_bar_handler(){
+  if(progress >= 90){
+    progress = 100;
+  }
+  else{
+    progress += Math.floor((Math.random() * 10) + 1);;
+  }
+  console.log(progress)
+  $("#progress-bar").attr("aria-valuenow", progress);
+  $("#progress-bar").css("width", progress + "%");
+  setTimeout("progress_bar_handler()",800);
+}
+
+
+/**
+ * @function escapeHTML 转义html脚本 < > & " '
+ * @param a -
+ *            字符串
+ */
+function escapeHTML(a){
+  a = "" + a;
+  return a.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");;
+}
+/**
+ * @function unescapeHTML 还原html脚本 < > & " '
+ * @param a -
+ *            字符串
+ */
+function unescapeHTML(a){
+  a = "" + a;
+  return a.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+}
+
+
+
+</script>
+
+<script type="text/javascript">
+    
+    function show_branch_diff(module, b1, b2){
+      
+
+      $("#mySmallModalLabel_svndiff").html(module + " : " + b1 + " -- " + b2);
+      console.log(module, b1, b2)
+      progress_bar_handler()
+      $("#diff-content").css("display","none");
+      $("#progress-bar-block").css('display',"block")
+      $("#svndiff_modal").modal()
+      progress = 0
+      $("#progress-bar").attr("aria-valuenow", 0);
+      $("#progress-bar").css("width", "0%");
+
+      // biz 和 shanghaife 不提供 diff 功能 无意义
+      if(module == 'biz'| module == 'shanghaife'){
+        $("#progress-bar-block").css('display',"none")
+        $("#diff-content").html('<div class="alert alert-danger" role="alert">' + "biz和shanghaife暂不提供diff功能" +  '</div>');
+        $("#diff-content").css("display","block");
+        return 0
+      }
+
+      $.get(
+          "/data_mgr/get/branch/diff/?module=" + module + "&b1=" + b1 + "&b2=" + b2,
+          function(data, status){
+            $("#progress-bar").attr("aria-valuenow", 100);
+            $("#progress-bar").css("width", "100%");
+            $("#progress-bar-block").css('display',"none")
+            if(status == "success"){
+              console.log("diff success")
+              if(data.status == 'fail'){
+                $("#diff-content").html('<div class="alert alert-danger" role="alert">' + data.data +  '</div>');
+                $("#diff-content").css("display","block");
+                //$("#svndiff_info").html($("#svndiff_info").html() + '<div class="alert alert-danger" role="alert">' + data.data +  '</div>');
+              }
+              else{
+                
+                $("#diff-content").html("<pre>" + escapeHTML(data.data) + "</pre>");
+                $("#diff-content").css("display","block");
+                //$("#svndiff_info").html($("#svndiff_info").html()+ "<pre>" + data.data + "</pre>");
+              }
+            }else{
+              console.log("diff fail")
+              $("#diff-content").html("<div style='color:red' align='center'> 接口请求失败，可能是网络原因，请联系：yechengzhou </div>");
+              $("#diff-content").css("display","block");
+
+              //$("#svndiff_info").html("<div style='color:red' align='center'> 接口请求失败，可能是网络原因，请联系：yechengzhou </div>")
+            }
+            progress = 0
+            //clearTimeout(progress_bar_handler) 
+          }
+        );
+
+    }
+
+    function show_cl(module, branch){
+      
+
+
+      result_html = "<iframe src='"+ "/cl?module=" + module + "&branch=" + branch + "' style='width:100%;height:500px;border:none'></iframe>"
+
+      $("#cl_info").html(result_html);
+      $("#cl_modal").modal()
+
+    }
+
+    function show_module_history(module ){
+
+      result_html = "<iframe frameborder='no' src='"+ "/timeline?module=" + module + "' style='height:1000px;width:380px;'></iframe>"
+      $("#mySmallModalLabel_svn").html(module + "操作历史");
+      $("#svn_info").html(result_html);
+      $("#svn_modal").modal()
+
+    }
+
+
+
+    function closereload(){
+
+      location.reload();
+
+    }
+
+    function build(){
+
+      var post_data = {};
+      post_data[$("#param_input").attr('name')] = $("#param_input").val()
+      post_data[$("#param_input_version").attr('name')] = $("#param_input_version").val()
+
+      post_data['url'] = $('#url').val()
+
+
+      
+          $.post(
+            "/data_mgr/trigger/jenkins",
+            post_data,
+            function(data, status){
+              console.log(status)
+              if(status == 'success'){
+                  $('#param_form').html('<div class="alert alert-success" role="alert">构建成功</div>')
+
+              }else{
+                  $('#param_form').html('<div class="alert alert-danger" role="alert">构建失败</div>')                  
+              }
+              location.reload();
+            },
+            "json"
+          );//这里返回的类型有：json,html,xml,text
+      
+    }
+
+    function seal(){
+
+      var post_data = {};
+      post_data[$("#param_input_seal").attr('name')] = $("#param_input_seal").val();
+      post_data[$("#param_input_sealversion").attr('name')] = $("#param_input_sealversion").val();
+
+      post_data['url'] = $('#url').val();
+      post_data['daily'] = 'daily';
+      console.log(post_data)
+          $.post(
+            "/data_mgr/trigger/jenkins",
+            post_data,
+            function(data, status){
+              console.log(status)
+              if(status == 'success'){
+                  $('#param_form_seal').html('<div class="alert alert-success" role="alert">封板操作成功</div>')
+
+              }else{
+                  $('#param_form_seal').html('<div class="alert alert-danger" role="alert">封板操作失败</div>')                  
+              }
+              location.reload();
+            },
+            "json"
+          );//这里返回的类型有：json,html,xml,text
+        
+    }
+
+    function merge(){
+
+      var post_data = {};
+      post_data[$("#param_input_merge").attr('name')] = $("#param_input_merge").val();
+      post_data[$("#param_input_mergeversion").attr('name')] = $("#param_input_mergeversion").val();
+
+      post_data['url'] = $('#url').val();
+      post_data['daily'] = 'merge';
+      console.log(post_data)
+          $.post(
+            "/data_mgr/trigger/jenkins",
+            post_data,
+            function(data, status){
+              console.log(status)
+              if(status == 'success'){
+                if (data.status == 'fail')
+                {
+                  $('#param_form_merge').html('<div class="alert alert-danger" role="alert">' + data.message + '</div>')
+                }
+                else{
+                  $('#param_form_merge').html('<div class="alert alert-success" role="alert">合入操作成功</div>')
+                }
+              }else{
+                  $('#param_form_merge').html('<div class="alert alert-danger" role="alert">合入操作失败</div>')                  
+              }
+              location.reload();
+            },
+            "json"
+          );//这里返回的类型有：json,html,xml,text
+        
+    }
+
+
+    function job_switch(url,on_off){
+        var post_data = {};
+        post_data['url'] = url
+        post_data['on_off'] = on_off
+        $.post(
+            "/data_mgr/switch/jenkins",
+            post_data,
+            function(data, status){
+              //$('#msg').html("please enter the email!");
+              console.log(status)
+              if(status == 'success'){
+                  $('#switch_result').html('<div class="alert alert-success" role="alert">操作成功</div>');
+
+              }else{
+                  $('#switch_result').html('<div class="alert alert-danger" role="alert">操作失败</div>')   
+
+              }
+              $('#switch_modal').modal(); 
+              location.reload();
+
+            },
+            "json"
+          );
+    }
+
+    function setBuildDialog(jobname, param ,default_param, description ){
+      var joburl = "http://jenkins.meiliworks.com/job/" + jobname + "/build?delay=0sec";
+      var param_form_html = "";
+      if(param == 'none'){
+          // 不需要参数触发
+          var trigger_url = 'http://jenkins.meiliworks.com/job/' + jobname + '/build?delay=0sec';
+          var form_html = '<button onclick=""></button>';
+      } 
+      if(default_param != 'none'){
+        default_param = $.parseJSON(default_param);
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input" type="text" class="form-control" name="' + param + '" value="' + default_param[param]+ '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + description + '</span></div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_version" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="build()">构建</button>';
+          param_form_html += form_html;
+      }else{
+        //for (var i in param)｛
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input" type="text" class="form-control" name="' + param +'">' +
+                          '</div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_sealversion" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="build()">构建</button>';
+          param_form_html += form_html;
+      //}    
+      }
+      
+
+      $('#mySmallModalLabel').html("<b>为" + jobname + "添加构建参数</b>"); // set jobn name as dialog title
+      $('#param_form').html(param_form_html);
+      $('#build_modal').modal();
+     
+
+    }
+
+    function setSealDialog(jobname, param ,default_param, description){
+
+      var joburl = "http://jenkins.meiliworks.com/job/" + jobname + "/build?delay=0sec";
+      var param_form_html = "";
+      if(param == 'none'){
+          // 不需要参数触发
+          var trigger_url = 'http://jenkins.meiliworks.com/job/' + jobname + '/build?delay=0sec';
+          var form_html = '<button onclick=""></button>';
+      } 
+
+      if(default_param != 'none'){
+        default_param = $.parseJSON(default_param);
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_seal" type="text" class="form-control" name="' + param + '" value="' + default_param[param] + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + description + '</span></div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_sealversion" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="seal()">封板</button>';
+          param_form_html += form_html;
+      }else{
+        //for (var i in param)｛
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_seal" type="text" class="form-control" name="' + param +'">' +
+                          '</div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_sealversion" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="seal()">封板</button>';
+          param_form_html += form_html;
+      //}    
+      }
+
+      
+
+      $('#mySmallModalLabel_seal').html("<b>为" + jobname + "添加封板参数</b>"); // set jobn name as dialog title
+      $('#param_form_seal').html(param_form_html);
+      $('#seal_modal').modal();
+     
+
+    }
+
+    function setMergeDialog(jobname, param ,default_param, description, sealversion){
+
+      var joburl = "http://jenkins.meiliworks.com/job/" + jobname + "/build?delay=0sec";
+      var param_form_html = "";
+      
+      
+
+      if(default_param != 'none'){
+        default_param = $.parseJSON(default_param);
+
+        if(jobname == "newlabs_biz" | jobname == "newlabs_shanghaife"){
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_merge" type="text" class="form-control" name="' + param + '" value="' + default_param[param] + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + description + '</span></div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_mergeversion" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="merge()">合入</button>';
+        }else{
+          var form_html = 
+
+                        '<div class="form-group"><label for="paraminput" class="col-sm-2 control-label"><div id="param">version</div></label><div class="col-sm-10"><input id="param_input_mergeversion" type="text" class="form-control" name="version" value=""></div><div class="col-sm-10 col-sm-offset-2"><span>请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785</span></div></div>' +
+                        '<input id="param_input_merge" type="text" class="form-control" name="' + param + '" value="' + sealversion + '" style="display:none">' +
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="merge()">合入</button>';
+            
+        }
+          param_form_html += form_html;
+      }else{
+        //for (var i in param)｛
+          var form_html = '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + param + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_seal" type="text" class="form-control" name="' + param +'">' +
+                          '</div>' +
+                        '</div>' + 
+                        '<div class="form-group">' +
+                          '<label for="paraminput" class="col-sm-2 control-label"><div id="param">' + "version" + '</div></label>' +
+                          '<div class="col-sm-10">' +
+                            '<input id="param_input_sealversion" type="text" class="form-control" name="' + "version" + '" value="' + "" + '">' +
+                          '</div>' +
+                          '<div class="col-sm-10 col-sm-offset-2"><span>' + "请填写需要的版本号，多个版本请以英文逗号隔开，如：2345684,2345785" + '</span></div>' +
+                        '</div>' + 
+                        '<input id="url" name="url" value="' + joburl + '" style="display:none">' +
+                        '<button  class="btn btn-default" style="margin: 0 50% 0 50%" onclick="merge()">合入</button>';
+          param_form_html += form_html;
+      //}    
+      }
+
+      
+
+      $('#mySmallModalLabel_merge').html("<b>为" + jobname + "添加合入参数</b>"); // set jobn name as dialog title
+      $('#param_form_merge').html(param_form_html);
+      $('#merge_modal').modal();
+     
+
+    }
+
+
+
+    function datetime_to_unix(datetime){
+      var tmp_datetime = datetime.replace(/:/g,'-');
+      tmp_datetime = tmp_datetime.replace(/ /g,'-');
+      var arr = tmp_datetime.split("-");
+      var now = new Date(Date.UTC(arr[0],arr[1]-1,arr[2],arr[3]-8,arr[4],arr[5]));
+      return parseInt(now.getTime()/1000);
+    }
+ 
+    function unix_to_datetime(unix) {
+      var now = new Date(parseInt(unix) * 1000);
+      return now.toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+    }
+
+
+
+
+    function setLogDialog(jobname, type, lastbuid){
+      var lastbuid = arguments[2] ? arguments[2] : 0;
+      // single build or builds history
+      var result_html = "";
+
+      if(type==0){
+        url = "http://jenkins.meiliworks.com/view/agile/job/" + jobname + "/" + lastbuid + "/consoleText"
+        // single build log
+        //$.get(url,function(data){ result_html = data; })   style="height:600px;width:80%;"
+
+        result_html = "<iframe src='"+ url + "' style='width:100%;height:500px;border:none'></iframe>"
+        $("#log_info").html(result_html);
+        $("#log_modal").css('style="height:600px;width:80%;"');
+        $("#log_modal").modal();
+      }else if(type==1){
+        // get build no from url
+        // url like this 
+        $.get("/data_mgr/get/jenkins_builds_info?name=agile&job=" + jobname, function(data){
+            /*for( var i in $.parseJSON(data.data).builds){
+            }*/
+
+            // 构建一个table
+
+            //var builds = $.parseJSON(data.data).builds;
+            var builds = data.data
+            result_html = "<table class='table'><thead><tr><th style='width:70px'>#</th><th>user</th><th>time</th><th>detail</th></tr></thead>";
+            for(var i=0; i< builds.length; i++){
+                this_row = "";
+
+                /*for ( var k in builds[i]){
+                  var this_no;
+                  var this_url;
+                  var this_user;
+                  var this_time;
+                  if(k =='number'){
+                    this_no = builds[i][k] 
+                  }
+                  else if (k == 'url'){
+                    this_url =  builds[i][k]
+                  }
+                  else if (k)
+                }*/
+                // get user 
+                //alert(builds[i].actions);
+                var params = builds[i].actions[0].parameters
+                //alert(params);
+                for(var j=0; j< params.length;j++){
+                  if (params[j]['name'] == 'usermail'){
+                    var this_user = params[j].value
+                  }
+                }
+                this_row += "<td>" + builds[i].number  + "</td>" + "<td>" + this_user + "</td>" + "<td>" + unix_to_datetime(builds[i].timestamp.toString().substring(0,10)) + "</td>"+ "<td><a href='" + builds[i].url + 'consoleText' + "' target='blank'>查看</a></td>" ;
+                this_row = "<tr>" + this_row + "</tr>"
+                result_html += this_row
+            }
+            result_html += "</table>"
+            $("#log_info").html(result_html);
+            $("#log_modal").modal();
+
+        });
+        
+      }
+
+      
+    }
+
+
+    function showsealinfo(div_name){
+      console.log(div_name);
+      $("#" + div_name).modal();
+    }
+
+    function show_online(){
+      
+      $("#online_info").html("<iframe src='/online' style='width:100%;height:600px;border:none'></iframe>")
+      $("#online_modal").modal()
+
+    }
+    
+</script>
+
+{% endblock %}
+
+
+{% block left %}
+
+{% endblock %}
+
+
+{% block specify %}
+<div class="row-fluid">
+<div class="col-md-8 col-lg-8">
+{% if data.public.auth.auth%}
+    <a href="/get/user?work_id=1&flag=super" class="btn btn-sm btn-primary" target="_blank">设置管理员</a>
+{% endif%}
+{% if data.public.auth.admin%}
+<a href="/get/user?work_id=1" class="btn btn-sm btn-info" target="_blank">设置操作权限</a>
+<a href="/data_mgr/group" class="btn btn-sm btn-warning" target="_blank">设置job分组</a>
+{% else %}
+<a href="/get/user?work_id=1" class="btn btn-sm btn-success" target="_blank">查看操作权限</a>
+{% endif %}
+
+{% if not data.public.auth.write%}
+<strong><font color="red"> 您没有发布代码的权利，如需权限，请向 <a href="/get/user?work_id=1" target="_blank">管理员</a> 申请！</font></strong>
+{%endif%}
+</div>
+{% if data %}
+<div class="col-md-4 col-lg-4">
+<a href="#check_version" data-toggle="modal" class="btn btn-sm btn-info right">获取封板信息</a>
+<div id="check_version" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-body">
+        <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>模块名</th>
+                <th>封板版本</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for k,v in version.items%}
+            <tr>
+                <td>{{k}}</td>
+                <td>{{v}}</td>
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<a onclick="javascript:show_online()" data-toggle="modal" class="btn btn-sm btn-primary right" style="margin-right:10px">获取上线信息</a>
+</div>
+
+
+<div id="check_version_biz" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog ">
+<div class="modal-content">
+<div class="modal-body">
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>模块名</th>
+        <th>封板版本</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for k,v in biz_version.items %}
+      <tr>
+          <td>{{k}}</td>
+          <td>{{v}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="check_version_shanghaife" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog ">
+<div class="modal-content">
+<div class="modal-body">
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>模块名</th>
+        <th>封板版本</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%for k,v in shanghaife_version.items%}
+      <tr>
+          <td>{{k}}</td>
+          <td>{{v}}</td>
+      </tr>
+    {%endfor%}
+    </tbody>
+</table>
+</div>
+</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+<br/><br/>
+<div class="row-fluid">
+<div class="col-md-12 col-lg-12">
+<div class="panel panel-info">
+    <div class="panel-heading">预上线管理</div>
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th style="width:60px">状态</th>
+        <th >名称</th>
+        <th >封板版本</th>
+        <th >newlab当前版本</th>
+        <th >操作者</th>
+        <th style="width:120px">日志</th>
+        {% if data.public.auth.write%}
+        <th style="width:200px">操作</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+{% for job in data.jobs %} <!--k : tag v : joblist-->
+          <tr>
+            <td>
+              <div class="job-{{ job.lastbuild_status }}" data-toggle="tooltip" data-placement="right" title="{{ job.lastbuild_status }}" onclick="show_module_history('{{ job.name }}')"></div>
+            </td>
+            <td>
+
+
+              <a href="{% if data.public.write%}{{ job.url }}{%endif%}"  data-toggle="tooltip" data-placement="right" title="详情" target="blank">
+              {{ job.name }}</a>
+
+            </td>
+
+            {% if job.newlab_version != job.sealed_version %}
+              {% if job.has_online_version %}
+                {% if job.online_version == job.sealed_version %}
+                <td><b><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')" target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="right" title="已上线">{{job.sealed_version}}</a></b>
+                  {% if job.name == "biz" or job.name == "shanghaife"%}
+                    <a href="#check_version_{{job.name}}" data-toggle="modal" class="right">所有封板</a>
+                  {% else %}
+                    <a style="float:right;" data-toggle="tooltip" data-placement="right" title="产看branch代码diff" href="javascript:show_branch_diff('{{job.name}}', '{{job.sealed_version}}', '{{job.newlab_version}}')"><span class="glyphicon glyphicon-search"></span></a>
+                  {% endif %}
+                </td>
+
+                {% else %}
+                <td><b><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')"  target="blank" style="color:red" data-toggle="tooltip" data-placement="right" title="与上线版本不符,线上版本{{job.online_version}}">{{job.sealed_version}}</a></b>
+                  {% if job.name == "biz" or job.name == "shanghaife"%}
+                    <a href="#check_version_{{job.name}}" data-toggle="modal" class="right">所有封板</a>
+                  {% else %}
+                    <a style="float:right;" data-toggle="tooltip" data-placement="right" title="产看branch代码diff" href="javascript:show_branch_diff('{{job.name}}', '{{job.sealed_version}}', '{{job.newlab_version}}')"><span class="glyphicon glyphicon-search"></span></a>
+                  {% endif %}
+                </td>
+                {% endif %}
+              {% else %}
+                <td><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')" >{{job.sealed_version}}</a>
+                  {% if job.name == "biz" or job.name == "shanghaife"%}
+                    <a href="#check_version_{{job.name}}" data-toggle="modal" class="right">所有封板</a>
+                  {% else %}
+                    <a style="float:right;" data-toggle="tooltip" data-placement="right" title="产看branch代码diff" href="javascript:show_branch_diff('{{job.name}}', '{{job.sealed_version}}', '{{job.newlab_version}}')"><span class="glyphicon glyphicon-search"></span></a>
+                  {% endif %}
+                </td>
+              {% endif %}
+            <td ><a style="background-color:#FFBF00;color:#fff" data-toggle="tooltip" data-placement="right" title="与封板不符">{{job.newlab_version}}</a></td>
+            {% else %}
+              {% if job.has_online_version %}
+                {% if job.online_version == job.sealed_version %}
+                <td><b><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')" target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="right" title="已上线">{{job.sealed_version}}</a></b>
+                  {% if job.name == "biz" %}
+                    <a href="#check_version_biz" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+                  {% if job.name == "shanghaife" %}
+                    <a href="#check_version_shanghaife" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+                </td>
+                {% else %}
+                <td><b><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')"  target="blank" style="color:red" data-toggle="tooltip" data-placement="right" title="与上线版本不符,线上版本{{job.online_version}}">{{job.sealed_version}}</a></b>
+                  {% if job.name == "biz" %}
+                    <a href="#check_version_biz" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+                  {% if job.name == "shanghaife" %}
+                    <a href="#check_version_shanghaife" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+
+                </td>
+                {% endif %}
+              {% else %}
+                <td><a href="javascript:show_cl('{{ job.name }}', '{{job.sealed_version}}')" >{{job.sealed_version}}</a>
+                  {% if job.name == "biz" %}
+                    <a href="#check_version_biz" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+                  {% if job.name == "shanghaife" %}
+                    <a href="#check_version_shanghaife" data-toggle="modal" class="right">所有封板</a>
+                  {% endif %}
+                </td>
+              {% endif %}
+            <td>{{job.newlab_version}}</td>
+            {% endif %}
+            <td><a href="http://speed.meilishuo.com/contacts/?q={{job.user}}" target="_blank">{{job.user}}</a></td>
+            <td>
+              <div><a href="javascript:setLogDialog('{{ job.jobname }}',0, '{{ job.lastBuild }}' )" >最新</a>
+              <a href="javascript:setLogDialog('{{ job.jobname }}',1 )" style="margin:0 5px">历史</a></div>
+            </td>
+            <td>
+              {% if data.public.auth.write%}
+              {% if job.buildable %}
+                <a class="btn btn-success btn-xs" onclick="javascript:setBuildDialog('{{ job.jobname }}',  '{{ job.trigger_param }}', '{{ job.trigger_default_param}}', '{{ job.trigger_param_description|escapejs }}')">
+                  发布
+                </a>
+                <a class="btn btn-info btn-xs" onclick="javascript:setSealDialog('{{ job.jobname }}',  '{{ job.trigger_param }}', '{{ job.trigger_default_param }}', '{{ job.trigger_param_description|escapejs }}')">
+                  封板
+                </a>
+
+                <a class="btn btn-primary btn-xs" onclick="javascript:setMergeDialog('{{ job.jobname }}',  '{{ job.trigger_param }}', '{{ job.trigger_default_param }}', '{{ job.trigger_param_description|escapejs }}', '{{job.sealed_version}}')">
+                  合入
+                </a>
+
+                <a class="btn btn-danger btn-xs" onclick="job_switch('{{ job.url }}', 'disable')">
+                  禁用
+                </a>
+
+              {% else %}
+                <a class="btn btn-primary btn-xs" onclick="job_switch('{{ job.url }}', 'enable')">
+                  启用
+                </a>
+              {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- 静态框们 -->
+<div id="build_modal" class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;">
+<div class="modal-dialog ">
+  <div class="modal-content" style="width:650px">
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel">  </div>
+
+    </div>
+    <div class="modal-body">
+      <div class="form-horizontal" id="param_form">
+        <!--div class="form-group">
+          <label for="paraminput" class="col-sm-2 control-label"><div id="param">haha</div></label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="paraminput" placeholder="Email">
+          </div>
+        </div-->
+
+      </div>
+
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+<div id="seal_modal" class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;">
+<div class="modal-dialog ">
+  <div class="modal-content" style="width:650px">
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_seal"> Seal </div>
+
+    </div>
+    <div class="modal-body">
+      <div class="form-horizontal" id="param_form_seal">
+        <!--div class="form-group">
+          <label for="paraminput" class="col-sm-2 control-label"><div id="param">haha</div></label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="paraminput" placeholder="Email">
+          </div>
+        </div-->
+
+      </div>
+
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="switch_modal" class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;">
+<div class="modal-dialog ">
+  <div class="modal-content" style="width:650px">
+
+    <!--div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel">  </div>
+
+    </div-->
+    <div class="modal-body">
+      <div id="switch_result"></div>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="merge_modal" class="modal fade bs-example-modal-sm in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;">
+<div class="modal-dialog ">
+  <div class="modal-content" style="width:650px">
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_merge"> 合入 </div>
+
+    </div>
+    <div class="modal-body">
+      <div class="form-horizontal" id="param_form_merge">
+        <!--div class="form-group">
+          <label for="paraminput" class="col-sm-2 control-label"><div id="param">haha</div></label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="paraminput" placeholder="Email">
+          </div>
+        </div-->
+
+      </div>
+
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+
+<!-- 用静态框显示log 信息-->
+<div id="log_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display; " >
+<div class="modal-dialog " >
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_log" align="center"> jenkins日志 </div>
+
+    </div>
+
+    <div class="modal-body">
+      <div id="log_info"></div>
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+<!-- 用静态框显示svn diff branch信息-->
+<div id="svndiff_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog " style="width:900px">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_svndiff" align="center">  </div>
+
+    </div>
+
+    <div class="modal-body">
+      <div id="svndiff_info">
+        <div id="progress-bar-block">
+          <div  align="center" style="margin:0 0 10px 0">正在拉取diff信息...</div>
+          <div class="progress">
+            <div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+
+            </div>
+          </div>
+        </div>
+        <div id="diff-content">
+
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+
+<!-- 用静态框显示cl信息-->
+<div id="cl_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog " style="width:900px">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_cl" align="center"> 递交历史 </div>
+
+    </div>
+
+    <div class="modal-body">
+      <div id="cl_info" class="holds-the-iframe">
+
+      </div>
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+<!-- 用静态框显示module svn check in 与 封板 信息-->
+<div id="svn_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog " style="width:400px">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_svn" align="center"> 模块操作历史 </div>
+
+    </div>
+
+    <div class="modal-body">
+      <div id="svn_info" class="holds-the-iframe-top">
+
+      </div>
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div>
+
+<!-- 用静态框显示上线信息-->
+<div id="online_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+<div class="modal-dialog " style="width:900px">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <div class="modal-title" id="mySmallModalLabel_online" align="center"> 今日上线信息 </div>
+
+    </div>
+
+    <div class="modal-body">
+      <div id="online_info" class="holds-the-iframe">
+
+      </div>
+
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+{% else %}
+<div class="panel panel-default" >
+  <h1>jenkins 挂了 </h1>
+</div>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    
+    {% load staticfiles %}
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'metisMenu/dist/metisMenu.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Timeline CSS -->
+    <link href="{% static 'normal/css/timeline.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Custom CSS -->
+    <link href="{% static 'normal/css/sb-admin-2.css' %}" rel="stylesheet" type="text/css" />
+
+    <link href="{% static 'normal/css/multiple-select.css' %}" rel="stylesheet" type="text/css" />
+
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet"/>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'normal/css/jquery.dataTables.css' %}">
+
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/loading-spinner.css' %}" rel="stylesheet" type="text/css" />
+
+
+    <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/js/jquery.multiple.select.js' %}"></script>
+    
+    <!--script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script-->
+    <!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script-->
+    <!-- DataTables -->
+   
+
+
+    
+    
+<script>
+
+// 修改subtask信息相关
+var alert_str = '<div class="alert alert-danger">content</div>'
+var create_subtask_data = {}
+var set_seq_data = {}
+
+
+
+function bind_job(subtask_id){    
+
+    var form_data = {};
+
+    form_data['sub_task_id'] = $("#sub_task")[0].value 
+    var selected_to = []
+    select_l = $('.selected input')
+    for(var i=0;i<select_l.length;i++){
+        selected_to.push(new Number(select_l[i].value))
+    }
+
+    form_data['job_id_list'] = selected_to;
+    console.log(selected_to)
+    $.post(
+        "/ci_mgr/bind/sub_task_job",
+        JSON.stringify(form_data),
+        function(data, status){
+          if(status == 'success'){
+              $("#main").html('<div class="alert alert-success" role="alert">操作成功</div>')
+
+          }else{
+              $("#main").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+          }
+        }
+      );//这里返回的类型有：json,html,xml,text
+    
+}
+
+function sleep(d){
+  for(var t = Date.now();Date.now() - t <= d;);
+}
+
+
+</script>
+
+</head>
+<body>
+
+    <div id="main">
+        
+        <div id="JobBindForm" >
+            <form role="form" >
+                <div class="form-group">
+                    <label>当前SubTask</label>
+                    <input id='sub_task' class="form-control" name='sub_task_id' value='{{data.current_subtask.id}}' disabled></input>
+                </div>
+                <div class="form-group">
+                    <label>jobs</label>
+                    <select name='jobs' id='jobs' multiple="multiple" style='display: block;width: 100%;'>
+                    {% for j in data.jobs %}
+                        {% if j.binded %} 
+                            <option value='{{j.id}}' selected="selected">{{j.name}}</option>
+                        {% else %}
+                            <option value='{{j.id}}' >{{j.name}}</option>
+                        {% endif %}
+                        
+                    {% endfor %}
+                    </select>
+                </div>
+                <script>
+                    $('#jobs').multipleSelect();
+                </script>
+                <input name='sub_task_id' style="display:none" value='{{data.current_sub_task_id}}'></input>
+                
+            </form>
+            
+            <div class='form-group' style='margin-top:220px'>
+                <button id='ok' class="btn btn-primary" onclick="bind_job()" style='width:100%'>确定</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+

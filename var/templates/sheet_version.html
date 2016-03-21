@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(1)").parent().addClass("active")
+    });
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+    function delete_version_item(id){
+      console.log(id);
+      $.get(
+            "/onlinecard/api/group_version/delete?group_version_id=" + id,
+            function(data, status){
+              console.log(status)
+              if(status == 'success'){
+                if(data.code == 0){
+                  console.log(data);
+                  alert('删除成功，页面即将刷新');
+                }else{
+                  alert(data.message);
+                }
+              }else{
+                  alert('删除失败');                 
+              }
+              location.reload();
+            },
+            "json"
+          );
+    }
+
+    function set_datatable(table_id){
+
+      if($("#" + table_id).attr('class').search('dataTable') != -1){
+        // 判断datatable是否已经被初始化
+        return true;
+      }
+
+      var group_version_id = table_id.split("_")[1];
+      console.log(group_version_id);
+
+      
+      var response_json = $.ajax({
+          type: 'get',
+          url: "/onlinecard/api/job_infos?group_version_id=" + group_version_id,
+          async : false,
+          success: function(data){
+            console.log(data)
+          },
+          dataType: 'json'
+      }).responseText;
+
+      response_json = JSON.parse(response_json);
+
+      for(var i=0;i<response_json.length;i++){
+        var tr_html = "";
+        tr_html += '<td>' + response_json[i]['name'] + '</td>';
+        tr_html += '<td>' + response_json[i]['online_Version'] + '</td>';
+        if(response_json[i]['final_version'] != undefined && response_json[i]['final_version'] != response_json[i]['seal_version']){
+          tr_html += '<td style="color:red">' + response_json[i]['seal_version'] + '</td>';
+        }else{
+          tr_html += '<td >' + response_json[i]['seal_version'] + '</td>';
+        }
+
+        tr_html += "<td><a class='btn btn-xs btn-primary' onclick=\"show_log("+ response_json[i]['id'] + ",'"+ response_json[i]['online_Version'] + "','" + response_json[i]['seal_version'] + "')\">Log</a></td>"
+
+        tr_html = "<tr>" + tr_html + "</tr>"
+
+        $('#' + table_id + ' tbody').append(tr_html);
+      }
+
+      //发送请求load 数据
+      $("#" + table_id).DataTable({
+                paging: false,//分页
+                ordering: true,//是否启用排序
+                searching: false,//搜索
+            }
+        );
+    }
+    
+    
+    function show_preview(this_id){
+      group_id = location.search.substr(location.search.search('group_id') + 'group_id'.length + 1)
+        url = '/spreview?group_version_id=' + this_id + '&group_id=' + group_id;
+        $("#preview_info").html("<iframe src='" + url+ "'' style='width:100%;height:600px;border:none'></iframe>")
+        $("#preview_modal").modal()
+    }
+    
+
+    function show_log(module_id, seal_version, online_version ){
+        url = '/small_log?module_id=' + module_id + '&seal_version=' + seal_version + '&online_version=' + online_version
+        $("#small_module_log_info").html("<iframe src='" + url+ "'' style='width:100%;height:600px;border:none'></iframe>")
+        $("#small_module_log_modal").modal()
+    }
+
+    
+</script>
+
+{% endblock %}
+
+
+{% block left %}
+
+{% endblock %}
+
+
+{% block main %}
+<div class="row-fluid">
+    <div class="col-md-2 col-lg-2" style="margin-left:-20px">
+        <ul class="nav nav-pills nav-stacked">
+          <!--li role="presentation" {% if -1 == data.public.group_id %}class="active"{% endif %}>
+              <a style="padding: 6px;" href="/sh?group_id=-1&page=1"><i class="fa fa-heart fa-fw"></i> 我的收藏</a>
+          </li-->
+          {% for d in data.public.group %}
+          <li role="presentation" {% if d.id == data.public.group_id %}class="active ljc"{% endif %} id="{{ d.id }}">
+              <a style="padding: 6px;" href="/sh?group_id={{d.id}}&page=1"><i class="fa fa-tasks fa-fw"></i> {{d.name}}</a>
+          </li>
+          {% endfor %}
+          <li role="presentation" {% if 0 == data.public.group_id %}class="active"{% endif %} id="0">
+              <a style="padding: 6px;" href="/sh?group_id=0&page=1"><i class="fa fa-tasks fa-fw"></i> 未分组</a>
+          </li>
+          {% if data.public.auth.admin%}
+           <li role="presentation">
+               <a style="padding: 6px;" href="#Modal" onclick="reset_data()" data-toggle="modal">
+                   <i class="fa fa-plus fa-fw"></i> 添加分组
+               </a>
+           </li>
+          {% endif %}
+        </ul>
+    </div>
+
+    <div class="col-md-10 col-lg-10">
+    <div class="row">
+      <div class="col-md-12 col-lg-12" id="tab">
+        <ul class="nav nav-tabs">
+          <li role="presentation" ><a href="/jenkins?group_id={{group_id}}">Newlab</a></li>
+          <li role="presentation" class="active"><a href="/sh?group_id={{group_id}}&page=1">版本库</a></li>
+          <li role="presentation"><a href="/onlinecard_mgr/online_card/showlist?group={{group_id}}&page=1">上线单</a></li>
+        </ul>
+      </div>
+    </div>
+
+  <div class="row" id="form" style="overflow: scroll;">
+    <div class="col-md-12 col-lg-12" >
+    <div class="panel panel-info" style="margin-top:10px">
+     <div class="accordion" id="accordion2" style="margin-bottom: 5px;">
+            <div class="accordion-group">
+              <div class="accordion-heading" style="background-color: #3C8DBC;">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"  style="color: white">
+                    今日提测单列表
+                </a>
+              </div>
+              <div id="collapseOne" class="accordion-body collapse in">
+                <div id="getTable">
+                </div>
+              </div>
+            </div>
+          </div>
+    <div class="panel-heading">版本信息
+        
+    </div>
+      {% if version_info|length > 0 %}
+      <table class="table" >
+	     <thead>
+                <tr>
+                  <th>版本</th>
+                  <th>发布者</th>
+                  <th>时间</th>
+                  <th>小版本信息</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for info in version_info%}
+                <tr>
+                  <td>{{info.version_num}}</td>
+                  <td>{{info.user}}</td>
+                  <td>{{info.update_time}}</td>
+                  <td>
+                    <div class="accordion-group">
+                      <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseno_sn_{{info.id}}" aria-expanded="true" onclick="set_datatable('table_{{info.id}}')">
+                            <p><b>点击查看详情</b></p>
+                        </a>
+                      </div>
+                      <div id="collapseno_sn_{{info.id}}" class="accordion-body collapse " aria-expanded="true">
+                            <div class="accordion-inner">
+                                <table class="table" id="table_{{info.id}}" style='table-layout:fixed;'>
+                                    <thead>
+                                      <tr>
+                                        <th style="width:90px">模块</th>
+                                        <th style="width:180px">线上版本</th>
+                                        <th style="width:180px">封版版本</th>
+                                        <th style="width:35px">log</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <!--
+                                      {% for i in info.small_version %}
+                                        <tr>
+                                            <td>{{i.name}}</td>
+                                            <td>{{i.online_Version}}</td>
+                                            {% if i.final_version and i.final_version != i.seal_version %}
+                                              <td style='color:red'>{{i.seal_version}}</td>
+                                            {% else %}
+                                              <td>{{i.seal_version}}</td>
+                                            {% endif %}
+                                            <td><a class='btn btn-xs btn-primary' onclick="show_log({{i.id}},'{{i.online_Version}}','{{i.seal_version}}')">Log</a></td>
+                                        </tr>
+                                      {% endfor %}
+                                      !-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                  </td>
+                  <td>
+                      <a class="btn btn-danger btn-xs" style='margin-top:5px' onclick='delete_version_item({{info.id}})'>删除</a>
+                      {% if info.has_published %}
+                      <a class="btn btn-info btn-xs" style='margin-top:5px' href='/onlinecard_mgr/online_card/card_detail?group_id={{group_id}}&card_id={{info.onlinecard_id}}'>上线单</a>
+                      {% else %}
+                      <a class="btn btn-success btn-xs" style='margin-top:5px' onclick='show_preview({{info.id}})'>预览</a>
+                      {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+
+
+      </table>
+    {% else %}
+	<div class='alert alert-danger' role='alert'>Opps, 挂了，请联系王学猛or周也程</div>
+    {% endif %}
+    </div>
+    </div>
+
+    <div class="col-md-12 col-lg-12"> <!--分页 -->
+      <nav>
+        <ul class="pagination">
+          {% if pre %}
+            <li >
+              <a href="/sh?group_id={{group_id}}&page={{pre}}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% else %}
+            <li class='disabled'>
+              <a aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% endif %}
+          
+          {% for i in pages%}
+            {% if i == page %}
+              <li class='active' ><a href="/sh?group_id={{group_id}}&page={{i}}">{{i}}</a></li>
+            {% else %}
+              <li><a href="/sh?group_id={{group_id}}&page={{i}}">{{i}}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if next == -1 %}
+          <li class='disabled'>
+            <a aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <a href="/sh?group_id={{group_id}}&page={{next}}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+
+
+    </div>
+
+    <!-- 静态框们 -->
+    <!-- 用静态框显示上线信息-->
+    <div id="small_module_log_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+      <div class="modal-dialog " style="width:900px">
+        <div class="modal-content">
+
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <div class="modal-title" id="mySmallModalLabel_online" align="center"> 小模块版本信息 </div>
+
+          </div>
+
+          <div class="modal-body">
+            <div id="small_module_log_info" class="holds-the-iframe">
+
+            </div>
+
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+    
+
+    <div id="preview_modal" class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" style="display: display;" >
+      <div class="modal-dialog " style="width:900px">
+        <div class="modal-content">
+
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <div class="modal-title" id="mySmallModalLabel_online" align="center"> 表单预览</div>
+
+          </div>
+
+          <div class="modal-body">
+            <div id="preview_info" class="holds-the-iframe">
+
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+   
+<script language="JavaScript" type="text/javascript">
+ $(function(){
+     var tou= window.document.getElementById("navbar-collapse");
+     var tab=window.document.getElementById("tab");
+     var biaodan=window.document.getElementById("form");
+     var winHeight = window.innerHeight;
+     var touh=tou.offsetHeight;
+     var tabh=tab.offsetHeight;
+     biaodan.style.height=(winHeight-touh-tabh)+"px";
+     $.ajax({
+         type:"GET",
+         url:"/onlinecard/api/product_card_nums",
+         ContentType:"application/json; charset=UTF-8",
+         success:function(response){
+             for(var i=0;i<response.length;i++){
+                 var id=response[i].id;
+
+                 $(".nav.nav-pills.nav-stacked li").each(function(){
+                     var eleId = $(this).attr("id");
+                     if(id == eleId){
+                         if(response[i].count !=0){
+                             $(this).find("a").append('<span style="margin-left:8px;color:red;">('+response[i].count+')</span>');
+                         }
+                     }
+                 });
+                }
+         },
+         error:function(error){
+             console.log(error);
+         }
+     });
+     getpreview();
+ });
+    function getpreview(){
+        var id=$("li[class='active ljc']").attr("id");
+        $.ajax({
+            type:"GET",
+            url:"/onlinecard/api/product_cards_by_group_id?group_id="+id,
+            ContentType:"application/json; charset=UTF-8",
+            success:function(response){
+                var html=' <div class="panel-body">' +
+                        '<table class="table">'+
+                        '<thead>'+' <tr>'+
+                        ' <th style="width:150px;">模块</th>'+
+                        ' <th style="width:100px;">PM</th>'+
+                        ' <th style="width:120px;">QA</th>'+
+                        ' <th style="width:100px;">RD</th>'+
+                        ' <th>内容</th>'+
+                        ' <th style="width:85px;">上线建议</th>'+
+                        ' <th style="width:85px;">测试结果</th>'+
+                        ' <th style="width:85px;">发布类型</th>'+
+                        ' </tr>'+
+                        ' </thead>'+
+                        '<tbody>'+
+                        '<tr>'+
+                        '<td><b style="color:#3C8DBC;font-size:15px;">过测试</b></td>'+
+                        '</tr>';
+                var html1='';
+                var html2= '</tbody></table><table class="table"><tbody><hr style="height:3px;border:none;border-top:4px double #3C8DBC; width:100%;"></hr><tr>'+
+                        '<td style="width:150px;"><b style="color:#3C8DBC;font-size:15px;">不过测试</b></td>'+
+                        '<td style="width:100px;"></td>'+'<td style="width:120px;"></td>'+
+                        '<td style="width:100px;"></td>'+'<td></td>'+
+                        '<td style="width:85px;"></td><td style="width:85px;"></td>'+'<td style="width:85px;"></td>'+
+                        '</tr>';
+                var html3='';
+                var product_cards=response.data;
+                if(product_cards!=undefined){
+                for(var i=0;i<product_cards.length;i++){
+                    if (product_cards[i].need_qa){
+                        html1=html1+'<tr>'+
+                                        '<td>'+product_cards[i].module_name+'</td>'+
+                                        '<td>'+product_cards[i].pm_owner+'</td>'+
+                                        '<td>'+product_cards[i].qa_owner+'</td>'+
+                                        '<td>'+product_cards[i].rd_owner+'</td>'+
+                                        '<td>'+product_cards[i].content+'</td>'+
+                                        '<td>'+product_cards[i].online_suggestion+'</td>'+
+                                        '<td>'+product_cards[i].test_result+'</td>'+
+                                        '<td>'+product_cards[i].release_type+'</td>'+
+                                        '</tr>';
+                    } else{
+                        html3=html3+'<tr>'+
+                                        '<td>'+product_cards[i].module_name+'</td>'+
+                                        '<td>'+product_cards[i].pm_owner+'</td>'+
+                                        '<td>'+product_cards[i].qa_owner+'</td>'+
+                                        '<td>'+product_cards[i].rd_owner+'</td>'+
+                                        '<td>'+product_cards[i].content+'</td>'+
+                                        '<td>'+product_cards[i].online_suggestion+'</td>'+
+                                        '<td>'+product_cards[i].test_result+'</td>'+
+                                        '<td>'+product_cards[i].release_type+'</td>'+
+                                        '</tr>';
+                    }
+                }
+                var htmlAll=html+html1+html2+html3+'</tbody></table></div>';
+                $('#getTable').html(htmlAll);
+                }else{
+                    $('#getTable').html("数据不存在!");
+                }
+            },
+            error:function(error){
+                console.log(response.code);
+            }
+        });
+    }
+</script>
+
+    
+  </div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+

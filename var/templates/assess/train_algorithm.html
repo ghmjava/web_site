@@ -1,0 +1,497 @@
+{% extends "assess/assess_base.html" %}
+
+
+{% block script %}
+<!--script src="http://echarts.baidu.com/build/dist/echarts.js"></script-->
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'echarts/build/dist/echarts.js' %}"></script>
+<script>
+
+    $(function(){
+        require.config({
+            paths: {
+                //echarts: 'http://echarts.baidu.com/build/dist'
+                echarts: "{% static 'echarts/build/dist' %}"
+            }
+        });
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+                'echarts/chart/scatter',
+            ]
+        )
+
+    });
+
+
+
+</script>
+
+{% endblock %}
+
+{% block specify %}
+  
+      <!-- /.sidebar-collapse -->
+        <div class="col-md-10 col-lg-10" >
+            <div class='row'>
+                <h1 class='page-header h2'>生成计算公式</h1> 
+                <div id="scene_info" class="jumbotron" style='padding-top:10px;padding-bottom:10px'>
+                    <p><h4 class='h2'>{{data.scene_info.name}}（{{data.module_info.name}}模块）</h4> </p>
+                    <table class='table'>
+                        <thead>
+                            <tr>
+                                <th>名字</th>
+                                <th>比例(%)</th>
+                                <th>资源</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for api in data.scene_api %}
+                            <tr>
+                                <td>{{api.api_info.name}}</td>
+                                <td>{{api.ratio}}</td>
+                                <td>
+                                    {% if api.api_info.threholds.resource_list %}
+                                        {% for i  in api.api_info.threholds.resource_list %}
+                                            <a>{{i.name}}的阈值为{{i.threshold}} ;</a>
+                                        {% endfor %}
+                                    {% else %}
+                                        没有设置，<a href='/assess_mgr/api?module_id={{data.module_info.id}}&id={{api.api_info.id}}' target='_blank'>去设置>><a/>
+                                    {% endif %}
+                                        
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                {% if data.public.auth.write != 1 %}
+                    <div class="alert alert-warning" role="alert" style='float:left;color:red'>您没有写权限，您对数据的修改将不会被保存</div>
+                
+                    <button class='btn btn-success' style="float:right;margin-bottom:10px" onclick="javascript:$('#new_record').css('display', 'block');$('#new_clicker').click()" disabled='disabled'>新增纪录</button>
+                {% else %}
+                    <button class='btn btn-success' style="float:right;margin-bottom:10px" onclick="javascript:$('#new_record').css('display', 'block');$('#new_clicker').click()">新增纪录</button>
+                {% endif %}
+            </div>
+
+            <div class="row" style='display:none' id="new_record">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-dmengrank-new" href="#search-dmengrank-new" class="collapsed" aria-expanded="false" id='new_clicker'> 新增记录</a>
+                        </h3>
+                    </div> 
+                    <div id="search-dmengrank-new" class="panel-collapse collapse" aria-expanded="false" >
+                                <div >
+
+                                {% for api in data.scene_api %}
+                                    {% for i  in api.api_info.threholds.resource_list %}
+                                        <div style="height:300px;display:none" id="new_{{i.name}}" ></div>
+                                    {% endfor %}
+                                {% endfor %}
+                                </div>
+                                <div style="margin: 10px 0 10px 0">
+                                    <div class="form-group" style='float:left;margin-left:10px'>
+                                        <label for="new_record_name" style='display:inline'>记录名</label>
+                                        <input type="text" class="form-control" id="new_record_name" name='record_name' placeholder="" style='display:inline;width:100px'>
+                                    </div>
+                                    
+                                        <button class="btn btn-xs btn-success" style="margin-right:10px;float:right;" onclick="get_algo_save_scene_record('source_table_new', '{{data.module_id}}', '{{data.scene_id}}', 0, true)">保存记录</button>
+                                    <table class="table" id='source_table_new' style="margin-bottom:10px;" width="95%">
+                                        
+                                        <thead>
+                                            <tr>
+                                                <th >总tps</th>
+                                                <th style='min-width:120px'> api占比</th>
+                                                <!--
+                                                {% for api in data.scene_api %}
+                                                    <th >{{api.api_info.name}} <small style='color:gray'>{{api.ratio}}%</small></th>
+
+                                                {% endfor %}
+                                                -->
+                                                <!--th style='width:80px'>api1</th>
+                                                <th style='width:80px'>api2</th>
+                                                {% for k,v in data.scene_records.0.data.items %}
+                                                    {% if k != 'total' %}
+                                                        <th >{{k}} </th>
+                                                    {% endif %}
+                                                {% endfor %}-->
+                                                {% for r in data.all_resource %}
+                                                        <th>{{r.name}}</th>
+                                                {% endfor %}
+                                                <th style='width:60px'>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id='source_table_new_body'>
+                                            <tr> <!-- 新增加数据 -->
+                                                <td><input name='total' class="form-control" onchange='auto_fill_by_ratio(this)'/></td>
+                                                <td>
+                                                       <div class="accordion-group">
+                                                          <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_0">
+                                                              共{{data.scene_api|length}}个API
+                                                            </a>
+                                                          </div>
+                                                          <div id="collapse_0" class="accordion-body collapse" style="height: 0px; ">
+                                                            <div class="accordion-inner">
+                                                                <table class="table">
+
+                                                                    <tr>
+                                                                        <th style='width:60px'>name</th>
+                                                                        <th>tps</th>
+                                                                        
+                                                                    </tr>
+                                                                    {% for api in data.scene_api %}
+                                                                        <tr>
+                                                                            <td >{{api.api_info.name}}</td>
+                                                                            
+                                                                            <td ><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </td>
+                                                <!--
+                                                {% for api in data.scene_api %}
+                                                    <td><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+                                                    
+                                                {% endfor %}
+                                                -->
+                                                <!--td>100</td>
+                                                <td>200</td>
+                                                {% for k,v in data.scene_records.0.data.items %}
+                                                    {% if k != 'total' %}
+                                                        <td><input name='{{k}}' class="form" class="form-control" /></td>
+                                                    {% endif %}
+      
+                                                {% endfor %}-->
+                                                {% for r in data.all_resource %}
+                                                    <td><input name='{{r.name}}' class="form-control"></input></td>
+                                                {% endfor %}
+                                                <td><button class='btn btn-success btn-xs' onclick='add_line(this,"source_table_new")'>添加一行</button ></td>
+                                            </tr>
+
+                                            <tr name='new_line_tr' style='display:none'> <!-- 模版 -->
+                                                <td><input name='total' class="form-control" onchange='auto_fill_by_ratio(this)'/></td>
+                                                <td>
+                                                    <div class="accordion-group">
+                                                          <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_new" >
+                                                              共{{data.scene_api|length}}个API
+                                                            </a>
+                                                          </div>
+                                                          <div id="collapse_new" class="accordion-body collapse" style="height: 0px; ">
+                                                            <div class="accordion-inner">
+                                                                <table class="table">
+
+                                                                    <tr>
+                                                                        <th style='width:60px'>name</th>
+                                                                        <th>tps</th>
+                                                                        
+                                                                    </tr>
+                                                                    {% for api in data.scene_api %}
+                                                                        <tr>
+                                                                            <td >{{api.api_info.name}}</td>
+                                                                            
+                                                                            <td ><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </td>
+                                                <!--
+                                                {% for api in data.scene_api %}
+                                                    <td><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+                                                    
+                                                {% endfor %}
+                                                -->
+                                                <!--td>100</td>
+                                                <td>200</td>
+                                                {% for k,v in data.scene_records.0.data.items %}
+                                                    {% if k != 'total' %}
+                                                        <td><input name='{{k}}' class="form" class="form-control" /></td>
+                                                    {% endif %}
+      
+                                                {% endfor %}-->
+                                                {% for r in data.all_resource %}
+                                                        <td><input name='{{r.name}}' class="form-control"></input></td>
+                                                {% endfor %}
+                                                <td><button class='btn btn-success btn-xs' onclick='add_line(this,"source_table_new")'>添加一行</button ></td>
+                                                
+                                            </tr>
+                                        </tbody>
+                                        
+                                    </table>
+                                </div>
+       
+                    </div>
+                </div>
+            </div>
+
+            {% for record in data.scene_records %}
+            <div class='row'>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion-dmengrank-{{record.id}}" href="#search-dmengrank-{{record.id}}" class="collapsed" aria-expanded="false"> #{{record.id}}: {{record.record_name}}  <small style="color:#D8D8D8"> 
+                                
+                                </small></a>
+                            {% if data.public.auth.write == 1 %}
+                            <button class="btn btn-xs btn-danger" style="float:right" onclick="delete_record('{{record.id}}')">删除</button>
+                            {% else %}
+                            <button class="btn btn-xs btn-danger" style="float:right" onclick="delete_record('{{record.id}}')" disabled="disabled">删除</button>
+                            {% endif %}
+                        </h3>
+                    </div> 
+                    <div id="search-dmengrank-{{record.id}}" class="panel-collapse collapse" aria-expanded="false" >
+
+                                <div >
+                                    <div class="alert alert-info" role="alert" >
+                                    {% if record.modify_by %}
+                                        由{{record.creator}}创建，上次修改时间为{{record.update_time}}，修改人{{record.modify_by}}
+                                    {% else %}
+                                        由{{record.creator}}创建，创建时间为{{record.update_time}}
+                                    {% endif %}
+                                    </div>
+                                    <div class="panel panel-default" style="margin:10px"> <!--  计算适合公式区域 -->
+                                        <div class='panel-heading'> 
+                                            根据阈值选择预测公式
+                                        </div>
+                                        <div class="panel-body">
+                                            <div id="{{record.id}}_choose_formula" style='float:left' class="alert alert-success" role="alert">点击按钮推算tps最大值与性能瓶颈</div>
+                                            <button class="btn btn-xs btn-info" style='float:right' onclick='choose_formula("{{data.module_info.id}}","{{data.scene_info.id}}","{{record.id}}")'>估算</button>
+                                        </div>
+                                    </div>
+                                {% for r in record.resources %}
+                                    <div style="height:300px;display:none" id="{{record.id}}_{{r}}" ></div>
+                                {% endfor %}
+                                </div>
+                                <div style="margin: 10px 0 10px 0">
+                                    <div class="form-group" style='float:left;margin-left:10px'>
+                                        <label for="new_record_name" style='display:inline'>记录名</label>
+                                        <input type="text" class="form-control" id="{{record.id}}_record_name" name='record_name' placeholder="" style='display:inline;width:100px' value='{{record.record_name}}'>
+                                    </div>
+                                    <button class="btn btn-xs btn-success" style="margin-right:10px;float:right;" onclick="get_algo_save_scene_record('source_table_{{record.id}}', '{{data.module_id}}', '{{data.scene_id}}', '{{record.id}}',0 ,'{{data.public.auth.write}}')">生成函数</button>
+                                        
+                                    <table class="table" id='source_table_{{record.id}}' style="margin-bottom:10px">
+                                        <thead>
+                                            <tr>
+                                                <th style='width:80px'>总tps</th>
+                                                <th style='min-width:120px'> api占比</th>
+                                                {% for k,v in record.data.items %}
+                                                    {% if k != 'total' %}
+                                                        
+                                                        {% if "#api#" in k %}
+                                                            <!-- th >{{k|cut:"#api#"}} </th-->
+                                                        {% else %}
+                                                            <th >{{k}} </th>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <th style='width:50px'>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id='source_table_{{record.id}}_body'>
+                                            {% for i in record.data_length %}
+                                            <tr>
+
+                                                {% for k,v in record.data.items %}
+                                                    {% if k == 'total' %}
+                                                        {% for vv in v %}
+                                                            {% if forloop.counter0 == i %}
+                                                                <td><input name='total' class="form-control" value='{{vv}}' onchange='auto_fill_by_ratio(this)'/></td>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                    {% endif %}
+                                                {% endfor %}
+                                               
+                                                <!-- api 占比-->
+                                                <td>
+                                                       <div class="accordion-group">
+                                                          <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_{{record.id}}_{{i}}">
+                                                              共{{record.api_info|length}}个API
+                                                            </a>
+                                                          </div>
+                                                          <div id="collapse_{{record.id}}_{{i}}" class="accordion-body collapse" style="height: 0px; ">
+                                                            <div class="accordion-inner">
+                                                                <table class="table">
+
+                                                                    <tr>
+                                                                        <th style='width:60px'>name</th>
+                                                                        <th>tps</th>
+                                                                        
+                                                                    </tr>
+                                                                    {% for api in record.apis %}
+                                                                        {% if forloop.counter0 == i%}
+                                                                            {% for k,v in api.items %}
+                                                                                <tr>
+                                                                                <td >{{k}}</td>
+                                                                                {% for scene_api in data.scene_api %}
+                                                                                {% if scene_api.api_info.name == k %}
+                                                                                    <td ><input name='#api#{{k}}' class="form-control" ratio='{{scene_api.ratio}}' onchange='auto_cal_ratio(this)' value='{{v}}'/></td>
+                                                                                {% endif %}
+                                                                                {% endfor %}
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                        
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </td>
+
+                                                {% for k,v in record.data.items %}
+                                                    {% if k != 'total' and not "#api#" in k %}
+                                                        {% for vv in v %}
+                                                            {% if forloop.counter0 == i %}
+                                                                <td><input name='{{k}}' class="form-control" value='{{vv}}' /></td>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <td><button class='btn btn-danger btn-xs' onclick='delete_line(this)'>删除</button ></td>
+                                            <tr>
+                                            {% endfor %}
+                                            <tr> <!-- 新增加数据 -->
+                                                <td><input name='total' class="form-control" onchange='auto_fill_by_ratio(this)'/></td>
+                                                <td>
+                                                       <div class="accordion-group">
+                                                          <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_{{record.id}}_new">
+                                                              共{{record.api_info|length}}个API
+                                                            </a>
+                                                          </div>
+                                                          <div id="collapse_{{record.id}}_new" class="accordion-body collapse" style="height: 0px; ">
+                                                            <div class="accordion-inner">
+                                                                <table class="table">
+
+
+                                                                    <tr>
+                                                                        <th style='width:60px'>name</th>
+                                                                        <th>tps</th>
+                                                                        
+                                                                    </tr>
+                                                                    {% for api in record.api_info %}
+                                                                        
+                                                                           
+                                                                        <tr>
+                                                                            <td >{{api|cut:"#api#"}}</td>
+                                                                            {% for scene_api in data.scene_api %}
+                                                                                    {% if scene_api.api_info.name == api|cut:"#api#" %}
+                                                                                        <td ><input name='{{api}}' class="form-control" ratio='{{scene_api.ratio}}' onchange='auto_cal_ratio(this)' value='{{v}}'/></td>
+                                                                                    {% endif %}
+                                                                            {% endfor %}
+                                                                        
+                                                                        </tr>
+                                                                        
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </td>
+                                                <!--
+                                                {% for api in data.scene_api %}
+                                                    <td><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+                                                    
+                                                {% endfor %}
+                                                -->
+                                                <!--td>100</td>
+                                                <td>200</td>
+                                                {% for k,v in data.scene_records.0.data.items %}
+                                                    {% if k != 'total' %}
+                                                        <td><input name='{{k}}' class="form" class="form-control" /></td>
+                                                    {% endif %}
+      
+                                                {% endfor %}-->
+                                                {% for r in data.all_resource %}
+                                                    <td><input name='{{r.name}}' class="form-control"></input></td>
+                                                {% endfor %}
+                                                <td><button class='btn btn-success btn-xs' onclick='add_line(this,"source_table_{{record.id}}")'>添加一行</button ></td>
+                                            </tr>
+                                            <tr name='new_line_tr' style='display:none'> <!-- 模版 -->
+                                                <td><input name='total' class="form-control" onchange='auto_fill_by_ratio(this)'/></td>
+                                                <td>
+                                                    <div class="accordion-group">
+                                                          <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_new" >
+                                                              共{{data.scene_api|length}}个API
+                                                            </a>
+                                                          </div>
+                                                          <div id="collapse_new" class="accordion-body collapse" style="height: 0px; ">
+                                                            <div class="accordion-inner">
+                                                                <table class="table">
+
+                                                                    <tr>
+                                                                        <th style='width:60px'>name</th>
+                                                                        <th>tps</th>
+                                                                        
+                                                                    </tr>
+                                                                     {% for api in record.api_info %}
+                                                                        
+                                                                           
+                                                                        <tr>
+                                                                            <td >{{api|cut:"#api#"}}</td>
+                                                                            {% for scene_api in data.scene_api %}
+                                                                                    {% if scene_api.api_info.name == api|cut:"#api#" %}
+                                                                                        <td ><input name='{{api}}' class="form-control" ratio='{{scene_api.ratio}}' onchange='auto_cal_ratio(this)' value='{{v}}'/></td>
+                                                                                    {% endif %}
+                                                                            {% endfor %}
+                                                                        
+                                                                        </tr>
+                                                                        
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                </td>
+                                                <!--
+                                                {% for api in data.scene_api %}
+                                                    <td><input name='#api#{{api.api_info.name}}' class="form-control" ratio='{{api.ratio}}' onchange='auto_cal_ratio(this)'/></td>
+                                                    
+                                                {% endfor %}
+                                                -->
+                                                <!--td>100</td>
+                                                <td>200</td>
+                                                {% for k,v in data.scene_records.0.data.items %}
+                                                    {% if k != 'total' %}
+                                                        <td><input name='{{k}}' class="form" class="form-control" /></td>
+                                                    {% endif %}
+      
+                                                {% endfor %}-->
+                                                {% for r in data.all_resource %}
+                                                        <td><input name='{{r.name}}' class="form-control"></input></td>
+                                                {% endfor %}
+                                                <td><button class='btn btn-success btn-xs' onclick='add_line(this,"source_table_{{record.id}}")'>添加一行</button ></td>
+                                                
+                                            </tr>
+
+                                        </tbody>
+                                        
+                                    </table>
+                                </div>
+       
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div>
+                
+            </div>
+        </div>
+
+{% endblock %}

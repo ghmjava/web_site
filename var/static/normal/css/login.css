@@ -1,0 +1,169 @@
+* {
+	margin: 0px;
+	padding: 0px;
+}
+html {
+	overflow-y: hidden;
+}
+body {
+	font-family: "Hiragino Sans GB", "Microsoft YaHei",  tahoma, arial, simsun;
+}
+li {
+	list-style: none;
+}
+input:-webkit-autofill { 
+-webkit-box-shadow: 0 0 0px 1000px #fff inset; 
+} 
+
+.body {
+	width: 100%;
+	height: 580px;
+	display: block;
+	position: relative;
+}
+.stage_box {
+	width:390px;
+	height: 255px;
+	position: absolute;
+	top: 50%;
+	margin-top: -128px;
+	left: 50%;
+	margin-left: -195px;
+	text-align: center;
+	overflow: hidden;
+}
+.userlnks {
+	clear: both;
+	height: 56px;
+}
+.userlnks a {
+	float: left;
+	width: 194px;
+	height: 56px;
+	text-align: center;
+	font-size: 18px;
+	letter-spacing: 4px;
+	line-height: 56px;
+	background: rgba(17,17,17,0.5);
+	color: #fff;
+	text-decoration: none;
+	cursor: pointer;
+	color: rgba(255,255,255,0.5);
+}
+.userlnks a:hover {
+	color: #fff;
+}
+.userlnks .register {
+	letter-spacing: 0;
+}
+.forms {
+	width: 388px;
+	position: absolute;
+	background: #fff;
+	color: #888;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.login {
+	width: 300px;
+	height: 158px;
+	margin: auto;
+}
+.w0 {
+	margin: 0 0 -1px;
+}
+.w1 {
+	margin: 12px 0 0;
+}
+.w2 {
+	margin: 10px 0 0;
+	height: 18px;
+}
+.w2 a {
+	color: #777;
+	text-decoration: none;
+	outline: none;
+	cursor: pointer;
+}
+.chkbox {
+	font-size: 12px;
+	float: left;
+	display: inline-block;
+	margin-right: 16px;
+}
+.chkbox a {
+	color: #777;
+	text-decoration: none;
+	outline: none;
+	cursor: pointer;
+	margin-left: 8px;
+}
+.j-ok {
+	background: url(/static/normal/img/btn.png) no-repeat -999px -999px;
+	background-position: -473px -783px;
+	width: 16px;
+	height: 16px;
+	float: left;
+}
+#c0 {
+	visibility: hidden;
+}
+.fgt {
+	font-size: 12px;
+	float: right;
+}
+.w-btn {
+	display: inline-block;
+	border: 0;
+	width: 300px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	font-size: 18px;
+	color: #fff;
+	background: url(/static/normal/img/btn.png) no-repeat -999px -999px;
+	background-position: -1px -461px;
+	cursor: pointer;
+}
+.w-btn:hover {
+	background-position: -1px -521px;
+}
+.inpt {
+	padding: 8px 16px;
+	border: 1px solid #D7D7D7;
+	width: 266px;
+	height: 22px;
+	font-size: 14px;
+	line-height: 22px;
+	text-align: left;
+}
+.txt {
+	border: 0;
+	outline: none;
+	width: 270px;
+	color: #444;
+	font-size: 14px;
+	line-height: 22px;
+}
+#stage1 {
+	/*background-color: #eeeeee;*/
+	background-image: url(/static/normal/img/login_bg.jpg);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+#guider {
+	width: 56px;
+	height: 70px;
+	position: absolute;
+	top: 380px;
+	right: 70px;
+	font-size: 14px;
+	cursor: pointer;
+}
+.userlnks .crt, .userlnks .crt:hover {
+	color: #444;
+	background: #fff;
+	border-color: #fff;
+}

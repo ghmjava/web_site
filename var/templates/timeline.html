@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+   <head>
+    <meta charset="utf-8">
+    <meta name="author" content="刘礼 <liliurd@meilishuo.com>">
+    {% load staticfiles %}
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-popover.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/modules/exporting.js' %}"></script>
+
+    <link rel="shortcut icon" href="{% static 'normal/img/favicon.ico' %}"/>
+
+    </head>
+
+    <script >
+
+    </script>
+  <body>
+
+  <!--div class="container" style="margin: 50px 30% 50px 30%">
+
+        {% if data %}
+        <div class="dotted-line" style="float:left"></div>
+            {% for i in data %}
+                {% if i.comment == '封板' %}
+                <a class="job-disabled left-item"  data-toggle="tooltip" data-placement="bottom" title="Comment:{{i.comment}} | Version:{{i.version}} | Time:{{i.time}} | User:{{i.user}}" ></a><div class="dotted-line left-item" ></div>
+                {% else%}
+                <div class="job-success left-item" ></div><div class="dotted-line left-item" ></div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-danger" role="alert">没有这个模块的记录</div>
+        {% endif %}
+
+    </div-->
+
+  <div>
+    <div>
+      {% if data %}
+        <div class="times">
+            <ul>
+            {% for i in data %}
+                {% if i.comment == '封板' %}
+                <li><div class="seal"></div><span>封板 {{i.time}}</span><p>  comment: {{i.comment}}</p><p>  version: {{i.version}}</p><p>  user: {{i.user}}</p><p></p></li>
+                {% elif i.comment == 'publish' %}
+                <li><div class="publish"></div><span>发布 {{i.time}}</span><p>  comment: {{i.comment}}</p><p>  version: {{i.version}}</p><p>  user: {{i.user}}</p><p></p></li>
+                {% else %}
+                <li><div class="checkin"></div><span>check in {{i.time}}</span><p>  comment: {{i.comment}}</p><p>  version: {{i.version}}</p><p>  user: {{i.user}}</p><p></p></li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+
+        {% else %}
+            <div class="alert alert-danger" role="alert">没有这个模块的记录</div>
+        {% endif %}
+
+    </div>
+  </div>
+  </body>
+</html>

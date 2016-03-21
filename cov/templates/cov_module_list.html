@@ -1,0 +1,41 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").removeClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").addClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li class="active"><a href="/cov/module">所有模块</a></li>
+    </ul>
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>模块</th>
+                <th>版本库类型</th>
+                <th>版本库地址</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for module in modules %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ module.name }}</td>
+                    <td>{{ module.repos_type }}</td>
+                    <td>{{ module.repos_addr }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="{% url 'cov:new_module'%}">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        新建模块
+    </a>
+{% endblock %}

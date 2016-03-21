@@ -1,0 +1,628 @@
+li:hover>ul{display: block;border: 0;}
+.left{float:left}
+.right{float:right}
+.center{text-align:center}
+.api {padding: 0 20px;*padding:0 20px;}
+.pd10 {padding: 10px;*padding:10px;}
+.mg10{margin:10px;_margin:10px;}
+.pd-bt10 {padding-bottom:10px}
+.pd-top10 {padding-top:10px}
+.no-pd-mg {padding:0; margin:0}
+.api_tag{margin:2px;_margin:2px;padding:4px;_padding:4px;}
+/*body{background:url(/static/normal/img/body-b.jpg) repeat-x center 0 #e4f3f7;}*/
+.body-bg{padding:60px 0 0 0;_padding:0;}
+.header{height:40px;width:100%;left:0;top:0;z-index:990;position:fixed;_overflow:hidden;}
+s { color: red; padding-right: 5px; text-decoration: none;}
+.frame{width:100%;height:1400px;border:0}
+.badge-success{  background-color: #468847;}
+.badge-warning{background-color: #f89406;}
+.badge-info{background: linear-gradient(to right, #3a87ad, #3EAFE6);}
+.badge-tag{background: linear-gradient(to right, #FF7800, #F7D291);}
+.alert {padding: 5px;border: 1px solid transparent;border-radius: 4px;}
+.panel-info {border-color: #97D4FF;}
+.panel-info>.panel-heading {background: linear-gradient(to right, #3C8DBC, #90D5FD);color:#fff;}40px;}
+.wd1 {width:100px;}
+/*body{background:url(/static/normal/img/body-b.jpg) repeat-x center 0 #e4f3f7;}*/
+#body-bg{padding:15px 0 0 0;_padding:0;}
+#page-wrap #main-wrap{margin:0 auto;text-align: left;width:960px;position:relative;_margin:20px auto 0;}
+#left-wrap{margin:0 auto;float:left;width:10%;x}
+#right-wrap{margin:0 auto;float:right;width:10%;}
+
+.main{background:#fff;min-height:650px;*zoom:1;_height:650px;_overflow:visible;}
+.st-section{overflow:hidden;*zoom:1;_margin:0}
+
+
+#header{height:40px;width:100%;left:0;top:0;z-index:990;position:fixed;_overflow:hidden;}
+#header .head-bd{margin: 0 auto;width: 960px;height:40px;position:relative;z-index:999}
+#header .header-wrap{height:40px}
+#header .head-bd .nav{float:left;height:40px;margin:0 0 0 10px;_margin:0 0 0 70px;}
+#header .head-bd .nav ul li{float:left;position:relative;}
+#header .head-bd .nav ul li.user{float:left;position:relative;left:580px}
+#header .head-bd .nav a{display:block;padding:11px 10px 13px;padding:12px 10px 12px \0;height:16px;line-height:16px;font-size:14px;}
+*+html #header .head-bd .nav a{padding:12px 10px 12px;}
+#header .head-bd .nav .current a.app{display:block;padding:11px 10px 13px;padding:12px 10px 12px \0; height:16px;line-height:16px;background:#4682B4;}
+*+html #header .head-bd .nav .current a.app{padding:12px 10px 12px;}
+#header .head-bd .nav a{color:#fff;float:left}
+.head-bd .nav .current .ico-header{display:block;height:2px;background-color:#DB4A37;overflow:hidden}
+
+#header .head-bd .search{position:relative;float:left;left:150px;top:5px;}
+
+
+.footer{width:960px;margin:10px auto;_position:relative;_bottom:0;overflow:hidden;*zoom:1;}
+.footer p{padding:10px 15px;overflow:hidden;}
+.footer p a{color:#36c;text-decoration:none;}
+
+.bs-sidenav{width:130px;margin:20px 10px;padding:0;background:#fff;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;-webkit-box-shadow:0 1px 4px rgba(0,0,0,.065);-moz-box-shadow:0 1px 4px rgba(0,0,0,.065);box-shadow:0 1px 4px rgba(0,0,0,.065)}
+.bs-sidenav>li>a{display:block;width:190px 9;margin:0 0 -1px;padding:8px 14px;border:1px solid #e5e5e5}
+.bs-sidenav>li:first-child>a{-webkit-border-radius:6px 6px 0 0;-moz-border-radius:6px 6px 0 0;border-radius:6px 6px 0 0}
+.bs-sidenav>li:last-child>a{-webkit-border-radius:0 0 6px 6px;-moz-border-radius:0 0 6px 6px;border-radius:0 0 6px 6px}
+.bs-sidenav .icon-chevron-right{float:right;margin-top:2px;margin-right:-6px;opacity:.25}
+.bs-sidenav.affix{top:40px}
+
+.bs-frame{position:relative;background:url(/static/normal/img/body_bg1.jpg) repeat;margin:10px;_margin:10px;padding: 10px;*padding-top:10px;border:1px solid #ddd;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.bs-frame-left{position:relative;float:left;width:40%;}
+.bs-frame-right{position:relative;float:right;width:60%;}
+
+.dl-h {
+  *zoom: 1;
+}
+
+.dl-h:before,
+.dl-h:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.dl-h:after {
+  clear: both;
+}
+
+.dl-h dt {
+  float: left;
+  width: 100px;
+  overflow: hidden;
+  clear: left;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bs-border {
+  position: relative;
+  margin: 15px 0;
+  padding: 39px 19px 14px;
+  *padding-top: 19px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+.img-small {
+  width: 32px;
+  height: 32px;
+}
+
+
+.product-container {
+      width: 260px;
+      margin: 0 auto;
+      border-radius: 10px;
+      background: #f6f8f7;
+}
+.name {
+        border-bottom: 1px solid @gray-light;
+        font-size: 20px;
+        padding: 2px;
+}
+
+.interest {
+        color: #1da427;
+        font-size: 70px;
+        font-weight: bold;
+        padding: 0px;
+        margin-bottom: -30px;
+
+
+}
+.percent {
+          font-size: 31px;
+}
+
+
+.intro {
+        padding: 5px;
+}
+
+.strong {
+        padding: 3px;
+        font-size: 17px;
+        color: @white;
+        background: #326c84;
+        border-radius: 0 0 10px 10px;
+}
+
+
+.small-unit {
+  position:relative
+  height: 200px;
+  padding: 10px;
+  margin-bottom: 30px;
+  font-size: 18px;
+  font-weight: 200;
+  #line-height: 30px;
+  color: inherit;
+  background-color: #eeeeee;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+.unit-title{
+
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: inherit;
+}
+
+.unit-do{
+  position: absolute
+  margin-left: auto;
+  margin-right: auto;
+  bottom: 0px;
+}
+
+.unit-status{
+  MARGIN-RIGHT: auto; MARGIN-LEFT: auto;
+  margin: 10px 0 10px 0
+}
+
+
+.job-success{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #5cb85c;
+    display:inline-block;
+}
+
+.job-disabled{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #f0ad4e;
+    display:inline-block;
+}
+
+
+.job-notbuild{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #777;
+    display:inline-block;
+}
+
+
+.job-failure{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #d9534f;
+    display:inline-block;
+}
+
+.job-aborted{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #d9534f;
+    display:inline-block;
+}
+
+
+.job-success{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #5cb85c;
+    display:inline-block;
+}
+
+.job-disabled{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #f0ad4e;
+    display:inline-block;
+}
+
+
+.job-notbuilt{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #BDBDBD;
+    display:inline-block;
+}
+
+.job-building{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    -webkit-animation: twinkling 2s infinite ease-in-out;
+    background-color: #5bc0de;
+    display:inline-block;
+}
+
+.job-fail{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #d9534f;
+    display:inline-block;
+}
+
+
+.anchorjs-link {
+  color: inherit;
+}
+
+
+.anchorjs-link {
+  opacity: 0;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dotted-line{
+    margin: 9px 2px 9px 2px;
+    border-top:2px dotted #47a3da;
+    width:30px;
+}
+
+
+.left-item{
+    float:left ;
+}
+
+
+ul,p{padding:0; margin:0;}
+.times {display:block;margin:15px 0;}/*首先，我们要创建一个容器class*/
+.times ul {margin-left:25px;border-left:2px solid #ddd;}/*利用ul标签的特性，设置外边框左移25px，左边边框是2px粗的实心线，颜色一般要浅一点*/
+.times ul li { list-style-type:none; width:100%;margin-left:-12px;line-height:20px;font-weight:narmal;}/*一般情况，通过li标签控制圆点回到时间线上，然后控制要出现的文字大小和是否粗体*/
+.times ul li .seal{width:12px;height:12px;background:#f0ad4e;border:2px solid #f0ad4e;margin:5px;border-radius:6px;-webkit-border-radius:6px;-moz-border-radius:6px;overflow:hidden;display:inline-block;float:left; }/*利用处理加粗以外没有其它特别属性b标签做时间轴的圆点。*/
+.times ul li .checkin{width:12px;height:12px;background:#5cb85c;border:2px solid #5cb85c;margin:5px;border-radius:6px;-webkit-border-radius:6px;-moz-border-radius:6px;overflow:hidden;display:inline-block;float:left; }/*利用处理加粗以外没有其它特别属性b标签做时间轴的圆点。*/
+.times ul li .publish{width:12px;height:12px;background:#0099FF;border:2px solid #0099FF;margin:5px;border-radius:6px;-webkit-border-radius:6px;-moz-border-radius:6px;overflow:hidden;display:inline-block;float:left; }/*利用处理加粗以外没有其它特别属性b标签做时间轴的圆点。*/
+
+.times ul li span {padding-left:7px;font-size:20px;line-height:20px;color:#555; margin: 20px 0 0 0}/*设置span标签的属性，让它来做时间显示，加一点边距，使时间显示离时间线远一点*/
+.times ul li:hover b {border:2px solid #ff6600;}/*注意这一行，前面的li标签后面加了一个:hover伪属性，意思是鼠标移上来，激活后面的属性，这样可以设置鼠标移动到整个时间范围的时候，时间点和时间显示会变色*/
+.times ul li:hover span {color:#ff6600;}/*同上*/
+.times ul li p {padding-left:30px;font-size:10px;line-height:25px;}/*这里利用段落标签p做文字介绍*/
+
+
+
+
+
+
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+}
+
+
+/*
+ * Global add-ons
+ */
+
+.sub-header {
+  padding-bottom: 10px;
+  padding-top: 20px;
+  margin-left: 40px;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+
+
+/*
+ * Main content
+ */
+
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*
+ * Placeholder dashboard ideas
+ */
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.picklist {
+  margin-left:40px;
+}
+
+
+.task_line {
+  border-bottom: 1px solid #eee;
+  margin-top: 20px;
+}
+
+.subtask_well{
+    background-color:#5cb85c;
+    text-align:center;
+    font-size:18px;
+    padding:10px;
+}
+
+
+
+.hex-success {
+    float: left;
+    margin-left: 3px;
+    margin-bottom: -26px;
+}
+.hex-success .top {
+    width: 0;
+    border-bottom: 30px solid #5cb85c;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+.hex-success .middle {
+    width: 104px;
+    height: 60px;
+    text-align:center;
+    background: #5cb85c;
+    font-size: 18px;
+    color: #fff;
+    padding-top: 15px;
+}
+
+.hex-success a{
+    margin-top:50%
+}
+
+.hex-success .bottom {
+    width: 0;
+    border-top: 30px solid #5cb85c;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+
+@-webkit-keyframes twinkling{	/*透明度由0到1*/
+	0%{
+		opacity:0;				/*透明度为0*/
+	}
+	100%{
+		opacity:1;				/*透明度为1*/
+	}
+}
+
+.hex-fail {
+    float: left;
+    margin-left: 3px;
+    margin-bottom: -26px;
+    -webkit-animation: twinkling 1s infinite ease-in-out;
+}
+
+.hex-fail .top {
+    width: 0;
+    border-bottom: 30px solid #d9534f;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+.hex-fail .middle {
+    width: 104px;
+    height: 60px;
+    text-align:center;
+    background: #d9534f;
+    font-size: 18px;
+    color: #fff;
+    padding-top: 15px;
+}
+
+.hex-fail .bottom {
+    width: 0;
+    border-top: 30px solid #d9534f;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+
+
+.hex-gray {
+    float: left;
+    margin-left: 3px;
+    margin-bottom: -26px;
+}
+
+.hex-gray .top {
+    width: 0;
+    border-bottom: 30px solid #8E8E8E;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+.hex-gray .middle {
+    width: 104px;
+    height: 60px;
+    text-align:center;
+    background: #8E8E8E;
+    font-size: 18px;
+    color: #fff;
+    padding-top: 15px;
+}
+
+.hex-gray .bottom {
+    width: 0;
+    border-top: 30px solid #8E8E8E;
+    border-left: 52px solid transparent;
+    border-right: 52px solid transparent;
+}
+
+
+.hex-row {
+    clear: left;
+    margin-left:150px
+}
+.hex-row.even {
+    margin-left: 203px;
+}
+
+.center{
+    text-align:center;
+    min-height: 350px;
+
+}
+
+
+.job-exclude{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #337ab7;
+    display:inline-block;
+}
+
+
+.job-label{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #FF8000;
+    display:inline-block;
+}
+
+.job-building-static{
+    width:18px;
+    height:18px;
+    border-radius:99em;
+    background-color: #5bc0de;
+    display:inline-block;
+}
+
+
+
+
+.accordion {
+  margin-bottom: 20px;
+}
+
+.accordion-group {
+  margin-bottom: 2px;
+  border: 1px solid #e5e5e5;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+.accordion-heading {
+  border-bottom: 0;
+}
+
+.accordion-heading .accordion-toggle {
+  display: block;
+  text-decoration:none;
+  padding: 8px 15px;
+}
+
+.accordion-toggle {
+  cursor: pointer;
+}
+
+.accordion-inner {
+  padding: 9px 15px;
+  border-top: 1px solid #e5e5e5;
+}
+
+
+.holds-the-iframe {
+  background:url(../img/loading_spinner.gif) center center no-repeat;
+ }
+
+
+.holds-the-iframe-top {
+  background:url(../img/loading_spinner.gif) top center no-repeat;
+ }
+
+ .running{
+    -webkit-animation: twinkling 2s infinite ease-in-out;
+ }

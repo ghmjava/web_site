@@ -1,0 +1,35 @@
+{% extends "ci_mgr/ci_base.html" %}
+{% block script %}
+<script>
+
+$(document).ready( function () {
+    $('#table_id').DataTable();
+} );
+
+function gather_checkbox(form_id){
+  var boxes = $(form_id + ' checkbox')
+  var checked = []
+  for(b in boxes){
+    if( b.attr('checked') == 'checked'){
+
+      checked.push(i.value)
+    }
+  }
+
+}
+</script>
+{% endblock %}
+
+
+{% block specify %}
+<div class="col-md-9 col-lg-9 " >
+  
+
+  <div class="well">
+        <div class="h2" >ERROR!</div>
+        <p>出错了</p>
+    </div>
+</div>
+
+{% endblock %}
+

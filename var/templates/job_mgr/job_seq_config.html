@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+
+    {% load staticfiles %}
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- MetisMenu CSS -->
+    <link href="{% static 'metisMenu/dist/metisMenu.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Timeline CSS -->
+    <link href="{% static 'normal/css/timeline.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Custom CSS -->
+    <link href="{% static 'normal/css/sb-admin-2.css' %}" rel="stylesheet" type="text/css" />
+
+    <link href="{% static 'normal/css/multiple-select.css' %}" rel="stylesheet" type="text/css" />
+
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome/css/font-awesome.min.css' %}" rel="stylesheet"/>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'normal/css/jquery.dataTables.css' %}">
+
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/loading-spinner.css' %}" rel="stylesheet" type="text/css" />
+
+
+    <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/js/jquery.multiple.select.js' %}"></script>
+
+    <!--script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script-->
+    <!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script-->
+    <!-- DataTables -->
+
+
+
+    <!--script>
+    window.jQuery || document.write('<script src="http://mysite.com/jquery.min.js"><\/script>')
+    </script-->
+
+
+
+    <script>
+
+        // 修改subtask信息相关
+        var alert_str = '<div class="alert alert-danger">content</div>'
+        var create_subtask_data = {}
+        var set_seq_data = {}
+
+
+        function change_job_seq(id){
+
+            if($("#is_start_yes").prop("checked")){
+                set_seq_data['is_start'] = 1
+            }else{
+                set_seq_data['is_start'] = 0
+            }
+
+            set_seq_data[$("input")[0].name] = $("input")[0].value
+            set_seq_data[$("input")[1].name] = $("input")[1].value
+
+            
+            var selected_to = []
+            //select_l = $('.selected input')
+            select_l = $('input[type=checkbox]')
+            for(var i=0;i<select_l.length;i++){
+                //selected_to.push(new Number(select_l[i].value))
+                if(select_l[i].checked == true){
+                    selected_to.push(new Number(select_l[i].value))
+                }
+            }
+
+            set_seq_data['next_list'] = selected_to
+            set_seq_data['id'] = id
+
+            
+            $.post(
+                "/job_mgr/set/next_job",
+                JSON.stringify(set_seq_data),
+                function(data, status){
+                  if(status == 'success'){
+                        if(data.status == 'fail'){
+                            $("#main").html('<div class="alert alert-danger" role="alert">'+ data.message + '</div>')
+                        }
+                        else{
+                            $("#main").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                        }
+
+                  }else{
+
+                        $("#main").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+                  }
+
+                }
+              );//这里返回的类型有：json,html,xml,text
+        }
+
+
+        function delete_job(id){
+            console.log(id)
+            var post_data = {}
+            post_data['id'] = id
+            $.post(
+                "/ci_mgr/rm/job",
+                JSON.stringify(post_data),
+                function(data, status){
+                  if(status == 'success'){
+                        if(data.status == 'fail'){
+                            $("#main").html('<div class="alert alert-danger" role="alert">'+ data.message + '</div>')
+                        }
+                        else{
+                            $("#main").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                        }
+
+                  }else{
+
+                        $("#main").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+                  }
+
+                }
+            );//这里返回的类型有：json,html,xml,text
+        }
+
+        function sleep(d){
+          for(var t = Date.now();Date.now() - t <= d;);
+        }
+</script>
+
+</head>
+<body>
+
+    <div id='main'>
+    <form >
+        <!--div class="form-group">
+            <label>当前SubTask</label>
+            <input class="form-control" name='sub_task_id' value='{{data.current_subtask.id}}' disabled></input>
+        </div>
+
+        <div class="form-group">
+            <label>当前job</label>
+            <input class="form-control" name='id' value='{{data.current_job.id}}' disabled></input>
+        </div-->
+
+        <div class="form-group">
+            <label>是否是起始Job</label>
+                {% if data.current_job.pre_id == 0 %}
+                    <input type="radio" name='optionsRadiosInline' id="is_start_yes" style='margin:0 5px 0 5px' value="1" checked>yes
+                    <input type="radio" name='optionsRadiosInline'id="is_start_no" style='margin:0 5px 0 5px' value="0">no
+                {% else %}
+                    <input type="radio" name='optionsRadiosInline' id="is_start_yes" style='margin:0 5px 0 5px' value="1" >yes
+                    <input type="radio" name='optionsRadiosInline'id="is_start_no" style='margin:0 5px 0 5px' value="0" checked>no
+                {% endif %}
+        </div>
+
+
+        <!--div class="form-group">
+            <label>后置</label>
+            <select name='next_list' id='to_select' multiple="multiple" style='display: block;width: 100%;'>
+            {% for j in data.jobs %}
+                {% if data.current_job.name != j.name %}
+                    {% if j in data.current_job.next %}
+                        <option value='{{j.id}}' selected="selected">{{j.name}}</option>
+                    {% else %}
+                        <option value='{{j.id}}' >{{j.name}}</option>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            </select>
+
+
+            
+        </div-->
+        <table class="table table-condensed">
+                <thead>
+                    <tr>    
+                        <th>#</th>
+                        <th>名字</th>
+                        <th>前置</th>
+                        <th>是标签</th>
+                        <th>选中</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for j in data.jobs %}
+                    {% if data.current_job.name != j.name %}
+                        <tr>
+                            <td>{{j.id}}</td>
+                            <td>{{j.name}}</td>
+                            <td>{{j.pre_id}}</td>
+                            {% if j.flag == 0 %}
+                                <td>Yes</td>
+                            {% else %}
+                                <td>No</td>
+                            {% endif %}
+                            
+                            {% if j in data.current_job.next %}
+                            <td><input type='checkbox' value='{{j.id}}' checked></input></td>
+                            {% else %}
+                            <td><input type='checkbox' value='{{j.id}}' ></input><td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+        </table>
+        <!--script>
+            $('#to_select').multipleSelect(
+            );
+        </script-->
+    </form>
+
+    <button id='ok' type="submit" class="btn btn-primary" onclick='change_job_seq("{{data.current_job.id}}")'>确定</button>
+</div>
+
+</body>
+</html>
+
+

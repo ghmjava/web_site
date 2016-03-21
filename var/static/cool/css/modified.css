@@ -1,0 +1,567 @@
+#para_broadband {
+  overflow: hidden; }
+
+  #broadband .table-cell.make-bottom {
+    vertical-align: bottom; }
+
+    /*added css for mobile parallax*/
+    #para_mobile{
+      overflow:hidden;
+    }
+
+    #mobile .table-cell.make-bottom {
+      vertical-align: bottom;
+    }
+
+    /*added css for entertainment  parallax*/
+    #para_entertainment{
+      overflow:hidden;
+    }
+
+    #entertainment .table-cell.make-bottom{
+      vertical-align: bottom;
+    }
+
+    /*added css for bundles  parallax */
+    #para_bundles{
+      overflow:hidden;
+    }
+
+    #ello_bundles .table-cell.make-bottom {
+      vertical-align: bottom;
+    }
+
+    .extra-logo {
+     margin-top: 1.2em;
+   }
+
+   .extra {
+     font-size: 2.8rem;
+   }
+
+   .extra-disclaimer {
+     /*position: absolute;*/
+     font-size: 1.4rem !important;
+     text-align: center;
+	/*left: 50%;
+	margin-left: -175px !important;	*/
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+.extra-disclaimer a{
+  text-decoration: underline;
+}
+
+/*changes by suman*/
+.banner-offer{
+  font-size: 0;
+}
+.banner-offer .yellow-offer{
+  right:auto;
+}
+.main-header--priceblock,.extra{
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#broadband2 #nbn-custom-plan .col-left > div:last-child {
+  margin-top: 0;
+}
+
+
+@media(max-width:767px){
+
+  .main-header--descBox h1{
+    padding-top: 50px;
+    font-size: 4.8rem;
+  }
+  .carousel-inner .item.third .main-header--descBox h1{
+
+    font-size: 4.8rem;
+  }
+  .main-header--priceblock h2{
+    margin-bottom: 50px;
+  }
+  .extra {
+    font-size: 2rem;
+  }
+}
+@media(max-width:321px){
+ .main-header--priceblock h2{
+  margin-bottom: 50px;
+}
+}
+
+/**wp modification bug bixes **/
+.top-divider, .bottom-divider{
+	float:left;
+	width:100%;
+}
+#price-tab-container{position:relative;}
+div.el-tab-content .col-right .terms{
+	width:100%;
+	float:left;
+	margin-top:0;
+}
+#mobile div.el-tab-content .col-right .terms{
+  margin-top:26px;
+}
+div.el-tab-content .col-right .terms sup{
+	top:0;
+}
+.package-loader-container{
+	position: absolute;
+  top: 0;
+  left: 1px;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+}
+.package-loader {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: table;
+  background: rgba(255,255,255,0.95);
+
+  -webkit-border-top-right-radius: 10px;
+  -webkit-border-bottom-right-radius: 10px;
+  -moz-border-radius-topright: 10px;
+  -moz-border-radius-bottomright: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.package-loader .modal-body {
+  display: table-cell;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+  color: #000;
+  border-radius: 10px;
+}
+.package-loader .modal-body .tick {
+  padding-bottom: 40px;
+  font-size: 32px;
+  color:#053a49;
+  font-family:"ATCOverlook-Light";
+}
+
+/*
+@media (min-width: 767px){
+  .el-header.color-block .navbar-nav > li {
+    padding-left: 11px;
+    padding-right: 11px;
+
+    }};
+
+    /**footer toglge legal**/
+    .legal span a{margin-left:10px;}
+    .legal span a img{max-width:10px;}
+    .footer-expandable.no-space .legal {padding-top:0;}
+
+
+    /**NBN**/
+    .el-section__Header h2 span{border-bottom:1px solid #fff;}
+    .el-section__Header h2 span.text-logo { font-family: "Nanami-Rounded-Med"; border:none; }
+
+    .nbn-select-price {
+      width: 100%;
+      list-style: none;
+      text-align: center;
+    }
+    .nbn-select-price label {
+      margin-bottom: 49px;
+      font-size: 23px;
+      font-size: 2.3rem;
+    }
+    .nbn-select-price ul {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .nbn-select-price ul li {
+      float: none;
+      display: inline-block;
+      margin: 0 15px;
+      text-align: center;
+    }
+    .nbn-select-price ul li .btn-yellow {
+      width: 260px;
+    }
+
+    .main-header--priceblock h3 {
+      font-size: 5.2rem;
+      letter-spacing: 2px;
+    }
+
+    #offer-content ul{
+      padding: 0;
+      list-style: none;
+    }
+
+
+
+
+    /**nbn  without scss 8 April **/
+    #processing-switch, #location-modal-switch {
+      position: absolute;
+      z-index: 99999;
+      top: 50%;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      /*height: 170px;*/
+      height:100%;
+    }
+    #processing-switch .modal-content, #location-modal-switch .modal-content{
+      display:table;
+      width:100%;
+      height:100%;
+    }
+    #processing-switch .modal-body, #location-modal-switch .modal-body{
+      position: relative;
+      height: 100%;
+      color: #043442;
+      font-family: "ATCOverlook-Light";
+      padding: 0;
+      font-size: 40px;
+      font-size: 4rem;
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+    }
+    #section1 {
+      position: relative;
+      float: left;
+      width: 100%;
+      height: 100%;
+      vertical-align: middle;
+    }
+    #location-modal-switch .modal-dialog .modal-content .modal-body .tick {
+      width: 100%;
+      clear: both;
+      font-size: 20px;
+      font-size: 2rem;
+      margin-bottom: 9px;
+    }
+
+    #location-modal-switch .modal-body select#select-location {
+      height: 58px;
+      border: none;
+      font-size: 18px;
+      font-size: 1.8rem;
+      background: #fff;
+      color: rgba(0, 0, 0, 0.5);
+      border-bottom-left-radius: 5px !important;
+      border-top-left-radius: 5px !important;
+    }
+    button#go-location {
+      background: silver;
+    }
+    #broadband-content #broadband-sidebar{
+      right:auto;
+      left:0;
+    }
+    #broadband-content #broadband-sidebar.slidehint {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      margin: auto;
+      width: 70px;
+      height: 50px;
+      cursor: pointer;
+    }
+    #broadband-content #broadband-sidebar .slidehint span {
+      transform: rotate(270deg);
+      transform-origin: right bottom 0;
+      float: right;
+      width: 30px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    #broadband-content #broadband-sidebar .slidehint img {
+      float: left;
+    }
+    #broadband-sidebar .slidehint {
+      width: 70px!important;
+    }
+
+
+
+
+
+    #broadband2 #nbn-custom-plan .col-left {
+      padding-right: 30px;
+      background: url(../images/shadow-divider.png) no-repeat center right;
+    }
+
+    #nbn-custom-plan .col-left h3 {
+      color: #053a49;
+      font-family: "ATCOverlook-Light";
+      font-size: 38px;
+      font-size: 3.8rem;
+      padding-left:0;
+    }
+    #nbn-custom-plan .package-includes {
+      color: #053a49;
+    }
+    #nbn-custom-plan .package-includes span {
+      font-family: "ATCOverlook-Bold";
+    }
+    #nbn-custom-plan .package-includes ul {
+      margin: 0;
+      padding: 6px 0 0 18px;
+    }
+    #nbn-custom-plan .package-includes li:first-child {
+      margin-top: 0;
+    }
+    #nbn-custom-plan .package-includes li {
+      font-family: "ATCOverlook-Regular";
+      font-size: 15px;
+      font-size: 1.5rem;
+      margin-top: 18px;
+      line-height: 27px;
+    }
+    #nbn-custom-plan .download-info a {
+      color: #000;
+      text-decoration: none;
+      display: block;
+    }
+    #nbn-custom-plan .download-info img {
+      vertical-align: bottom;
+      margin-right: 15px;
+    }
+    #nbn-custom-plan .download-info {
+      margin-top: 40px;
+      font-family: "ATCOverlook-Regular";
+      color: #053a49;
+      font-size: 15px;
+      font-size: 1.5rem;
+    }
+    #nbn-custom-plan .col-left .features-list {
+      background: url(../images/bg-features.png) no-repeat;
+      background-size: cover;
+      margin-left: 10px;
+      margin-top: 61px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      border-radius: 5px;
+    }
+    #nbn-custom-plan .col-right .features-list{
+      background:#053a49;
+      margin-left: 10px;
+      margin-top: 61px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      border-radius: 5px;
+    }
+    #tabbed-offer .features-list{
+      background:#053a49;
+      margin-left: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      border-radius: 5px;
+      margin-top: 10px;
+      width: 80%;
+      float: right;
+      margin-right: 20px;
+    }
+    #nbn-custom-plan .col-right .features-list li, #tabbed-offer .features-list li{
+      background:url(../images/nbn-feature-list.png)no-repeat left center;
+      padding-left:26px;
+      list-style: none;
+      font-family: "ATCOverlook-Bold";
+      color: #fff;
+      font-size: 13px;
+      font-size: 1.3rem;
+      margin-top: 9px;
+    }
+    #nbn-custom-plan .col-right .features-list li:first-child, #tabbed-offer .features-list li:first-child{margin-top:0;}
+    #nbn-custom-plan .col-right .features-list ul, #tabbed-offer .features-list ul{
+      margin: 0;
+      padding: 15px 0px;
+    }
+
+    #nbn-custom-plan .col-left .features-list {margin-top:21px;}
+
+    #nbn-custom-plan .col-left .features-list ul {
+      margin: 0;
+      padding: 15px 11px;
+    }
+    #nbn-custom-plan .col-left .features-list li:first-child {
+      margin-top: 0;
+    }
+    #nbn-custom-plan .col-left .features-list li {
+      list-style: none;
+      font-family: "ATCOverlook-Bold";
+      color: #053a49;
+      font-size: 13px;
+      font-size: 1.3rem;
+      margin-top: 9px;
+    }
+    #nbn-custom-plan .col-right .features-list li img {
+      margin-right: 9px;
+    }
+    #nbn-custom-plan .col-left .features-list li img {
+      margin-right: 19px;
+    }
+    #nbn-custom-plan .col-right .terms {
+      margin-top: 26px;
+      color: #053a49;
+      font-size: 14px;
+      width: 100%;
+      float: left;
+      margin-top: 0;
+      padding:0;
+      margin-bottom:15px;
+    }
+    #nbn-custom-plan .col-right .terms span {
+      font-family: "ATCOverlook-Bold";
+      padding-left: 35px;
+    }
+    #nbn-custom-plan .col-right .terms ul {
+      padding: 12px 0 20px 24px;
+      margin: 0;
+    }
+    #nbn-custom-plan .col-right .terms li {
+      font-family: "ATCOverlook-Regular";
+      padding-left: 10px;
+      font-size: 13px;
+      font-size: 1.3rem;
+      line-height: 1.8;
+    }
+    #nbn-custom-plan .checkbox{
+      font-family: "ATCOverlook-Bold",sans-serif;
+      font-size: 12px;
+      font-size: 1.2rem;
+      margin-top:20px;
+      color:#053a49;
+      width: 320px;
+      float:left;
+      position:relative;
+    }
+    #fullpage{
+      overflow: visible;
+      /*min-height:1393px;*/
+    }
+    #fullpage #section1{
+      top:0;
+      display:block;
+      margin-bottom: -80px;
+    }
+    #offermodal .modal-dialog{
+      height:100%;
+    }
+    #offermodal-nbn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(217, 216, 216, 0.94);
+      opacity: 1;
+      display: block;
+      border-radius: 10px;
+    }
+    #package-switch{text-align: center;}
+    .btn-go-nbn, .btn-go-broadband{
+      margin-top:25px;
+      display: none;
+      width: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    .btn-go-nbn, .btn-go-broadband {display:inline-block;position: relative;  z-index: 999;}
+
+    #nbnnoaddressform {position: absolute; }
+    #nbnnoaddressform form {text-align:center;}
+    #nbnnoaddressform .modal-dialog {width:480px; margin:0 auto;}
+    #nbnnoaddressform .modal-content {background:#e7e8e8; padding:15px;}
+    #nbnnoaddressform .modal-body {z-index:0;}
+    #nbnnoaddressform .modal-body p{color:#124655; font-size:16px; font-size:1.6rem; margin-bottom:10px;font-family: "ATCOverlook-Light"; text-align:center;}
+    #nbnnoaddressform .form-group {width:50%; float:left; padding:5px; position: relative;}
+    #nbnnoaddressform .form-group input{border-radius:0; height:50px; }
+    #nbnnoaddressform .btn-yellow {padding: 5px!important;  height: auto;  line-height: 40px;}
+    #nbnnoaddressform .close { opacity: 1;  z-index: 999999999;  width: 16px;  position: absolute;  right: 15px;}
+    #nbnnoaddressform .close img {  max-width: 16px;  height: auto;}
+    #nbnnoaddressform input.error{border:1px solid #ff0000;}
+    #nbnnoaddressform label.error {font-size:12px; font-family: "ATCOverlook-Light"; color:#ff0000; text-align:left;}
+
+
+    #broadband2 div.el-tab-content .col-right .features-list.not-showing {background: transparent; min-height: 10px; }
+
+    @media(max-width:991px){
+      .top-divider >div:first-child{width:55%;}
+      .top-divider >div:first-child h3{font-size:32px!important; font-size:3.2rem!important;}
+      .top-divider #tabbed-offer {padding-left:0; width:45%;}
+      #tabbed-offer .features-list{width:90%;margin-top:30px;}
+      #broadband-content {padding-bottom:0;}
+    }
+    @media (max-width:900px){
+      #nbn-custom-plan .checkbox {width:310px;}
+    }
+    @media(max-width:866px){
+      .broadband--offer{
+        float: left !important;
+        width: 105px;
+        height: 105px;
+        padding: 10px;
+      }
+      #fullpage #section1{margin-bottom:0!important; margin-top:-80px!important;}
+
+    }
+    @media(max-width:767px){
+      div.el-tab-content .col-right .features-list li img{ margin-right:5px; }
+      div.el-tab-content .col-right .features-list ul{padding-left:0; padding-right:0;}
+      .top-divider #tabbed-offer {width:100%;}
+      #tabbed-offer .features-list {float:left;margin-left:30px; width:75%;}
+
+      #broadband {height:auto!important;}
+      #fullpage {margin-bottom:0;}
+      #fullpage #section1 {float: left;   width: 100%;   margin-top: 0!important;}
+      div.el-tab-container .list-group-item span {padding:0;}
+      #broadband-content {position:relative;}
+      #mobile div.el-tab-menu div.list-group > a {padding-top:40px; padding-bottom: 40px;}
+      #nbn-custom-plan .checkbox {width:100%;}
+      #broadband2 div.el-tab-content .col-right .features-list.not-showing {display: none;}
+    }
+
+    @media(max-width:414px){
+      #nbnnoaddressform .form-group {width:100%; float:left; padding:5px; position: relative;}
+      #nbnnoaddressform .modal-dialog {width:auto;}
+      #nbnnoaddressform .btn-yellow{width:auto;}
+      .top-divider >div:first-child {width:1000%;}
+      .top-divider >div {width:100%;}
+      #broadband2 #nbn-custom-plan .col-left {background:none; padding-right:25px;}
+    }
+
+    /* //// Added By suman */
+
+    #broadband.modal-backdrop-in:before{
+
+      content:'';
+      position: absolute;
+      left: 0;
+      top:0;
+      width: 100%;
+      height: 100%;
+      z-index:11;
+      background:rgba(5,28,36,0.8);
+    }
+
+
+     #broadband.modal-backdrop-in:before{
+
+      content:'';
+      position: absolute;
+      left: 0;
+      top:0;
+      width: 100%;
+      height: 100%;
+      z-index:11;
+      background:rgba(5,28,36,0.8);
+    }

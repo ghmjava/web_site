@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+   <head>
+    <meta charset="utf-8">
+
+    {% load staticfiles %}
+       <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+
+       <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-popover.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/modules/exporting.js' %}"></script>
+
+    <link rel="shortcut icon" href="{% static 'normal/img/favicon.ico' %}"/>
+       <script type="text/javascript" charset="utf8" src="{% static 'normal/js/jquery.dataTables.js' %}"></script>
+
+
+    </head>
+    <script >
+        function addEvent(obj,type,handle){
+            try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+                obj.addEventListener(type,handle,false);
+            }catch(e){
+                try{  // IE8.0及其以下版本
+                    obj.attachEvent('on' + type,handle);
+                }catch(e){  // 早期浏览器
+                    obj['on' + type] = handle;
+                }
+            }
+        }
+
+        //所有资源都加载完毕,移除转菊花...
+        $(window).load(function(){
+            //移除转菊花...
+            $("#loading").css("display", "none")
+            $("#content").css("display", "block")
+
+            //所有location的checkbox都绑定check_all_location_checked函数
+            for (var i=0;i<$('[type=checkbox][selectall!=true]').length;i++){
+                addEvent($('[type=checkbox][selectall!=true]')[i], 'click', check_all_location_checked)
+            }
+            check_all_location_checked();
+
+        });
+        
+        function check_box(box){
+            if($(box).attr('checked')){
+                $(box).removeAttr('checked')
+            }
+            else{
+                $(box).attr('checked', true)
+                box.checked = true;
+            }
+            
+        }
+        function check_all_location_checked(){
+            // if all location checked, make selete all checked
+            console.log()
+            var record_ids = [];
+            for (var i=0;i<$('input[type=checkbox][selectall=true]').length;i++){
+                console.log($('input[type=checkbox][selectall=true]')[i].id);
+                record_ids.push( $('input[type=checkbox][selectall=true]')[i].id.split('_')[1])
+            }
+            for (var i=0;i<record_ids.length;i++){
+                var if_all_checked = true;
+                for (var j=0;j<$("#form_" + record_ids[i]).find('[type=checkbox][selectall!=true]').length;j++){
+                    if ($("#form_" + record_ids[i]).find('[type=checkbox][selectall!=true]')[j].checked){
+                        continue;
+                    }else{
+                        if_all_checked = false;
+                        break
+                    }
+                }
+                $('#seletall_' + record_ids[i])[0].checked = if_all_checked;
+            }
+        }
+        function cancel_no_card(e){
+            //取消所有hascard=false的checkbox
+            console.log(e.checked);
+            var set_check = false
+            if(e.checked){
+                set_check = false
+            }else{
+                set_check = true
+            }
+
+            for(var i=0;i<$('input[type=checkbox][hascard=False]').length;i++){
+                $('input[type=checkbox][hascard=False]')[i].checked = set_check;
+            }
+
+            if(set_check){
+                $('input[type=checkbox][hascard=False]').attr('checked', set_check);
+
+            }else{
+                $('input[type=checkbox][hascard=False]').removeAttr('checked');
+            }
+
+            check_all_location_checked()
+        }    
+
+        function selete_all(e){
+            console.log( e.checked )
+            if (e.checked) { 
+                //改checkbox样式
+                for(var i=0; i<$('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]').length;i++){
+                    $('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]')[i].checked = e.checked;
+                }
+                //设置checkbox为check， 这样才能取到checked值
+                $('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]').attr('checked', e.checked);
+            }else{
+                $('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]').removeAttr('checked');
+            }
+            /*
+            for(var i=0; i<$('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]').length;i++){
+                if(){
+                    $('#form_' + e.id.split('_')[1]).find('[type=checkbox][selectall!=true]')[i].checked = e.checked;
+                }
+                else{
+                    
+                }
+            }*/
+        }
+
+        function submit_sheet(){
+
+            var form_data = {}
+            form_data['group_id'] = $("#group_id").val()
+            form_data['group_version_id'] = $("#group_version_id").val()
+
+            var product_card = []
+            for(var i=0;i < $("input[name=card_id]").length; i++){
+                product_card.push($("input[name=card_id]")[i].value);
+            }
+            console.log(product_card);
+            form_data['product_card'] =  product_card;
+
+            form_data['remark'] = $('#remark').val()
+            form_data['mails'] = $('#mails').val()
+
+
+
+            var module = []
+            for(var i=0;i<$("form[name=module]").find('select').find("option:selected").length;i++){
+                var this_module = {}
+                this_module['seal_version'] = $("form[name=module]").find('select').find("option:selected")[i].text;
+                this_module['module_name'] = $("form[name=module]").find('input[name=module_name]')[i].value
+                this_module['id'] = $("form[name=module]").find('input[name=module_id]')[i].value
+                this_module['location'] = []
+                var machine_len = $('form[name=module]').find('input[type=checkbox][name=machine_'+ this_module['id'] + '][checked]').length;
+
+                for(var j=0;j<machine_len;j++){
+                    this_module['location'].push($('form[name=module]').find('input[type=checkbox][name=machine_'+ this_module['id'] + '][checked]')[j].value)
+                }
+                this_module['location'] = this_module['location'].join(',')
+                module.push(this_module);
+            }
+            console.log(module)
+
+            form_data['module'] = module
+            $.ajax({
+              url:'/onlinecard/api/online_card/add',
+              type:"POST",
+              data:JSON.stringify(form_data),
+              contentType:"application/json; charset=utf-8",
+              dataType:"json",
+              success: function(data){
+                if(data.code==0){
+                    alert('成功');
+                    window.parent.location.href = data.loc
+                }else{
+                    alert('失败');
+                }
+              }
+            });
+            
+        }
+    </script>
+  <body>
+    <div id="content" style="margin-top:-50px;margin-left:10px;margin-right:10px">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <table class='table'>
+                    <thead>
+                        <tr>
+
+                            <th style="width:150px;">模块</th>
+                            <th style="width:100px;">PM</th>
+                            <th style="width:120px;">QA</th>
+                            <th style="width:100px;">RD</th>
+                            <th>内容</th>
+                            <th style="width:80px;">上线建议</th>
+                            <th style="width:80px;">测试结果</th>
+                            <th style="width:80px;">发布类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>过测试</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% for i in data.need_qa %}
+                        <tr>
+                            <input name='card_id' style='display:none' value='{{i.id}}'></input>
+                            <td>{{i.module_name}}</td>
+                            <td>{{i.pm_owner}}</td>
+                            <td>{{i.qa_owner}}</td>
+                            <td>{{i.rd_owner}}</td>
+                            <td>{{i.content}}</td>
+                            <td>{{i.online_suggestion}}</td>
+                            <td>{{i.test_result}}</td>
+                            <td>{{i.release_type}}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td><b>不过测试</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% for i in data.not_need_qa %}
+                        <tr>
+                            <input name='card_id' style='display:none' value='{{i.id}}'></input>
+                            <td>{{i.module_name}}</td>
+                            <td>{{i.pm_owner}}</td>
+                            <td>{{i.qa_owner}}</td>
+                            <td>{{i.rd_owner}}</td>
+                            <td>{{i.content}}</td>
+                            <td>{{i.online_suggestion}}</td>
+                            <td>{{i.test_result}}</td>
+                            <td>{{i.release_type}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+    
+            <div class="panel panel-default" style="margin-top:10px">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>
+                          无提测单 
+                          <input type="checkbox" checked="checked" onclick='cancel_no_card(this)'> 取消
+                        </label>
+                    </div>
+                    <input id='group_id' value="{{data.group_id}}" style='display:none'/>
+                    <input id='group_version_id' value="{{data.group_version_id}}" style='display:none'/>
+
+                    <div class="col-sm-12">
+                    
+                    <h4 class='h4'>有提测单</h4>
+                    {% for i in data.modules %}
+                     {% if i.has_productcard %}
+                        <form class="form-inline" id='form_{{i.id}}' name='module' style='margin-top:10px'>
+                          <div class="form-group" style='width:350x; margin-right:50px'>
+                            <input name='module_name' value="{{i.name}}" style='display:none'></input>
+                            <input name='module_id' value="{{i.id}}" style='display:none'></input>
+                            <label style='width:130px'>{{i.name}}</label>
+                            <select class="form-control" style='width:250px'>
+                            <option selected="selected">{{ i.seal_version }}</option>
+                            {% for version in i.valid_versions %}
+                              <option>{{version}}</option>
+                            {% endfor %}
+                            </select>
+                          </div>
+                          {% for location in i.locations %}
+                          <div class="form-group" >
+                            <div class="checkbox">
+                              <label>
+                                {{location.name}}
+                                {% if location.status == 1 %}
+                                <input type="checkbox" name='machine_{{i.id}}' hascard='{{i.has_productcard}}' onclick='check_box(this)' value='{{location.name}}' checked=true>
+                                {% else %}
+                                <input type="checkbox" name='machine_{{i.id}}' hascard='{{i.has_productcard}}' onclick='check_box(this)' value='{{location.name}}'>
+                                {% endif %}
+                              </label>
+                            </div>
+                          </div>
+                          {% endfor %}
+                          <div class="form-group">
+                            <div class="checkbox">
+                              <label>
+                                全选
+                                <input selectall=true id='seletall_{{i.id}}'type="checkbox" onclick='selete_all(this)'>
+                              </label>
+                            </div>
+                          </div>
+                        </form>
+                     {% endif %}
+                    {% endfor %}
+
+                    <h4 class='h4'>无提测单</h4>
+                    {% for i in data.modules %}
+                     {% if not i.has_productcard %}
+                        <form class="form-inline" id='form_{{i.id}}' name='module' style='margin-top:10px'>
+                          <div class="form-group" style='width:350x; margin-right:50px'>
+                            <input name='module_name' value="{{i.name}}" style='display:none'></input>
+                            <input name='module_id' value="{{i.id}}" style='display:none'></input>
+                            <label style='width:130px'>{{i.name}}</label>
+                            <select class="form-control" style='width:250px'>
+                            <option selected="selected">{{ i.seal_version }}</option>
+                            {% for version in i.valid_versions %}
+                              <option>{{version}}</option>
+                            {% endfor %}
+                            </select>
+                          </div>
+                          {% for location in i.locations %}
+                          <div class="form-group" >
+                            <div class="checkbox">
+                              <label>
+                                {{location.name}}
+                                {% if location.status == 1 %}
+                                <input type="checkbox" name='machine_{{i.id}}' hascard='{{i.has_productcard}}' onclick='check_box(this)' value='{{location.name}}' checked=true>
+                                {% else %}
+                                <input type="checkbox" name='machine_{{i.id}}' hascard='{{i.has_productcard}}' onclick='check_box(this)' value='{{location.name}}'>
+                                {% endif %}
+                              </label>
+                            </div>
+                          </div>
+                          {% endfor %}
+                          <div class="form-group">
+                            <div class="checkbox">
+                              <label>
+                                全选
+                                <input selectall=true id='seletall_{{i.id}}'type="checkbox" onclick='selete_all(this)'>
+                              </label>
+                            </div>
+                          </div>
+                        </form>
+                     {% endif %}
+                    {% endfor %}
+
+                    </div>
+                    <div class="col-sm-12" style='margin-top:30px'>
+                        <form class="form-horizontal">
+                          <div class="form-group">
+                            <label class="col-sm-1 control-label">备注</label>
+                            <div class="col-sm-5">
+                              <input class="form-control" name='remark' id="remark" value='{{data.message}}'>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="col-sm-1 control-label">知会邮件</label>
+                            <div class="col-sm-5">
+                              <input class="form-control" name='mails' id="mails" value='{{data.email}}'>
+                            </div>
+                          </div>
+                        </form>
+                        <button type="submit" class="btn btn-success" style='float:right' onclick='submit_sheet()'>提交</button>
+                    </div>
+                </div>
+            </div>
+    
+    </div>
+  </body>
+</html>

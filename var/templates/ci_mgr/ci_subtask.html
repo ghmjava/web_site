@@ -1,0 +1,677 @@
+{% extends "ci_mgr/ci_base.html" %}
+
+{% block script %}
+
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'echarts/build/dist/echarts.js' %}"></script>
+<script type="text/javascript">
+
+
+
+
+$(function () {
+{% for k,v in data.job_tree.items %}
+    var myChart{{k}};
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: "{% static 'echarts/build/dist' %}"
+        }
+    });
+
+    // 使用
+    require(
+        [
+            'echarts',
+            'echarts/chart/tree' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function (ec) {
+            // 基于准备好的dom，初始化echarts图表
+            myChart{{k}} = ec.init(document.getElementById('{{k}}'));
+            myChart{{k}}.on(ecConfig.EVENT.CLICK, change_to_modify_page); //绑定点击函数
+            option = {
+                title : {
+                    text: ''
+                },
+                toolbox: {
+                    show : false,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+
+
+                series : [
+                {% for i in v.jobs %}
+                    {
+                        name:'树图',
+                        type:'tree',
+                        orient: 'horizontal',  // vertical horizontal
+                        rootLocation: {x: 20 ,y: {% widthratio forloop.counter 1 50 %} }, // 根节点位置  {x: 100, y: 'center'}
+                        clickable: true,
+                        nodePadding: 8,
+                        layerPadding: 95,
+                        hoverable: true,
+                        roam: true,
+                        symbolSize: 15,
+                        itemStyle: {
+                            normal: {
+                                color: '#4883b4',
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: "{b}",
+                                    textStyle: {
+                                        color: '#000',
+                                        fontSize: 5
+                                    }
+                                },
+                                lineStyle: {
+                                    color: '#ccc',
+                                    type: 'curve' // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+                                }
+                            },
+                            emphasis: {
+                                color: '#4883b4',
+                                label: {
+                                    show: false
+                                },
+                                borderWidth: 0
+                            }
+                        },
+
+                        data: {{ i|safe}}
+                        /*[
+                            {'name':'a', 'children':
+                                {'name':'b', 'children':[
+                                    {'name':'ab','woaosd':123},{'name':'abc', '123':213}
+                                    ]
+                                },
+                                {'name':'c', 'children':[
+                                    {'name':'ab'},{'name':'abc'}
+                                    ]
+                                }
+                            ],'a':'b'}
+                        ]*/
+                    },
+                    {% endfor %}
+
+                ]
+            };
+
+            // 为echarts对象加载数据
+            myChart{{k}}.setOption(option);
+        }
+    );
+
+{% endfor %}
+
+//点击事件函数
+var ecConfig = require('echarts/config');
+function change_to_modify_page(param) {
+    
+    var job_id = param.value.id
+    var module_id = param.value.module_id;
+    var sub_task_id = current_subtask_id
+
+    var bind_url = '/ci/job/seq?module_id='+ module_id + '&job_id=' + job_id + '&sub_task_id=' + sub_task_id
+    $("#SetJobSeq").attr('src', bind_url)
+    $("#joborder-dialog").modal()
+
+}
+});
+// 修改subtask信息相关
+var alert_str = '<div class="alert alert-danger">content</div>'
+var create_subtask_data = {}
+var set_seq_data = {}
+
+var current_subtask_id // 用来记录当前点击的job数据哪个subtask
+
+
+
+
+
+function show_mark_fail_dialog(job_id, job_name, job_record_id, reason, user, fail_type,status){
+    $("#markfile_title").html(job_name + " 标注失败原因")
+    $("#markfail_job_record_id").attr('value', job_record_id)
+    $("#markfail_job_id").attr('value', job_id)
+    $("#mark_user").html(user)
+    $("#fail_reason").text(reason)
+    if(status == 5){
+        $("#manual_pass")[0].checked = true
+    }
+    for(var i=0;i<$('#fail_type option').length;i++){
+        if ($('#fail_type option')[i].value == fail_type){
+            $('#fail_type option')[i].selected = true
+        }
+    }
+
+    $("#markfail_dialog").modal()
+
+}
+
+function send_fail_reason(){
+    var form_data ={}
+    form_data['id'] = $("#markfail_job_record_id").attr('value')
+    form_data['reason'] = $('#fail_reason').val()
+    if($('#manual_pass')[0].checked){ 
+        form_data['status'] = 5;
+    }
+    else{
+        form_data['status'] = 4;
+    }
+    form_data['fail_type'] = $("#fail_type").val()
+    
+    $.post(
+        "/ci_mgr/save/job_reason",
+        JSON.stringify(form_data),
+        function(data, status){
+            if (status == 'success'){
+                $('#markfail_body').html('<div class="alert alert-success">发送成功</div>')
+                //alert("发送失败原因成功")
+            }else{
+                $('#markfail_body').html('<div class="alert alert-danger">发送失败</div>')
+                //alert("发送失败原因失败")
+            }
+            location.reload()
+        }
+    ).fail(function(e){ 
+        // Handle error here
+        $('#markfail_body').html('<div class="alert alert-danger">发送失败</div>')
+        //alert('发送失败原因失败')
+    });
+}
+
+
+
+
+
+function get_jobs(task_id){ // todo
+
+    $.get(
+        "/ci_mgr/get/sub_task_job?sub_task_id=" + task_id,
+        function(data, status){
+            var data = data.data
+            var i = 0;
+            while(true){
+                if(data[i].next != []){
+
+                }
+            }
+        }
+        );
+}
+
+
+
+
+
+
+function show_bind_dialog(module_id, subtask_id){
+    url = '/ci/job/bind?module_id=' + module_id + '&subtask_id=' + subtask_id
+    $("#JobBind").attr('src', url)
+    $("#jobbind-dialog").modal()
+}
+
+function set_current_subtask(id){
+    current_subtask_id = id;
+}
+
+
+
+function visit_url(param){
+    var flag = arguments[1] ? arguments[1] : "&o=";    
+    var current_url = ""
+    var if_maodian = false
+    if(window.location.href.search('#') != -1){
+        if_maodian = true
+        current_url = window.location.href.substr(0, window.location.href.search('#'))
+    }
+    else{
+        current_url = window.location.href
+    }
+    url = current_url.split(flag)
+    if(url.length > 1){
+      url = url[0] + param;
+    }else{
+      url = url + param;
+    }
+    //window.parent.frames[1].location.href = url
+    if (if_maodian){
+        window.location.href = url + window.location.href.substr(window.location.href.search('#'))
+
+    }else{
+        window.location.href = url 
+    }
+}
+
+
+function show_publish_newlab(options){
+    var version = JSON.parse(options).other.version;
+    version = version.substr(1, version.length)
+    $("#publish_version").attr('value', version);
+    $("#publish_modal").modal();
+}
+
+
+
+
+function build(){
+
+  var post_data = {};
+  post_data['branch_num'] = $("#publish_branch").val()
+  post_data['version'] = $("#publish_version").val()
+  post_data['url'] = 'http://jenkins.meiliworks.com/job/newlabs_' + $("#publish_module").val() + '/build?delay=0sec'
+
+  
+      $.post(
+        "/data_mgr/trigger/jenkins",
+        post_data,
+        function(data, status){
+          if(status == 'success'){
+              $('#param_form').html('<div class="alert alert-success" role="alert">构建成功</div>')
+          }else{
+              $('#param_form').html('<div class="alert alert-danger" role="alert">构建失败</div>')                  
+          }
+          location.reload();
+        },
+        "json"
+      );//这里返回的类型有：json,html,xml,text
+    
+}
+/*
+setBuildDialog('newlabs_brdlib',  'branch_num', '{"branch_num": "trunk"}', 'trunk 或者 branch号')
+*/
+
+
+function show_out_params(params_str){
+    if (params_str != "{}"){
+        var params = JSON.parse(params_str);
+        var param_title = "<tr>"
+        var param_body = "<tr>"
+        for(var k in params){
+            param_title += "<th>" + k + "</th>";
+            param_body += "<td>" + params[k] + "</td>";
+        }
+        param_title += "</tr>";
+        param_body += "</tr>";
+        $("#param_title").html(param_title);
+        $("#param_body").html(param_body);
+    }else{
+        $("#param_body").html('<div class="alert alert-danger" role="alert">此Task运行记录没有出参</div>');
+    }
+    
+    $("#out_param_modal").modal();
+}
+
+
+</script>
+{% endblock %}
+
+{% block specify %}
+
+    <!-- Navigation -->
+<div class="col-md-10 col-lg-10 " style="margin-top:-40px;margin-left:20px">
+    <div class="row" >
+        <div class="page-header" style="font-size:20px" >{{ data.current_task.name }}的 SubTask
+                
+                
+                <a class="btn btn-link btn-xs" href='/ci/task/?module={{data.current_module.name}}' style='float:right;'>返回</a>
+        </div>
+    </div>
+
+    <div class="row" style='width:{{data.row_len}}px;min-width:600px'>
+           
+
+        <div>   
+            <a class="btn btn-success btn-xs" href="/ci/subtask?task_id={{data.current_task.id}}&type=create"  style='margin-left:10px;margin-bottom:10px' target='_blank'>新建Subtask</a>
+        </div>
+                                        
+        {% for i in data.current_task.sub_task %}
+
+            {% if forloop.counter != 1 %}
+                <i class="glyphicon glyphicon-arrow-right" style="margin:10px 0 0 0;float:left"></i>
+            {% endif %}
+            
+            <!-- {% widthratio 90 data.current_task.sub_task|length 1 %}% -->
+                
+            <div class='panel panel-default' style="margin:0 10px 0 10px;min-width:200px;width:{{i.block_len}}px; float:left;">
+                <div class='panel-heading'><b>{{ i.name }}</b>
+                    <a class='btn btn-xs btn-link' style="float:right;padding: 0 0 10px 0" onclick="show_bind_dialog('{{data.current_module.id}}','{{i.id}}')">绑定job</a>
+                    <a class='btn btn-xs btn-link' style="float:right;padding: 0 0 10px 0；margin-left:10px" href='/ci/subtask?task_id={{data.current_task.id}}&subtask_id={{i.id}}&type=modify'>编辑</a></div>
+                <div class="panel-body" id="{{ i.name }}" style="min-height:100px;height:{% widthratio i.job_line_cnt|add:1 1 60 %}px" onclick="set_current_subtask('{{i.id}}')">
+                    <!-- jobs -->
+                </div>
+                <p class="help-block" style="float:left;margin-left:5px;margin-bottom:5px;">点击job圆点设置顺序</p>
+                <div style='float:right;margin-bottom:5px;margin-right:5px'><a class='fa fa-plus' data-toggle="tooltip" data-placement="left" title="" data-original-title="添加job" href='/ci/job/create?module_id={{data.current_module.id}}' target='_blank'></a></div>
+
+            </div>
+            <!--div class="well well-smc subtask_well">{{ i.name }}</div-->
+        {% endfor %}
+                           
+    </div>
+
+    {% if data.current_task.sub_task_exclude %}
+    <div class='row'>
+        <div class="page-header" style="font-size:20px">未加入运行序列的SubTask</div>
+        {% for i in data.current_task.sub_task_exclude %}
+            <div class='panel panel-default' style="margin:0 10px 0 10px;min-width:300px;width:{{i.block_len}}px; float:left;">
+                <div class='panel-heading'><b>{{ i.name }}</b>
+                    <a class='btn btn-xs btn-link' style="float:right;padding: 0 0 10px 0" onclick="show_bind_dialog('{{data.current_module.id}}','{{i.id}}')">设置job绑定关系</a>
+                    <a class='btn btn-xs btn-link' style="float:right;padding: 0 0 10px 0；margin-left:10px" href='/ci/subtask?task_id={{data.current_task.id}}&subtask_id={{i.id}}&type=modify'>编辑subtask</a></div>
+                <div class="panel-body" id="{{ i.name }}" style="min-height:180px;height:{% widthratio i.job_line_cnt|add:1 1 70 %}px" onclick="set_current_subtask('{{i.id}}')">
+                    
+                </div>
+                <div style='float:right;margin-bottom:5px;margin-right:5px'><a class='fa fa-plus' data-toggle="tooltip" data-placement="left" title="" data-original-title="添加job" href='/ci/job/create?module_id={{data.current_module.id}}' target='_blank'></a></div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+
+    <div class='row' >
+        <div class="page-header" style="font-size:20px" id='record'>运行记录</div>
+    </div>
+
+    <!--
+    # 状态码
+    STATUS_UNKNOWN = -1
+    STATUS_CREATE = 0
+    STATUS_WAIT = 1
+    STATUS_RUNNING = 2
+    STATUS_PASS = 3
+    STATUS_FAIL = 4
+    STATUS_MANUAL_PASS = 5
+    -->
+    {% for t in data.task_record.task %}
+        <div class="row">
+            
+            <div style='float:right;margin-top:20px;' >
+                {% if t.status == 5 or t.status == 3%}
+                    {% if t.options.other.version %}
+                    <button class='btn btn-sm btn-success' style='float:right;margin-top:20px;' onclick="show_publish_newlab('{{t.options}}')">发布到newlab</button>
+                    {% endif %}
+                {% endif %} 
+                <button class='btn btn-sm btn-primary' style="display:block" onclick="show_out_params('{{t.params_str}}')">查看出参信息</button>
+            </div>
+            <div class="row" style="margin-top:5px;width:{{data.row_len}}px;float:left;margin-left:10px"> 
+                
+                {% for i in t.sub_task %}
+                    {% if forloop.counter != 1 %}
+                        <i class="glyphicon glyphicon-arrow-right" style="margin:20px 0 0 0;float:left"></i>
+                    {% endif %}
+                    
+                    {% if i.status == 3 %}
+                    <div class='panel panel-green' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Pass</p>
+                        </div>
+                    {% elif i.status == 4 %}
+                    <div class='panel panel-red' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Fail</p>
+                        </div>
+                    {% elif i.status == 2 %}
+                    <div class='panel panel-primary running' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Running</p>
+                        </div>
+                    {% elif i.status == 1 %}
+                    <div class='panel panel-warning' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Wait</p>
+                        </div>
+                    {% elif i.status == 0 %}
+                    <div class='panel panel-default' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Create</p>
+                        </div>
+                    {% elif i.status == -1 %}
+                    <div class='panel panel-default' style="min-width:150px;margin:10px 10px 0 10px; float:left">
+                         <div class="panel-heading">
+                                {{ i.name }} <p style='float:right'>Unkown</p>
+                        </div>
+                    {% endif %}
+                       
+                        <div class="panel-body" id="{{ i.name }}" style='max-width:300px'>
+                            {% for j in i.job %}
+
+                                {% if j.status == 3 %}
+                                 <button class='btn btn-success btn-sm' onclick="javascript:window.open('{{j.build_url}}')">{{j.name}}</button>
+                                {% elif j.status == 4 %}
+                                 <div class="btn-group">
+                                     <button class='btn btn-danger btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{j.name}} <span class="caret"></span></button>
+                                     <ul class="dropdown-menu">
+                                        <li><a onclick='show_mark_fail_dialog("{{j.job_id}}", "{{j.name}}","{{j.id}}", "{{j.reason}}","{{j.user}}","{{j.fail_type}}","{{j.status}}")'>标注失败原因</a></li>
+                                      </ul>
+                                 </div>
+                                {% elif j.status == 2 %}
+                                 <button class='btn btn-info btn-sm'>{{j.name}}</button>
+                                {% elif j.status == 1 %}
+                                 <button class='btn btn-default btn-sm'>{{j.name}}</button>
+                                {% elif j.status == 0 %}
+                                 <button class='btn btn-default btn-sm'>{{j.name}}</button>
+                                {% elif j.status == -1 %}
+                                 <button class='btn btn-default btn-sm'>{{j.name}}</button>
+                                {% elif j.status == 5 %}
+                                <div class="btn-group">
+                                     <button class='btn btn-success btn-sm dropdown-toggle' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{j.name}}(手动)<span class="caret"></span></button>
+                                     <ul class="dropdown-menu">
+                                        <li><a onclick='show_mark_fail_dialog("{{j.job_id}}", "{{j.name}}","{{j.id}}", "{{j.reason}}","{{j.user}}","{{j.fail_type}}", "{{j.status}}")'>标注失败原因</a></li>
+                                      </ul>
+                                 </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+                <!--div class="well well-smc subtask_well">{{ i.name }}</div-->
+        <div style="margin: 20px 0px 10px 0px;border-top:1px dotted #C0C0C0;"></div>  
+    {% endfor %}
+        <div class='row' style='margin-top:20px'> <!-- 翻页 -->
+            <div style="text-align:center;margin:0 auto;">
+                {% if data.task_record.page %}
+                    <nav class=" no-pd-mg">
+                       <font class="right" style="margin-top:15px;color:#999999;">&nbsp;&nbsp;&nbsp;&nbsp;总页数 / 总记录数：{{data.task_record.page.page.total}} / {{data.task_record.page.total}}</font>
+                      <ul class="pagination pagination-sm no-pd-mg" style="margin-top:10px;">
+                        {% if "start" != data.task_record.page.flag %}
+                          <li>
+                          <a style="cursor: pointer;" onclick="visit_url('&page_current=1', '&page_current')" aria-label="Previous">
+                            <span aria-hidden="true">首页</span>
+                          </a>
+                        </li>
+                        {%endif%}
+                        {% for d in data.task_record.page.page.list %}
+                        {% if d == data.task_record.page.page.current %}
+                        <li class="active"><a>{{d}}</a></li>
+                        {% else %}
+                        <li><a style="cursor: pointer;" onclick="visit_url('&page_current={{d}}', '&page_current')">{{d}}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if "end" != data.task_record.page.flag %}
+                          <li>
+                          <a style="cursor: pointer;" onclick="visit_url('&page_current={{data.task_record.page.page.total}}', '&page_current')" aria-label="Previous">
+                            <span aria-hidden="true">末页</span>
+                          </a>
+                        </li>
+                        {%endif%}
+                      </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </div>
+    
+
+    <div id="submit-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label"></h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+
+    <div id="joborder-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">设置Job顺序</h4>
+                </div>
+                <div class="modal-body " style='height:100%'>
+                    <iframe id='SetJobSeq' style='width:100%;height:450px;border:none'>
+                    </iframe>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+    <div id="jobbind-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">绑定job</h4>
+                </div>
+                <div class="modal-body " style='height:100%'>
+                    <iframe id='JobBind' style='width:100%;height:450px;border:none'>
+                    </iframe>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+    <div id="markfail_dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 id='markfile_title' class="modal-title" id="task-dialog-label"></h4>
+                </div>
+                <div class="modal-body" id='markfail_body' style='height:100%'>
+                    <form role="form" action='#' method="POST">
+                        <div class="form-group">
+                            <label class="checkbox-inline" style='padding-left:0px'>是否标记为pass</label>
+                            <input type="checkbox" name='status' id='manual_pass'> 
+                        </div>
+                        <div class="form-group">
+                            <label>失败类型</label>
+                            <select id="fail_type" name='fail_type' class="form-control" >
+                                {% for i in data.fail_types%}
+                                <option value='{{i.id}}'>{{i.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>失败原因</label>
+                            <textarea id="fail_reason" name='reason' class="form-control" rows="3"></textarea>
+                            <div id='mark_user'></div>
+                        </div>
+                        
+                        <input id='markfail_job_record_id' name="job_record_id" value="" style='display:none'></input>
+                    </form>
+                    <button onclick='send_fail_reason()' class="btn btn-primary" >确定</button>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+    <div id="publish_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog ">
+          <div class="modal-content" style="width:650px">
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+              <div class="modal-title" id="mySmallModalLabel">  </div>
+
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal" id="param_form">
+                    <div class="form-group">
+                        <label for="paraminput" class="col-sm-2 control-label">
+                            <div id="param">module</div>
+                        </label>
+                        <div class="col-sm-10">
+                            <select id='publish_module' name='moudle' class="form-control" >
+                                {% for i in data.jenkins_module %}
+                                    <option value="{{i}}">{{i}}</options>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paraminput" class="col-sm-2 control-label">
+                            <div >branch_num</div>
+                        </label>
+                        <div class="col-sm-10">
+                            <input id="publish_branch" type="text" class="form-control" name="branch_num" value="trunk" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paraminput" class="col-sm-2 control-label">
+                            <div>version</div>
+                        </label>
+                        <div class="col-sm-10">
+                            <input id="publish_version" type="text" class="form-control" name="version" value="" disabled>
+                        </div>
+                    </div>
+                    
+                    
+                    <button class="btn btn-default" style="margin: 0 50% 0 50%" onclick="build()">构建</button>
+                </div>
+              
+            </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+
+    <div id="out_param_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog ">
+          <div class="modal-content" style="width:650px">
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+              <div class="modal-title" id="mySmallModalLabel"> 出参记录 </div>
+
+            </div>
+            <div class="modal-body">
+                <table class='table'id='param_table'>
+                    <thead id='param_title'>
+                    </thead>
+                    <tbody id='param_body'>
+                    </tbody>
+                </table>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(1)").parent().addClass("active")
+    });
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block main %}
+<div class="row-fluid">
+    <div class="col-md-2 col-lg-2" style="margin-left:-20px">
+        <ul class="nav nav-pills nav-stacked">
+          {% for d in data.public.group %}
+          <li role="presentation" {% if d.id == data.public.group_id %}class="active"{% endif %}>
+              <a style="padding: 6px;" href="/onlinecard_mgr/online_card/showlist?group={{d.id}}&page=1"><i class="fa fa-tasks fa-fw"></i> {{d.name}}</a>
+          </li>
+          {% endfor %}
+          <!--li role="presentation" {% if 0 == data.public.group_id %}class="active"{% endif %}>
+              <a style="padding: 6px;" href="/onlinecard_mgr/online_card/showlist?group=0&page=1"><i class="fa fa-tasks fa-fw"></i> 未分组</a>
+          </li-->
+          {% if data.public.auth.admin %}
+           <!--li role="presentation">
+               <a style="padding: 6px;" href="#Modal" onclick="reset_data()" data-toggle="modal">
+                   <i class="fa fa-plus fa-fw"></i> 添加分组
+               </a>
+           </li-->
+          {% endif %}
+        </ul>
+    </div>
+    <div class="col-md-10 col-lg-10">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">上线单详情&nbsp;&nbsp;|&nbsp;<a href="javascript :;" onClick="javascript :history.back(-1);" style="font-size:10px;color:white">返回</a></div>
+                    <br/>
+                    <div id="content" style="margin-left:10px;margin-right:10px">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                              <h4 class="panel-title">提测单信息</h4>
+                            </div>
+                            <div class="panel-body">
+                                <table class='table'>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:150px;">模块</th>
+                                            <th style="width:150px;">PM</th>
+                                            <th style="width:150px;">QA</th>
+                                            <th style="width:150px;">RD</th>
+                                            <th>内容</th>
+                                            <th style="width:80px;">上线建议</th>
+                                            <th style="width:80px;">测试结果</th>
+                                            <th style="width:80px;">发布类型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><b>过测试</b></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        {% for i in data.need_qa %}
+                                            <tr>
+                                                <td>{{i.module_name}}</td>
+                                                <td>{{i.pm_owner}}</td>
+                                                <td>{{i.qa_owner}}</td>
+                                                <td>{{i.rd_owner}}</td>
+                                                <td>{{i.content}}</td>
+                                                <td>{{i.online_suggestion}}</td>
+                                                <td>{{i.test_result}}</td>
+                                                <td>{{i.release_type}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                            <tr>
+                                                <td><b>不过测试</b></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        {% for i in data.not_need_qa %}
+                                            <tr>
+                                                <td>{{i.module_name}}</td>
+                                                <td>{{i.pm_owner}}</td>
+                                                <td>{{i.qa_owner}}</td>
+                                                <td>{{i.rd_owner}}</td>
+                                                <td>{{i.content}}</td>
+                                                <td>{{i.online_suggestion}}</td>
+                                                <td>{{i.test_result}}</td>
+                                                <td>{{i.release_type}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+    
+                        <div class="panel panel-default" style="margin-top:10px">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">上线状态</h4>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>模块</th>
+                                            <th>版本</th>
+                                            <th>上线状态（
+                                                <div class='job-notbuilt' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>不涉及
+                                                <div class='job-building-static' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px" ></div>待上线
+                                                <div class='job-exclude' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>上线中
+                                                <div class='job-success' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>已上线
+                                                <div class='job-fail' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>未知状态
+                                                ）
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in data.seal_version %}
+                                            <tr>
+                                                <td>{{i.name}}</td>
+                                                <td>{{i.version}}</td>
+                                                <td>
+                                                    <form class="form-inline" id='form_{{i.id}}' name='module' style='margin-top:0px'>
+                                                        {% for loc in i.location %}
+                                                            <div class="form-group" >
+                                                                <div class="checkbox">
+                                                                    <label>
+                                                                        {%  if loc.locationName == "定福庄"  %}
+                                                                            <a style="display: block;">定福庄
+                                                                            {% if loc.status == -1 %}
+                                                                                <div class='job-notbuilt' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="不涉及"></div>
+                                                                            {% elif loc.status == 0 %}
+                                                                                <div class='job-building-static' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="待上线" ></div>
+                                                                            {% elif loc.status == 1 %}
+                                                                                <div class='job-exclude' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="上线中" ></div>
+                                                                            {% elif loc.status == 2 %}
+                                                                                <div class='job-success' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="已上线"></div>
+                                                                            {% else %}
+                                                                                <div class='job-fail' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="未知状态"></div>
+                                                                            {% endif %}
+                                                                            </a>
+                                                                        {% else %}
+                                                                            <a style="display: none;">定福庄</a>
+                                                                        {% endif %}
+                                                                        {%  if loc.locationName == "北京"  %}
+                                                                            <a style="display: block;">北京
+                                                                            {% if loc.status == -1 %}
+                                                                                <div class='job-notbuilt' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="不涉及"></div>
+                                                                            {% elif loc.status == 0 %}
+                                                                                <div class='job-building-static' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="待上线" ></div>
+                                                                            {% elif loc.status == 1 %}
+                                                                                <div class='job-exclude' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="上线中" ></div>
+                                                                            {% elif loc.status == 2 %}
+                                                                                <div class='job-success' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="已上线"></div>
+                                                                            {% else %}
+                                                                                <div class='job-fail' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="未知状态"></div>
+                                                                            {% endif %}
+                                                                            </a>
+                                                                        {% else %}
+                                                                            <a style="display: none;">北京</a>
+                                                                        {% endif %}
+                                                                        {%  if loc.locationName == "广州"  %}
+                                                                            <a style="display: block;">广州
+                                                                            {% if loc.status == -1 %}
+                                                                                <div class='job-notbuilt' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="不涉及"></div>
+                                                                            {% elif loc.status == 0 %}
+                                                                                <div class='job-building-static' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="待上线" ></div>
+                                                                            {% elif loc.status == 1 %}
+                                                                                <div class='job-exclude' style="float:right;margin-bottom:0px;margin-right:5px" data-toggle="tooltip" title="上线中" ></div>
+                                                                            {% elif loc.status == 2 %}
+                                                                                <div class='job-success' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="已上线"></div>
+                                                                            {% else %}
+                                                                                <div class='job-fail' style="float:right;margin-bottom:0px;margin-right:5px"  data-toggle="tooltip" title="未知状态"></div>
+                                                                            {% endif %}
+                                                                            </a>
+                                                                        {% else %}
+                                                                            <a style="display: none;">广州</a>
+                                                                        {% endif %}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+{#                                            <tr>#}
+{#                                                <td></td>#}
+{#                                                <td></td>#}
+{#                                                <td>#}
+{#                                                    <input type="button" class="btn btn-info btn-xs" value="DFZ上线" onclick="onlineButton('DFZ')">#}
+{#                                                    <input type="button" class="btn btn-info btn-xs" value="BJ上线" onclick="onlineButton('BJ')">#}
+{#                                                    <input type="button" class="btn btn-info btn-xs" value="GZ上线" onclick="onlineButton('GZ')">#}
+{#                                                </td>#}
+{#                                            </tr>#}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="panel panel-default" style="margin-top:10px">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">其他</h4>
+                            </div>
+                            <div class="panel-body">
+                                <dl class="dl-horizontal">
+                                    <dt style="text-align:left; width: 80px; margin-bottom: 10px">备注信息：</dt>
+                                    <dd style="margin-left: 0px">{{data.remark}}</dd>
+                                    <dt style="text-align:left; width: 80px;">知会邮件：</dt>
+{#                                    <dd style="margin-left: 0px">{{data.notification_email}}</dd>#}
+                                    <dd style="margin-left: 0px">
+                                    <br/>
+                                    {% for tmp in data.notification_email %}
+                                        <span style="margin-left: 80px;">{{ tmp }}</span>
+                                            <br/>
+                                    {% endfor %}
+                                </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script type="application/javascript">
+
+    function onlineButton(area){
+{#        alert(JSON.parse({{ data.seal_version |safe }}));#}
+        $.ajax({
+            type:"POST",
+            url:"/onlinecard_mgr/online_card/getOnline?area="+area,
+            data: "data={{ data |safe }}",
+            dataType:"json",
+            success: function (data) {
+                if(data.mes=="true"){
+                    alert("提交成功!");
+                     history.go(0);
+                }else{
+                    alert("提交失败!");
+                }
+            },
+            error: function (error) {
+                alert("出问题啦!速度联系刘继超那小子!");
+                console.debug(error);
+            }
+        });
+    }
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block script %}
+    {% block cov_script %}
+
+    {% endblock %}
+{% endblock %}
+
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("current")
+    });
+{% endblock %}
+
+{% block left %}
+    <div class="col-md-2">
+        <!--Sidebar content-->
+        <ul id="cov_navi" class="nav nav-pills nav-stacked">
+            <li id="index" class="active" onclick="nav_item_click(this)"><a href="/cov">任务列表</a></li>
+            <li id="new" onclick="nav_item_click(this)"><a href="/cov/new">新建任务</a></li>
+            <li id="module" onclick="nav_item_click(this)"><a href="/cov/module">模块管理</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="col-md-10">
+        <!--Body content-->
+        {% block cov_main %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block endscript %}
+    {% block cov_endscript %}
+    {% endblock %}
+{% endblock %}

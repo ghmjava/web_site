@@ -1,0 +1,437 @@
+{% extends "ci_mgr/ci_base.html" %}
+{% block script %}
+<script>
+
+var form_info = {}
+
+$(function(){
+  addEvent($("#JobForm button")[1], 'click', FormHandler); // form submit button onclick binding
+  if($("#JobForm button").length > 2){
+    addEvent($("#JobForm button")[2], 'click', resetForm); // form submit button onclick binding
+  }
+  addEvent($('[name=param_del]')[0], 'click', del_para);
+  addEvent($("#submit-dialog button")[2], 'click', createJob); // dialog confirm button binding
+}
+);
+
+
+function FormHandler(){
+  if (this.type != 'submit'){
+    return false
+  }
+  form_info[$("#JobForm input")[0].name] = $("#JobForm input")[0].value
+  form_info[$("#JobForm select")[0].name] = $("#JobForm select")[0].value
+  form_info[$("#JobForm select")[1].name] = $("#JobForm select")[1].value
+  form_info[$("#JobForm textarea")[0].name] = $("#JobForm textarea")[0].value
+
+  form_info['job_detail'] = {}
+  form_info['job_detail'][$("#JobForm textarea")[1].name] = $("#JobForm textarea")[1].value
+  form_info['job_detail'][$("#JobForm textarea")[2].name] = $("#JobForm textarea")[2].value
+  form_info['job_detail']['params'] = gather_params()
+  form_info['description'] = form_info['job_detail']['description']
+  /*
+  var str = ''
+  var all_right = true
+  var json_fail = false
+  for ( var k in form_info){
+    str += k + ': ' + form_info[k]
+    if(form_info[k].trim() == ''){
+      all_right=false
+      break;
+    }
+  }
+  var description_list = form_info['job_detail'].split('\n')
+  for(var i=0;i<description_list.length;i++){
+    description_list[i] = description_list[i].trim()
+  }
+
+  form_info['job_detail'] = description_list.join('')
+  alert(form_info['job_detail'])
+
+  try{
+    $.parseJSON(form_info['job_detail'])
+  }catch(err){
+    all_right = false
+    json_fail = true
+  }
+  */
+  console.log(form_info)
+  
+  $("#submit-dialog .modal-body").html('确认递交job吗？')
+  $("#submit-dialog").modal()
+
+}
+
+function close_dialog(){
+  $('#submit-dialog').modal('hide')
+}
+
+function resetForm(){
+    //console.log($("#SubTaskForm button")[0])
+    $("#JobForm form")[0].reset()
+}
+
+
+function createJob(){
+  var post_data = form_info
+  if(this.name){
+    post_data['id'] = this.name
+  }
+  $.post(
+      "/ci_mgr/save/module_job",
+      JSON.stringify(post_data),
+      function(data, status){
+        if(status == 'success'){
+            $("#submit-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+
+        }else{
+            $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+        }
+        location.reload();
+      }
+    );//这里返回的类型有：json,html,xml,text
+
+}
+
+function add_para(para_div_id){
+  var copy_tr = $("#copy_tr").clone()[0];
+  copy_tr.attributes.removeNamedItem('id');
+  copy_tr.attributes.removeNamedItem('style')
+  $('#'+ para_div_id).append(copy_tr)
+  
+  /*
+  $('#'+ para_div_id).append($("[name='param']").clone()[0])
+  for(var i=0;i<$('[name=param_del]').length;i++){
+      addEvent($('[name=param_del]')[i], 'click', del_para);
+  }*/
+
+}
+function del_para(){
+
+  // 过滤一遍tr
+  for(var i=0;i<$("#param_tbl tr").length;i++){
+    if ($("#param_tbl tr")[i].children.length == 0){
+      $("#param_tbl tr")[i].remove()
+      i--;
+    }
+    
+  }
+
+  if($("#param_tbl tr").length > 1){ // 
+    $("#param_tbl tr")[$("#param_tbl tr").length - 1].remove()
+  }else{
+    
+  }
+  /*
+  if ($("[name='param']").length > 1){
+    $(this).parent().parent().parent().remove()
+  }else{
+    alert('至少要保留一个哦，可以为空')
+  }*/
+  
+}
+
+function gather_params(){
+  var param_names = $('[name=param_name]')
+  var param_default_values = $('[name=param_default_value]')
+  var param_descriptions = $('[name=param_description]')
+  var params = []
+  if (param_names.length == param_default_values.length && param_default_values.length ==param_descriptions.length)
+  {
+    for(var i=1;i<param_names.length;i++){  // ignore first template param
+      var tmp = {}
+      tmp['name'] = param_names[i].value
+      tmp['default_value'] = param_default_values[i].value
+      tmp['description'] = param_descriptions[i].value
+      params.push(tmp)
+    }
+    console.log(params)
+  }
+  else{
+    console.log('error in get params')
+    return 
+  }
+  return params
+}
+
+
+
+function delete_job(id){
+    console.log(id)
+    var post_data = {}
+    post_data['id'] = id
+    $.post(
+        "/ci_mgr/rm/job",
+        JSON.stringify(post_data),
+        function(data, status){
+          if(status == 'success'){
+                if(data.status == 'fail'){
+                    $("#del-dialog .modal-body").html('<div class="alert alert-danger" role="alert">'+ data.message + '</div>')
+                }
+                else{
+                    $("#del-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                }                        
+
+          }else{
+
+                $("#del-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+          }
+          $("#del_confirm").css('display', 'none')
+        }
+    );//这里返回的类型有：json,html,xml,text
+}
+
+
+
+</script>
+{% endblock %}
+
+
+{% block specify %}
+<div class="col-md-9 col-lg-9 " >
+  
+  <div class='col-md-12 col-lg-12' style="margin-bottom:20px">
+    
+          <div class="row" id="operation">
+              <div id="JobForm" class="col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                  <form role="form"  onsubmit="return false;">
+                      <div class="form-group">
+                          <label>Job名</label>
+                          <input class="form-control" name="name" value="{{ data.current_job.name }}">
+                          <p class="help-block">e.g. snake mall...</p>
+                      </div>
+                      <div class="form-group">
+                          <label>所属Module</label>
+                          <select class="form-control" name="module_id">
+                              {% for i in data.module %}
+                                  {% if data.current_job.module == i.id %}
+                                      <option value='{{i.id}}' selected='selected'>{{i.name}}</option>
+                                  {% elif i.id == data.module_id %}
+                                      <option value='{{i.id}}' selected='selected'>{{i.name}}</option>
+                                  {% else %}
+                                      <option value='{{i.id}}'>{{i.name}}</option>
+                                  {% endif %}
+                              {% endfor %}
+                          </select>
+                      </div>
+                      <div class="form-group" style='display:none'>
+                          <label>类型</label>
+                          <select class="form-control" name="type">
+                              {% for i in data.types %}
+                                  {% if data.current_module.type == i %}
+                                      <option value='{{i}}' selected='selected'>{{i}}</option>
+                                  {% else %}
+                                      <option value='{{i}}'>{{i}}</option>
+                                  {% endif %}
+                              {% endfor %}
+                          </select>
+                      </div>
+
+                      <div class="form-group">
+                          <label>场景</label>
+                          <textarea class="form-control" name="scene" >{{data.current_job.scene}}</textarea>
+                          <p class="help-block">job的使用场景</p>
+                      </div>
+
+                      <!--div class="form-group">
+                          <label>描述</label>
+                          <textarea class="form-control" name="description" >{{data.current_job.desc}}</textarea>
+                          <p class="help-block">详细的描述可以帮助别人</p>
+                      </div-->
+
+
+                      <div class="form-group">
+                          <label>命令</label>
+                          <textarea class="form-control" name="command" >{{data.current_job.job_detail.command}}</textarea>
+                          <p class="help-block">shell命令</p>
+                          <label>描述</label>
+                          <textarea class="form-control" name="description" >{{data.current_job.job_detail.description}}</textarea>
+                          <p class="help-block">详细的描述可以帮助别人</p>
+                      </div>
+
+                      {% if data.current_job %}
+                          <div id='param_div' class='form-group'>
+                              <div name='param' class="panel panel-default">
+                                <div class="panel-heading">
+                                  <label >参数</label>
+                                  <div style='float:right'>
+                                    <a name='param_add' class="glyphicon glyphicon-plus-sign" onclick='add_para("param_tbl")'></a>
+                                    <a name='param_del' class="glyphicon glyphicon-minus-sign" ></a>
+                                  </div>
+                                </div>
+                                <div class='panel-body'>
+
+                                  <!--div class="form-group">
+                                      <label>名字</label>
+                                      <input type="text" name='param_name' class="form-control" value='{{p.name}}'>
+                                  </div>
+                                  <div class="form-group">
+                                      <label>默认值</label>
+                                      <input type="text" name='param_default_value' class="form-control" value='{{p.default_value}}'>
+                                  </div>
+                                  <div class="form-group">
+                                      <label>描述</label>
+                                      <textarea type="text" name='param_description' class="form-control">{{p.description}}</textarea>
+                                  </div-->
+                                  <table class='table'>
+                                    <thead>
+                                      <tr>
+                                        <th style='width:150px'>名字</th>
+                                        <th style='width:150px'>默认值</th>
+                                        <th>描述</th>
+                                      </tr>
+
+                                    </thead>
+                                    <tbody id='param_tbl'>
+                                      <tr id='copy_tr' style='display:none'>
+                                        <td>
+                                          <input type="text" name='param_name' class="form-control">
+                                        </td>
+                                        <td>
+                                          <input type="text" name='param_default_value' class="form-control">
+                                        </td>
+                                        <td>
+                                          <textarea type="text"  rows="1" name='param_description' class="form-control"></textarea>
+                                        </td>
+                                      <tr>
+                                      
+
+                                      {% for p in data.current_job.job_detail.params %}
+                                        <tr>
+                                          <td>
+                                            <input type="text" name='param_name' class="form-control" value='{{p.name}}'>
+                                          </td>
+                                          <td>
+                                            <input type="text" name='param_default_value' class="form-control" value='{{p.default_value}}'>
+                                          </td>
+                                          <td>
+                                            <textarea type="text"  rows="1" name='param_description' class="form-control">{{p.description}}</textarea>
+                                          </td>
+                                        <tr>
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+
+                                </div>
+                              </div>
+                            </div>
+                      {% else %}
+                      <div id='param_div' class='form-group'>
+                          <div name='param' class="panel panel-default">
+                            <div class="panel-heading">
+                              <label >参数</label>
+                              <div style='float:right'>
+                                <a name='param_add' class="glyphicon glyphicon-plus-sign" onclick='add_para("param_tbl")'></a>
+                                <a name='param_del' class="glyphicon glyphicon-minus-sign" ></a>
+                              </div>
+                            </div>
+                            <div class='panel-body'>
+
+                              <!--div class="form-group">
+                                  <label>名字</label>
+                                  <input type="text" name='param_name' class="form-control">
+                              </div>
+                              <div class="form-group">
+                                  <label>默认值</label>
+                                  <input type="text" name='param_default_value' class="form-control">
+                              </div>
+                              <div class="form-group">
+                                  <label>描述</label>
+                                  <textarea type="text" name='param_description' class="form-control"></textarea>
+                              </div>
+                            </div-->
+                              <table class='table'>
+                                <thead>
+                                  <tr>
+                                    <th style='width:150px'>名字</th>
+                                    <th style='width:150px'>默认值</th>
+                                    <th>描述</th>
+                                  </tr>
+
+                                </thead>
+                                <tbody id='param_tbl'>
+                                  <tr id='copy_tr' style='display:none'>
+                                    <td>
+                                      <input type="text" name='param_name' class="form-control">
+                                    </td>
+                                    <td>
+                                      <input type="text" name='param_default_value' class="form-control">
+                                    </td>
+                                    <td>
+                                      <textarea type="text"  rows="1" name='param_description' class="form-control"></textarea>
+                                    </td>
+                                  <tr>
+
+                                  
+
+                                </tbody>
+                              </table>
+                            </div>
+
+                      </div>
+                      {% endif %}
+                      <button type="reset" style="display:none;"></button>
+
+                  </form>
+                  {% if data.current_job %}
+                      <button type="submit" class="btn btn-default" >编辑</button>
+                      <button  class="btn btn-danger" onclick="javascript:$('#del-dialog').modal()">删除</button>
+                  {% else %}
+                      <button type="submit" class="btn btn-default">创建</button>
+                      <button type="reset" class="btn btn-default">重置</button>
+                  {% endif %}
+
+              
+
+      </div>
+
+    </div>
+  </div>
+
+  <div id="submit-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label">Job</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    {% if data.current_job %}
+                    <button type="button" class="btn btn-primary" name='{{ data.current_job.id }}'>确认</button>
+                    {% else %}
+                    <button type="button" class="btn btn-primary">确认</button>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+    <div id="del-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">删除Job</h4>
+                </div>
+                <div class="modal-body" style='height:100%'>
+                        确定删除吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id='del_confirm' onclick="delete_job('{{data.current_job.id}}')">确认</button>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

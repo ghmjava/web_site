@@ -1,0 +1,28 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").addClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li><a href="/cov">所有任务</a></li>
+        <li><a href="{% url 'cov:detail' task.id %}">{{ task.name }}</a></li>
+        <li><a href="{% url 'cov:results' task.id %}">查看报告</a></li>
+        <li class="active"><a href="#">{{ name }}</a></li>
+    </ul>
+    <iframe id="iFrame1"
+            name="iFrame1"
+            src="{{ ifm_src }}"
+            width="100%"
+            height="600"
+            frameborder="1">
+    </iframe>
+
+{% endblock %}

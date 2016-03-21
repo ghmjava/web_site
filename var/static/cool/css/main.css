@@ -1,0 +1,162 @@
+
+@-webkit-keyframes twinkling{	/*透明度由0到1*/
+	0%{
+		opacity:0.2;				/*透明度为0*/
+	}
+	100%{
+		opacity:1;				/*透明度为1*/
+	}
+}
+
+
+.banner-offer {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .banner-offer .yellow-offer {
+    border-radius: 50%;
+    color: #053a49;
+    text-align: center;
+    font-size: 10px;
+    font-size: 1rem;
+    line-height: px;
+    position: relative;
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    letter-spacing: 0;
+    text-shadow: none;
+    float: none;
+    display: inline-block;
+    margin: 0 12px;
+  }
+  .banner-offer .yellow-offer .offer-text, .banner-offer .yellow-offer .yellow-offer.yellow, .banner-offer .yellow-offer .yellow-offer.white {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    height: 80px;
+    width: 80px;
+    display: table;
+  }
+  .banner-offer .yellow-offer .offer-text span, .banner-offer .yellow-offer .yellow-offer.yellow span, .banner-offer .yellow-offer .yellow-offer.white span {
+    font-size: 16px;
+    font-size: 2.6rem;
+    font-weight: 700;
+  }
+  .banner-offer .yellow-offer .offer-text .text-details, .banner-offer .yellow-offer .yellow-offer.yellow .text-details, .banner-offer .yellow-offer .yellow-offer.white .text-details {
+    display: table-cell;
+    vertical-align: middle;
+    text-align:center；
+    line-height:18px;
+  }
+  .banner-offer .yellow-offer.yellow {
+    line-height: 0.8;
+    background-image: -webkit-linear-gradient(to top, #FFBF00, #fff);
+    background-image: linear-gradient(to top, #FFBF00, #fff);
+  }
+
+  .banner-offer .yellow-offer.green {
+    background: #01DF01;
+    line-height: 0.8;
+  }
+
+  .banner-offer .yellow-offer.red {
+    line-height: 0.8;
+    -webkit-animation: twinkling 2s infinite ease-in-out;
+    background-image: -webkit-linear-gradient(to top, #FE642E, #fff);
+    background-image: linear-gradient(to top, #FE642E, #fff);
+  }
+
+  .banner-offer .yellow-offer.blue {
+    background: #073d4e;
+    color: #fff;
+  }
+  .banner-offer .yellow-offer.white {
+    background: #ffffff;
+    font-size: 16px;
+    font-size: 1.6rem;
+    line-height: 22px;
+  }
+  .banner-offer .yellow-offer.big {
+    width: 200px;
+    height: 200px;
+    font-size: 31px;
+    font-size: 3.1rem;
+    line-height: 36px;
+  }
+  .banner-offer .yellow-offer.big span {
+    font-size: 52px;
+    font-size: 5.2rem;
+    line-height: 56px;
+    font-weight: 700;
+  }
+  .banner-offer .yellow-offer.big .offer-text, .banner-offer .yellow-offer.big .yellow-offer.yellow, .banner-offer .yellow-offer.big .yellow-offer.white {
+    width: 180px;
+    height: 200px;
+  }
+  .banner-offer .yellow-offer.big .offer-text .text-details, .banner-offer .yellow-offer.big .yellow-offer.yellow .text-details, .banner-offer .yellow-offer.big .yellow-offer.white .text-details {
+    line-height: 20px;
+  }
+
+
+  .broadband--offer .offer-text, .broadband--offer .banner-offer .yellow-offer.yellow, .banner-offer .broadband--offer .yellow-offer.yellow, .broadband--offer .banner-offer .yellow-offer.white, .banner-offer .broadband--offer .yellow-offer.white {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  .broadband--offer .offer-text span, .broadband--offer .banner-offer .yellow-offer.yellow span, .banner-offer .broadband--offer .yellow-offer.yellow span, .broadband--offer .banner-offer .yellow-offer.white span, .banner-offer .broadband--offer .yellow-offer.white span {
+    font-size: 38px;
+    font-size: 3.8rem;
+  }
+  .text-detail{
+    width: 60px;
+  }
+
+#yellow-circle {
+float: left;
+width: 15px;
+height: 15px;
+background: #FFBF00;
+-moz-border-radius: 15px;
+-webkit-border-radius: 15px;
+border-radius: 15px;
+}
+
+#red-circle {
+float: left;
+width: 15px;
+height: 15px;
+background: #FE642E;
+-moz-border-radius: 15px;
+-webkit-border-radius: 15px;
+border-radius: 15px;
+}
+
+.hint{
+  display:block;
+  height: 30px;
+  margin: 5px 0 0 10px;
+}
+
+.single-hint{
+  float: left;
+}
+
+.hint-line{
+  float: right;
+  margin: 5px 5px 5px 5px;
+}
+
+.commitUser{
+  display:none;
+}
+
+

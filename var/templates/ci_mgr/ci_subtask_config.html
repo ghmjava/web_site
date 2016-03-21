@@ -1,0 +1,336 @@
+{% extends "ci_mgr/ci_base.html" %}
+
+{% block script %}
+
+
+<script>
+// 修改subtask信息相关
+var alert_str = '<div class="alert alert-danger">content</div>'
+var create_subtask_data = {}
+var set_seq_data = {}
+
+$(function(){
+    addEvent($("#SubTaskForm button")[1], 'click', SubTaskFormHandler); // form submit button onclick binding
+    if($("#SubTaskForm button").length > 2){
+
+        addEvent($("#SubTaskForm button")[2], 'click', resetForm); // form submit button onclick binding
+    }
+    //addEvent($("#seq_set_btn")[0], 'click', show_seq_dialog)
+    addEvent($("#submit-dialog button")[2], 'click', createSubTask); // dialog confirm button binding
+});
+
+function SubTaskFormHandler(){
+    if(this.type == "reset")
+    {
+        $("#newTaskForm form button")[0].click()
+    }
+    else if(this.type == "submit"){
+        var str = ""
+        // get all create task info and put in dialog body
+        /*for(var this_input in $("#newTaskForm input")) {
+            str += this_input.name  + " : " + this_input.value + "\n";
+        }*/
+        var subtask_id = false
+
+        create_subtask_data['is_start'] = $("input[name='optionsRadiosInline']:checked").val()
+
+        var name = $("#SubTaskForm input")[0].value
+        var task_id = $("#SubTaskForm input")[1].value
+        var desc = $("#SubTaskForm textarea")[0].value
+        var type = $("#SubTaskForm select")[0].value
+        var pre = $("#SubTaskForm select")[1].value
+        var next = $("#SubTaskForm select")[2].value
+        try{
+            subtask_id = $("#subtask_id_input")[0].value
+        }catch(err){
+            console.log('create')
+        }
+
+
+        create_subtask_data['name'] = name
+        create_subtask_data['task_id'] = task_id
+        create_subtask_data['desc'] = desc
+        create_subtask_data['type'] = type
+        if (create_subtask_data['is_start'] == 1){
+            create_subtask_data['pre'] = 0
+        }else{
+            create_subtask_data['pre'] = pre
+        }
+        
+        create_subtask_data['next'] = next
+
+        if(subtask_id != false){  // 说明是修改
+            create_subtask_data['id'] = subtask_id
+        }
+
+        // set 全局变量
+        if (name != "" && task_id != "" && create_subtask_data['is_start'] != ""){
+            var str = ""
+            for(var k in create_subtask_data)
+            {
+                str += ( k + ": " + create_subtask_data[k] + "<br>")
+            }
+
+        }
+        else{
+            str = alert_str.replace("content", "name task_id is_start字段不能为空")
+        }
+        $("#submit-dialog .modal-body").html(str)
+        $("#submit-dialog").modal()
+    }
+}
+
+
+function createSubTask(){
+    // show confirm dialog
+    var post_data = create_subtask_data
+    $.post(
+        "/ci_mgr/save/sub_task",
+        JSON.stringify(post_data),
+        function(data, status){
+          if(status == 'success'){
+            console.log(data)
+            if(data.status == 'fail'){
+
+                $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">' + data.message + '</div>')
+              }else{
+                $("#submit-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                //location.reload();
+              }
+          }else{
+              $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+          }
+          $("#ok").css('display','none')
+          //addEvent($("#submit-dialog button")[2], 'click', function(){$("#submit-dialog").modal("hide")});
+          
+        }
+      );//这里返回的类型有：json,html,xml,text
+}
+
+function close_dialog(){
+    $("#submit-dialog").modal("hide");
+    addEvent($("#SubTaskForm button")[1], 'click', SubTaskFormHandler); // form submit button onclick binding
+}
+
+function resetForm(){
+    //console.log($("#SubTaskForm button")[0])
+    $("#SubTaskForm form")[0].reset()
+}
+
+function delete_subtask(id){
+    $("#delete-dialog").modal('hide')
+    var post_data = {}
+    post_data['id'] = id
+    $.post(
+        '/ci_mgr/rm/sub_task',
+        JSON.stringify(post_data),
+        function(data, status){
+            if(status == 'success'){
+                console.log(data)
+                if(data.status == 'fail'){
+                    $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">' + data.message + '</div>')
+                  }else{
+                    $("#submit-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                    //location.reload();
+                  }
+              }else{
+                  $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+              }
+              $('#submit-dialog').modal()
+              $("#ok").css('display','none')
+          }
+            
+        );
+}
+
+
+</script>
+{% endblock %}
+
+{% block specify %}
+
+    <!-- Navigation -->
+<div class="col-md-10 col-lg-10 " style="margin-top:-40px;margin-left:20px">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+
+            {% if data.current_subtask %}
+            <div class="page-header" style="font-size:20px">编辑SubTask
+            <a id='create_btn' class="btn btn-link btn-xs" href="/ci/subtask?task_id={{data.current_task.id}}" style="float:right">返回</a></div>
+            {% else %}
+            <div class="page-header" style="font-size:20px">新建SubTask
+            <a id='create_btn' class="btn btn-link btn-xs" href="/ci/subtask?task_id={{data.current_task.id}}" style="float:right">返回</a>
+        </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row" id="modify">
+        <div class="col-md-12 col-lg-12">
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    {% if data.task_not_match == 1 %}
+                    <div class="alert alert-fail" role="alert">该task下不存在这个task哦</div>
+                    {% else %}
+                    <div class="row">
+                        <div id="SubTaskForm" class="col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                            <form role="form" >
+                                <div class="form-group">
+                                    <label>SubTask名</label>
+                                    <input class="form-control" name="name" value="{{ data.current_subtask.name }}">
+                                    <p class="help-block">起一个好名字</p>
+                                </div>
+                                <div class="form-group" style='display:none'>
+                                    <label>所属Task id</label>
+                                    <input class="form-control" name="task_id" value="{{data.current_task.id}}" disabled></>
+                                </div>
+                                <div class="form-group">
+                                    <label>描述</label>
+                                    <textarea class="form-control" name="desc" >{{data.current_subtask.desc}}</textarea>
+                                    <p class="help-block">详细的描述可以帮助到其他人哦</p>
+                                </div>
+                                <div class="form-group" style='display:none'>
+                                    <label>类型</label>
+
+                                    <select multiple="" class="form-control" name="type">
+                                        {% for i in data.types %}
+                                            {% if data.current_subtask.type == i %}
+                                                <option value='{{i}}' selected='selected'>{{i}}</option>
+                                            {% else %}
+                                                <option value='{{i}}'>{{i}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                 <div class="form-group">
+                                    <label>是否是起始SubTask</label>
+                                        {% if data.current_subtask.is_start == 0 %}
+                                        <input type="radio" name='optionsRadiosInline' id="is_start_yes" style='margin:0 5px 0 5px' value="1" >yes
+                                        <input type="radio" name='optionsRadiosInline'id="is_start_no" style='margin:0 5px 0 5px' value="0" checked>no
+                                        {% else %}
+                                        <input type="radio" name='optionsRadiosInline' id="is_start_yes" style='margin:0 5px 0 5px' value="1" checked> yes
+                                        <input type="radio" name='optionsRadiosInline'id="is_start_no" style='margin:0 5px 0 5px' value="0" >no
+                                        {% endif %}
+                                    <p class="help-block">如果是起始Subtask,“前置”设置将会被忽略</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>前置</label>
+                                    <select multiple="" class="form-control" name="type">
+                                        {% if data.current_subtask.pre == 0%}
+                                            <option value='0'  selected='selected'>无</option>
+                                            {% for i in data.all_sub_task %}
+                                                <option value='{{i.id}}' >{{i.name}}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value='0' >无</option>
+                                            {% for i in data.all_sub_task %}
+                                                {% if i.id == data.current_subtask.pre %}
+                                                    <option value='{{i.id}}'  selected='selected'>{{i.name}}</option>
+                                                {% else %}
+                                                    <option value='{{i.id}}' >{{i.name}}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                    <p class="help-block">不能与后置重复</p>
+                                </div>
+                                <div class="form-group" style='display:none'>
+                                    <label>后置</label>
+                                    <select multiple="" class="form-control" name="type">
+                                         {% if data.current_subtask.next == 0 %}
+                                            <option value='0'  selected='selected'>无</option>
+                                            {% for i in data.all_sub_task %}
+                                                <option value='{{i.id}}' >{{i.name}}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value='0' >无</option>
+                                            {% for i in data.all_sub_task %}
+                                                {% if i.id == data.current_subtask.next %}
+                                                    <option value='{{i.id}}'  selected='selected'>{{i.name}}</option>
+                                                {% else %}
+                                                    <option value='{{i.id}}' >{{i.name}}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </select>
+                                    <p class="help-block">不能与前置重复</p>
+                                </div>
+                                {% if data.current_subtask %}
+                                    <input id='subtask_id_input'style="display:none" name="name" value="{{ data.current_subtask.id }}">
+                                {% endif %}
+
+                                <button type="reset" style="display:none;"></button>
+                            </form>
+                            {% if data.current_subtask %}
+                                <button type="submit" class="btn btn-default">编辑</button>
+                                <button type="submit" class="btn btn-danger" onclick="javascript:$('#delete-dialog').modal()">删除</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-default">创建</button>
+                                <button type="reset" class="btn btn-default">重置</button>
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div class="page-header" style="font-size:20px">设置SubTask顺序</div>
+        </div>
+    </div-->
+
+    <div id="submit-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label"></h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id='ok'>确认</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+    <div id="delete-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label"></h4>
+                </div>
+                <div class="modal-body">
+                    确认删除吗？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick='delete_subtask("{{data.current_subtask.id}}")'>确认</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+
+    
+</div>
+
+{% endblock %}

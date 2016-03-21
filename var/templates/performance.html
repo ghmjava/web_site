@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("active")
+    });
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: '上行和下行 趋势图',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: [{% autoescape off %}{% for c in data.categories %}'{{c}}',{% endfor %}{% endautoescape %}]
+        },
+        yAxis: {
+            title: {
+                text: '{{data.unit_name}}({{data.unit}})'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '{{data.unit}}'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{% autoescape off %}{% for s in data.series %}{% if s.index == 1 %}{name:'{{s.name}}',data:{{s.data}},},{% endif %}{% endfor %}{% endautoescape %}]
+    });
+
+    {% for d in data.series %}
+    {% if d.index != 1 %}
+    $('#container{{d.index}}').highcharts({
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: '{{d.name}} 趋势图',
+            x: -20 //center
+        },
+        xAxis: {
+            categories: [{% autoescape off %}{% for c in data.categories %}'{{c}}',{% endfor %}{% endautoescape %}]
+        },
+        yAxis: {
+            title: {
+                text: '{{data.unit_name}}({{data.unit}})'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '{{data.unit}}'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{% autoescape off %}{name:'{{d.name}}',data:{{d.data}},},{% endautoescape %}]
+    });
+    {% endif %}
+    {% endfor %}
+
+    {% if data.interface %}
+    $("#interface").val("{{data.interface}}")
+    {% endif %}
+    {% if data.interface_type %}
+    $("#interface_type").val("{{data.interface_type}}")
+    {% endif %}
+    {% if data.start %}
+    $("#start").val("{{data.start}}")
+    {% endif %}
+    {% if data.end %}
+    $("#end").val("{{data.end}}")
+    {% endif %}
+    var param = "?env=" + $("#env").val() + "&interface=" + $("#interface").val() + "&start=" + $("#start").val() + "&end=" + $("#end").val()
+    $("#pic").attr("href","/performance" + param);
+    $("#interface_list").attr("href","/get/interface" + param);
+    $("#data").attr("href","/performance/detail" + param);
+});
+</script>
+{% endblock %}
+
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/performance">
+    <select class="form-control input-small" name="env" id="env" style="display:none">
+    <option value="NEWLAB">NEWLAB</option>
+    </select>
+    &nbsp;&nbsp;接口：
+    <select class="form-control input-small" name="interface" id="interface">
+    {% for i in data.interface_info %}
+    <option value="{{i.id}}">{{i.desc}}</option>
+    {% endfor %}
+    </select>
+    &nbsp;&nbsp;开始：
+    <input class="form-control pick_date input-small" name="start" id="start" type="text" placeholder="请选择时间">
+    &nbsp;&nbsp;结束：
+    <input class="form-control pick_date input-small" name="end" id="end" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn btn-info">确定</button>
+</form>
+<ul class="nav nav-tabs">
+  <li><a id="interface_list">接口列表</a></li>
+  <li class="active">
+    <a id="pic">趋势图</a>
+  </li>
+  <li><a id="data">数据详情</a></li>
+
+</ul>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+{% for d in data.series %}
+{% if d.index != 1 %}
+<div id="container{{d.index}}" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+{% endif %}
+{% endfor %}
+{% endblock %}
+{% block right %}
+
+{% endblock %}

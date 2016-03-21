@@ -1,0 +1,456 @@
+{% extends "job_mgr/job_base.html" %}
+{% block script %}
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'echarts/build/dist/echarts.js' %}"></script>
+
+<script>
+$(function () {
+  $('#table_id').dataTable( {
+  "bProcessing" : true, 
+  "bAutoWidth": false,
+  "aoColumns" : [
+            { sWidth: '120px' },
+            { sWidth: '300px' },
+            { sWidth: '120px' },
+            { sWidth: '120px' }
+        ] , 
+  "sProcessing" : "正在获取数据，请稍后...",
+  
+  } );
+
+  if(location.search.search('notag') != -1){
+    $('#notag').prop('checked', true);
+    $('#notag').parent().addClass('active')
+  }else if(location.search.search('tag') != -1){
+    $('#tag').prop('checked', true)
+    $('#tag').parent().addClass('active')
+  }else{
+    $('#all').prop('checked', true)
+    $('#all').parent().addClass('active')
+
+  }
+
+  {% for i in data.trees %}
+    var myChart{{k}};
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: "{% static 'echarts/build/dist' %}"
+        }
+    });
+    // 使用
+    require(
+        [
+            'echarts',
+            'echarts/chart/tree' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function (ec) {
+            // 基于准备好的dom，初始化echarts图表
+            myChart{{i.id}} = ec.init(document.getElementById('{{i.id}}'));
+            myChart{{i.id}}.on(ecConfig.EVENT.CLICK, change_to_modify_page); //绑定点击函数
+            option = {
+                title : {
+                    text: ''
+                },
+                toolbox: {
+                    show : false,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+
+
+                series : [
+                    {
+                        name:'树图',
+                        type:'tree',
+                        orient: 'horizontal',  // vertical horizontal
+                        rootLocation: {x: 50 ,y: {{i.width_px}}/2 }, // 根节点位置  {x: 100, y: 'center'}
+                        clickable: true,
+                        nodePadding: 20,
+                        layerPadding: 150,
+                        hoverable: true,
+                        roam: false,
+                        symbolSize: 15,
+                        itemStyle: {
+                            normal: {
+                                color: '#4883b4',
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: "{b}",
+                                    textStyle: {
+                                        color: '#000',
+                                        fontSize: 12
+                                    }
+                                },
+                                lineStyle: {
+                                    color: '#81BEF7',
+                                    type: 'curve', // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+                                    width: 2,
+                                }
+                            },
+                            emphasis: {
+                                color: '#81BEF7',
+                                label: {
+                                    show: false
+                                },
+                                borderWidth: 0
+                            }
+                        },
+
+                        data: {{ i.chart_data|safe}}
+                        /*[
+                            {'name':'a', 'children':
+                                {'name':'b', 'children':[
+                                    {'name':'ab','woaosd':123},{'name':'abc', '123':213}
+                                    ]
+                                },
+                                {'name':'c', 'children':[
+                                    {'name':'ab'},{'name':'abc'}
+                                    ]
+                                }
+                            ],'a':'b'}
+                        ]*/
+                    },
+                ]
+            };
+
+            // 为echarts对象加载数据
+            myChart{{i.id}}.setOption(option);
+        }
+    );
+  {% endfor %}
+
+  //点击事件函数
+  var ecConfig = require('echarts/config');
+  function change_to_modify_page(param) {
+      /*var mes = '【' + param.type + '】';
+      if (typeof param.seriesIndex != 'undefined') {
+          mes += '  seriesIndex : ' + param.seriesIndex;
+          mes += '  dataIndex : ' + param.dataIndex;
+      }
+      if (param.type == 'hover') {
+          document.getElementById('hover-console').innerHTML = 'Event Console : ' + mes;
+      }
+      else {
+          document.getElementById('console').innerHTML = mes;
+      }*/
+      var job_id = param.value.id
+      
+      var bind_url = '/job/seq_conf?id=' + job_id 
+      $("#SetJobSeq").attr('src', bind_url)
+      $("#joborder-dialog").modal()
+      
+
+  }
+
+} );
+
+
+
+
+function gather_checkbox(form_id){
+  var boxes = $(form_id + ' checkbox')
+  var checked = []
+  for(b in boxes){
+    if( b.attr('checked') == 'checked'){
+
+      checked.push(i.value)
+    }
+  }
+
+}
+
+function show_modify_dialog(job_id, job_name, job_url){
+  $("#modify_title").html("修改 - " + job_name);
+  $("#job_id").attr('value', job_id);
+  $("#job_name").attr('value', job_name);
+  $("#job_url").attr('value', job_url);
+  $("#modify_dialog").modal();
+}
+
+function create_job(){
+  var post_data = {}
+  for(var i=0;i< $("#create_dialog input").length;i++){
+    post_data[$("#create_dialog input")[i].name] = $("#create_dialog input")[i].value
+  }
+  $.post(
+    '/job_mgr/save/job',
+    JSON.stringify(post_data),
+    function(data){
+      if (data.status == 'success'){
+        $('#create_body').html('<div class="alert alert-success">创建成功</div>');
+      }
+      else{
+        $('#create_body').html('<div class="alert alert-danger">'+ data.message + '</div>');
+      }
+      sleep(1000)
+      location.reload()
+    }
+  ).fail(function(e){ 
+        // Handle error here
+        $('#create_body').html('<div class="alert alert-danger">修改失败</div>');
+        //alert('发送失败原因失败')
+        sleep(1000)
+        location.reload();
+  });
+
+}
+
+function modify_job(){
+  var post_data = {}
+  for(var i=0;i< $("#modify_dialog input").length;i++){
+    post_data[$("#modify_dialog input")[i].name] = $("#modify_dialog input")[i].value
+  }
+  $.post(
+    '/job_mgr/save/job',
+    JSON.stringify(post_data),
+    function(data){
+      
+      if (data.status == 'success'){
+        $('#modify_body').html('<div class="alert alert-success">修改成功</div>');
+
+      }
+      else{
+        $('#modify_body').html('<div class="alert alert-danger">'+ data.message + '</div>');
+
+      }
+      sleep(1000)
+
+      location.reload()
+    }
+  ).fail(function(e){ 
+        // Handle error here
+        $('#modify_body').html('<div class="alert alert-danger">修改失败</div>');
+        sleep(1000)
+        location.reload();
+  });
+}
+
+
+function show_del_dialog(job_id, job_name, job_url){
+
+  $("#del_title").html("删除 - " + job_name);
+  $("#del_id").attr('value', job_id);
+  
+  $("#del_dialog").modal();
+}
+
+function del_job(){
+  var post_data = {}
+  post_data['id'] = $("#del_id").val()
+  $.post(
+    '/job_mgr/rm/job',
+    JSON.stringify(post_data),
+    function(data){
+      
+      if (data.status == 'success'){
+        $('#del_body').html('<div class="alert alert-success">删除成功</div>');
+
+      }
+      else{
+        $('#del_body').html('<div class="alert alert-danger">'+ data.message + '</div>');
+
+      }
+      sleep(1000)
+
+      location.reload()
+    }
+  ).fail(function(e){ 
+        // Handle error here
+        $('#del_body').html('<div class="alert alert-danger">删除失败</div>');
+        sleep(1000)
+        location.reload();
+  });
+}
+</script>
+{% endblock %}
+
+
+{% block specify %}
+<div class="col-md-12 col-lg-12 " style="margin-top:-40px">
+  
+
+    <div class="page-header h3" >现有监控项
+      <a class='btn btn-xs btn-success' style="float:right; margin:0 0 10px 10px" onclick="javascript:$('#create_dialog').modal()">新建</a>
+    </div>
+      <div style='margin-bottom:20px'>
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary " onclick='location.href="/job/config/"'>
+            <input type="radio" name="options" id="all" autocomplete="off" > 全部
+          </label>
+          <label class="btn btn-primary" onclick='location.href="/job/config/?type=tag"'>
+            <input type="radio" name="options" id="tag" autocomplete="off"> 标签
+          </label>
+          <label class="btn btn-primary" onclick='location.href="/job/config/?type=notag"'>
+            <input type="radio" name="options" id="notag" autocomplete="off"> 监控项
+          </label>
+        </div>
+      </div>
+      <table id="table_id" class="display" style='table-layout:fixed'  width="100%">
+          <thead>
+              <tr>
+                  <th>名字</th>
+                  <th>地址</th>
+                  <th>创建者</th>
+                  <!--th >成功次数</th>
+                  <th >失败次数</th-->
+                  <th>操作</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for j in data.jobs %}
+              <tr>
+                  <td>{{j.name}}</td>
+                  <td style="word-wrap:break-word;" >{{j.url}}</td>
+                  <td>{{j.user}}</td>
+                  <!--td>{{j.pass_num}}</td>
+                  <td>{{j.fail_num}}</td-->
+                  <td><a class='btn btn-primary btn-xs' style="float:left" onclick='show_modify_dialog("{{j.id}}", "{{j.name}}", "{{j.url}}")'>修改</a><a style="float:left; margin-left:10px" class='btn btn-danger btn-xs' onclick='show_del_dialog("{{j.id}}", "{{j.name}}", "{{j.url}}")'>删除</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+
+
+    <div class='panel panel-default' style='margin-top:20px'>       
+            <div class="panel-heading">
+              <b> 监控项关系图 </b>  
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >标签</span></div>
+                <div class='job-label' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >成功</span></div>
+                <div class='job-success' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >失败</span></div>
+                <div class='job-fail' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >正在运行</span></div>
+                <div class='job-building-static' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >未运行</span></div>
+                <div class='job-notbuilt' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >未绑定</span></div>
+                <div class='job-exclude' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+            </div>    
+        <div class="panel-body" >
+        {% for i in data.trees %}
+                
+                               
+             
+                
+                  <!--button class='btn btn-info btn-sm' style='float:right'>自动刷新</button-->
+                  <div id="{{ i.id }}" style="height:{{i.width_px}}px">
+                  </div>
+
+
+            
+        {% endfor %}
+        <p class="help-block" style="float:left;margin-left:5px;margin-bottom:5px;">点击圆点设置顺序</p>
+
+        </div>
+
+    </div>     
+</div>
+
+<div id="create_dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">新建Job</h4>
+                </div>
+                <div class="modal-body" id='create_body' style='height:100%'>
+                    <form role="form" action='#' method="POST">
+                        <div class="form-group">
+                            <label>名称</label>
+                            <input  name='name' class="form-control" ></input>
+                        </div>
+                        <div class="form-group">
+                            <label>Job地址</label>
+                            <input name='url' class="form-control" placeholder='http://'></input>
+                            <p style='color:red'>*地址不填，该项为标签</p>
+                        </div>
+                    </form>
+                    <button onclick='create_job()' class="btn btn-primary" >确定</button>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+</div>
+
+
+<div id="modify_dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                    <h4 id='modify_title' class="modal-title" id="task-dialog-label">修改Job － </h4>
+                </div>
+                <div class="modal-body" id='modify_body' style='height:100%'>
+                    <form role="form" action='#' method="POST">
+                        <div class="form-group">
+                            <label>名称</label>
+                            <input id="job_name" name='name' class="form-control" ></input>
+                        </div>
+                        <div class="form-group">
+                            <label>Job地址</label>
+                            <input id="job_url" name='url' class="form-control" placeholder='http://'></input>
+                            <p style='color:red'>*地址不填，该项为标签</p>
+                        </div>
+                        <input id='job_id' name='id'class="form-control" style="display:none"></input>
+                    </form>
+                    <button onclick='modify_job()' class="btn btn-primary" >确定</button>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+</div>
+
+<div id="del_dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                    <h4 id='del_title' class="modal-title" id="task-dialog-label">删除 － </h4>
+                </div>
+                <div class="modal-body" id='del_body' style='height:100%'>
+                  <form role="form" action='#' method="POST">
+                    <input id='del_id' name='id' style='display:none'></input>
+                    <div class="alert alert-danger">确定删除监控项吗？</div>
+
+                  </form>
+                    <button onclick='del_job()' class="btn btn-primary" >确定</button>
+                    <button onclick='javascript:$("#del_dialog").modal("hide")' class="btn " >取消</button>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+</div>
+
+
+<div id="joborder-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="javascript:$('#jobbind-dialog').modal('hide'); location.reload()">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">设置Job顺序</h4>
+                </div>
+                <div class="modal-body " style='height:100%'>
+                    <iframe id='SetJobSeq' style='width:100%;height:500px;border:none'>
+                    </iframe>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+

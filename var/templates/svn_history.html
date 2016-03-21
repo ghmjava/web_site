@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script type="text/javascript">
+$(function () {
+    $('#myTab a:first').tab('show')
+
+    {% if data.module %}
+    $("#module").val("{{data.module}}")
+    {% endif %}
+    {% if data.create %}
+    $("#create").val("{{data.create}}")
+    {% endif %}
+});
+</script>
+<script type="text/javascript">
+    // bind 2 a tags
+    function bind_tab(id){
+        $(function() {
+            var div = $("#" + id + "-tab"); // 。
+            div.click(function(e,text) {
+	        });
+	        div.trigger("click");
+        });
+    }
+</script>
+{% endblock %}
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/svn/history">
+    模块：
+    <select class="input-small" name="module" id="module">
+    <option value="all">所有模块</option>
+    <option value="wap">wap</option>
+    <option value="lm">lm</option>
+    <option value="common">common</option>
+    <option value="zhaoshang">zhaoshang</option>
+    <option value="shop">shop</option>
+    <option value="snake">snake</option>
+    <option value="zhifu">zhifu</option>
+    <option value="whornbill">whornbill</option>
+    <option value="pro">pro</option>
+    <option value="virus">virus</option>
+    <option value="mall">mall</option>
+    </select>
+    &nbsp;&nbsp;时间：
+    <input class="pick_date input-small" name="create" id="create" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn">确定</button>
+</form>
+
+<h2>总共修改代码行数为:<font color="green">{{data.total}}</font></h2>
+<div class="accordion-group">
+<div class="accordion-heading">
+<a class="accordion-toggle" data-toggle="collapse" href="#collapse1">
+模块统计
+</a>
+</div>
+<div id="collapse1" class="accordion-body collapse in">
+<div class="accordion-inner">
+{% if data.detail %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>模块名</th>
+      <th>今天上线版本</th>
+      <th>昨天上线版本</th>
+      <th>修改行数</th>
+    </tr>
+  </thead>
+    {% for detail in data.detail%}
+    <tr>
+      <td><a onclick="bind_tab('{{detail.module}}')">{{detail.module}}</a></td>
+        <td>{{detail.options.todayBranchNo}}</td>
+      <td>{{detail.options.yestodayBranchNo}}</td>
+      <td>{{detail.modify}}</td>
+    </tr>
+    {% endfor %}
+  <tbody>
+  </tbody>
+</table>
+{% else %}
+{{data.create}}的上线信息不存在！！！
+{% endif %}
+</div>
+</div>
+</div>
+
+<div class="accordion-group">
+<div class="accordion-heading">
+<a class="accordion-toggle" data-toggle="collapse" href="#collapse2">
+模块详细
+</a>
+</div>
+<div id="collapse2" class="accordion-body collapse in">
+<div class="accordion-inner">
+{% if data.detail %}
+    <div role="tabpanel">
+
+            <!-- tab nav -->
+            <ul id="myTab" class="nav nav-pills" role="tablist">
+                {% for detail in data.detail%}
+                    <li role="presentation" ><a href="#{{ detail.module }}" id="{{ detail.module }}-tab" role="tab" data-toggle="tab" aria-controls="{{ detail.module }}" aria-expanded="true">{{ detail.module }}</a></li>
+                    <!--li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">Profile</a></li-->
+                {% endfor %}
+            </ul>
+
+            <!-- Tab panes -->
+            <div id="myTabContent" class="tab-content">
+                {% for detail in data.detail%}
+                <div role="tabpanel" class="tab-pane fade" id="{{ detail.module }}" aria-labelledby="{{ detail.module }}-tab">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr id = "{{ detail.module }}" >
+                                <td style="width: 100px;">提交者</td>
+                                <td style="width: 140px;">修改时间</td>
+                                <td style="width: 50px;">svn版本</td>
+                                <td style="width: 110px;">评论</td>
+                                <td>修改文件</td>
+                                <td style="width: 30px;">代码</td>
+                            </tr>
+                            {% for svn in detail.options.svnCommitList%}
+                                <tr id ="{{ detail.module }}" >
+                                    <td style="width: 100px;">{{svn.commitUser}}</td>
+                                    <td style="width: 150px;">{{svn.timestamp}}</td>
+                                    <td style="width: 50px;">{{svn.trunkVersion}}</td>
+                                    <td style="width: 120px;">{{svn.comment}}</td>
+                                    <td >
+                                        <ul>
+                                        {% for m in svn.modifiedFileList%}
+
+                                                <li>{{m}}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                        {% for m in svn.modifiedFileUrl%}
+                                        <li><a href="{{m}}"  target="view_window"> > </a></li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                    {#{ detail.module }#}
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+<!--table class="table table-hover">
+  <thead>
+    <tr>
+        <th>模块名</th>
+      <th>提交者</th>
+      <th>修改时间</th>
+      <th>svn版本</th>
+      <th>评论</th>
+      <th>修改文件</th>
+        <th>代码</th>
+    </tr>
+  </thead>
+    {% for detail in data.detail%}
+    {% for svn in detail.options.svnCommitList%}
+    <tr>
+        <td>{{detail.module}}</td>
+      <td style="width: 80px;">{{svn.commitUser}}</td>
+       <td style="width: 150px;">{{svn.timestamp}}</td>
+       <td style="width: 50px;">{{svn.trunkVersion}}</td>
+       <td style="width: 120px;">{{svn.comment}}</td>
+        <td >
+              <ul>
+              {% for m in svn.modifiedFileList%}
+              <li>{{m}}</li>
+              {% endfor %}
+              </ul>
+          </td>
+          <td>
+              <ul>
+              {% for m in svn.modifiedFileUrl%}
+              <li><a href="{{m}}"> >> </a></li>
+              {% endfor %}
+              </ul>
+          </td>
+    </tr>
+
+    {% endfor %}
+    {% endfor %}
+  <tbody>
+  <tbody>
+  </tbody>
+</table-->
+{% else %}
+{{data.create}}的上线信息不存在！！！
+{% endif %}
+</div>
+</div>
+</div>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

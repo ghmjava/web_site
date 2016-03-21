@@ -1,0 +1,56 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").removeClass("active")
+            $("ul#cov_navi li#new").addClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li class="active"><a href="/cov/new">新建任务</a></li>
+    </ul>
+    <form class="form-horizontal" action="/cov/new" method="post">{% csrf_token %}
+        <div class="form-group">
+            <label for="task" class="col-sm-1 control-label">任务</label>
+            <div class="col-sm-4">
+                <input id="task" class="form-control input-sm" type="text" name="task" value={{ task_name_def }} />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="module" class="col-sm-1 control-label">模块</label>
+            <div class="col-sm-4">
+                <select id="module" class="form-control input-sm" type="select" name="module">
+                    {% for module in modules %}
+                        <option value={{ module.name }}>{{ module }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="version_type" class="col-sm-1 control-label">版本</label>
+            <div class="col-sm-4">
+                 <select id="version_type" class="form-control input-sm" type="select" name="version_type">
+                    <option value="svn_reversion" selected="selected">svn reversion</option>
+                    <option value="已发布版本">已发布版本</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="version" class="col-sm-1 control-label"></label>
+            <div class="col-sm-4">
+                <input id="version" class="form-control input-sm" type="text" name="version" value=""/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary col-md-offset-1">创建</button>
+    </form>
+{% endblock %}
+
+
+{% block cov_endscript %}
+
+{% endblock %}

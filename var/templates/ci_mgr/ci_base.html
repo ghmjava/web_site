@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block menu_script %}
+
+
+    $(function(){
+        $('#side-menu').metisMenu();
+        var location_str = window.location.pathname
+        $("#side-menu li a").each(
+          function(){
+            var tmp = this.href.split("//")[1]
+            var path = tmp.substr(tmp.search('/'),tmp.length)
+            if(path == location_str){
+                this.style.textDecoration = ""
+                this.style.backgroundColor = '#eee'
+            }
+          }
+        );
+        $("ul#menu li a:eq(3)").parent().addClass("active")
+    });
+
+
+    function addEvent(obj,type,handle){
+        try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+            obj.addEventListener(type,handle,false);
+        }catch(e){
+            try{  // IE8.0及其以下版本
+                obj.attachEvent('on' + type,handle);
+            }catch(e){  // 早期浏览器
+                obj['on' + type] = handle;
+            }
+        }
+    }
+    
+    function sleep(d){
+      for(var t = Date.now();Date.now() - t <= d;);
+    }
+
+{% endblock %}
+
+
+{% block left %}
+
+{% endblock %}
+
+
+{% block main %}
+    <div class="row-fluid">
+        <div class="col-md-2 col-lg-2" style="margin-left:-40px">
+              <div class="sidebar-nav navbar-collapse active">
+                    <ul class="nav in" id="side-menu">
+                        <!--li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </li-->
+                        <li>
+                            <a href="/ci/dashboard" class="active"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        </li>
+                        <!--li>
+                            <a href="#" class="active"><i class="fa fa-bar-chart-o fa-fw"></i> 模块<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse" style="margin-left:10px">
+                                <li >
+                                    <a  href="/ci/module">编辑模块</a>
+                                </li>
+                                {% for i in data.module %}
+                                <li >
+                                    <a  href="/ci/task/?module={{ i.name }}">{{ i.name | capfirst }}<span class="fa arrow"></span></a>
+
+                                    <ul class="nav nav-third-level" style="margin-left:10px">
+                                        <li>
+                                            <a href="/ci/task/?module={{ i.name }}">task</a>
+                                        </li>
+                                        <li>
+                                            <a href="/ci/jobs/?module={{ i.name }}">job</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">report</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                {% endfor %}
+                                
+                                
+                            </ul>
+                            
+                        </li-->
+                        <li>
+                          {% for i in data.module %}
+                            <a href="#" class="active"><!--i class="fa fa-bar-chart-o fa-fw"></i--> <b>{{ i.name | capfirst }}</b><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse" style="margin-left:10px">
+                                <!--li >
+                                    <a  href="/ci/module?module={{ i.name }}"><i class="fa fa-wrench fa-fw"></i> 编辑模块</a>
+                                </li-->
+                                <li>
+                                    <a href="/ci/task/?module={{ i.name }}"><i class="fa fa-tasks fa-fw"></i> Task</a>
+                                </li>
+                                <li>
+                                    <a href="/ci/jobs/?module={{ i.name }}"><i class="fa fa-file-text-o fa-fw"></i> Job</a>
+                                </li>
+                                <li>
+                                    <a href="#"><i class="fa fa-table fa-fw"></i> Report</a>
+                                </li>
+                                <!--li >
+                                    <a  href="/ci/task/?module={{ i.name }}">{{ i.name | capfirst }}<span class="fa arrow"></span></a>
+
+                                    <ul class="nav nav-third-level" style="margin-left:10px">
+                                        
+                                    </ul>
+                                </li-->
+                                
+                                
+                                
+                            </ul>
+                            {% endfor %}
+                        </li>
+
+                        <!--li>
+                            <a href="/ci/module"><i class="fa fa-plus fa-fw"></i> 新建模块</a>
+                        </li-->
+                        <li>
+                            <a href="/ci/jobs"><i class="fa fa-files-o fa-fw"></i> Job池</a>
+                        </li>
+                        
+
+                    </ul>
+                </div>
+        </div>
+    
+      <!-- /.sidebar-collapse -->
+
+          {% block specify %}
+
+
+          <!--h1 class="page-header">Dashboard</h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Label</h4>
+              <span class="text-muted">Something else</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Label</h4>
+              <span class="text-muted">Something else</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Label</h4>
+              <span class="text-muted">Something else</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+              <h4>Label</h4>
+              <span class="text-muted">Something else</span>
+            </div>
+          </div-->
+
+          
+          {% endblock %}
+    </div>
+    
+
+{% endblock %}
+{% block right %}
+  
+{% endblock %}

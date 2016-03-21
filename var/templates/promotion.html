@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script type="text/javascript">
+$(function () {
+    {% if data.p_id %}
+    $("#promotion").val("{{data.p_id}}")
+    {% endif %}
+});
+</script>
+{% endblock %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("active")
+    });
+    {% endblock %}
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/promotion">
+    大促活动：
+    <select class="input form-control" name="promotion" id="promotion">
+    <option value="all">所有活动</option>
+    {% for d in data.promotion%}
+    <option value="{{d.id}}">{{d.desc}}{% if d.module%}-{{d.module}}{% endif %}</option>
+    {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-info">确定</button>
+</form>
+<br/>
+<table class="table bs-border table-striped table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>大促描述</th>
+      <th>接口描述</th>
+      <th>序号</th>
+      <th>说明</th>
+      <th>结束时间</th>
+      <th>数目</th>
+      <th>tps</th>
+      <th>平均时间</th>
+      <th>错误</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in data.record%}
+  {% for i in d.interface%}
+  {% for de in i.detail%}
+    <tr>
+      <td>{{d.desc}}</td>
+      <td>{{i.desc}}</td>
+      <td>{{de.index}}</td>
+      <td>{{de.desc}}</td>
+      <td>{{de.end}}</td>
+      <td>{{de.options.count}}</td>
+      <td>{{de.options.tps}}</td>
+      <td>{{de.options.avg_time}}</td>
+      <td>{{de.options.error}}</td>
+    </tr>
+  {% endfor %}
+  {% endfor %}
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+{% block right %}
+
+{% endblock %}

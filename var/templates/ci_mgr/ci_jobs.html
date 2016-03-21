@@ -1,0 +1,130 @@
+{% extends "ci_mgr/ci_base.html" %}
+{% block script %}
+<script>
+
+$(document).ready( function () {
+    var del_job_id = 0; 
+
+    //$('#table_id').DataTable();
+    $("#table_id").DataTable({
+                paging: true,//分页
+                ordering: true,//是否启用排序
+                searching: true,//搜索
+            }
+        );
+});
+
+
+function show_del_dialog(id){
+    del_job_id = id;
+    $('#del-dialog').modal();
+
+}
+
+
+function delete_job(){
+    console.log(del_job_id)
+    var post_data = {}
+    post_data['id'] = del_job_id
+    $.post(
+        "/ci_mgr/rm/job",
+        JSON.stringify(post_data),
+        function(data, status){
+          if(status == 'success'){
+                if(data.status == 'fail'){
+                    $("#del-dialog .modal-body").html('<div class="alert alert-danger" role="alert">'+ data.message + '</div>')
+                }
+                else{
+                    $("#del-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                }                        
+
+          }else{
+
+                $("#del-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+          }
+          $("#del_confirm").css('display', 'none')
+        }
+    );//这里返回的类型有：json,html,xml,text
+}
+
+
+
+</script>
+{% endblock %}
+
+
+{% block specify %}
+<div class="col-md-9 col-lg-9 " style="margin-top:-40px">
+  
+
+  <div class="page-header h3" >现有Jobs
+    <a class='btn btn-xs btn-success' style="float:right; margin:0 0 10px 10px" href="/ci/job/create/?module_id={{data.current_module.id}}" target='_blank'>新建</a>
+  </div>
+  <div class='col-md-12 col-lg-12' style="margin-bottom:20px">
+    <table id="table_id" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>名字</th>
+                <th>所属模块</th>
+                <th>类型</th>
+                <th>创建时间</th>
+                <th>创建者</th>
+                <th>对应jenkins job</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for j in data.jobs %}
+            <tr>
+                <td>{{j.name}}</td>
+                <td>{{j.module}}</td>
+                <td>{{j.type}}</td>
+                <td>{{j.createTime}}</td>
+                <td>{{j.user}}</td>
+                <td><a href="http://jenkins.meiliworks.com/job/{{j.jenkins_name}}" target='_blank'>{{j.jenkins_name}}</a></td>
+                <!--td><a class='fa-search fa' style="float:right; margin-right:10px" onclick="alert('12')"></a></td-->
+                <td>
+                    <a class='btn btn-xs btn-link' style="float:right; margin-right:10px"  href="/ci/job/modify?job_id={{j.id}}" target="_blank">编辑</a>
+                    <a class='btn btn-xs btn-link' style="float:right; margin-right:10px;color:red" onclick="show_del_dialog('{{j.id}}')">删除</a>
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<div id="del-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="task-dialog-label">删除Job</h4>
+            </div>
+            <div class="modal-body" style='height:100%'>
+                    确定删除吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id='del_confirm' onclick='delete_job()'>确认</button>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+</div>
+
+
+<script type="text/javascript">
+  
+  $('#table_id')
+    .removeClass( 'display' )
+    .addClass('table table-striped table-bordered');
+
+</script>
+
+
+{% endblock %}
+

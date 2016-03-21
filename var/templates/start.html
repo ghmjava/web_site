@@ -1,0 +1,2645 @@
+<!DOCTYPE html>
+
+
+
+
+  <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+  <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+  <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <html class="no-js">
+  <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ello Mobile Broadband Entertainment</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/png" href="http://ello.com.au/wp-content/themes/ello/http://ello.com.au/wp-content/themes/ello/assets/images/favicon.png"/>
+    <link rel="stylesheet" href="http://ello.com.au/wp-content/themes/ello/assets/css/main.css">
+    <link rel="stylesheet" href="http://ello.com.au/wp-content/themes/ello/assets/css/slider.css">
+    <link rel="stylesheet" href="http://ello.com.au/wp-content/themes/ello/assets/css/modified.css">
+
+<!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+     <style>
+     .el-tab-menu {height:100%!important;}
+     .el-tab {height:100%!important;}
+     .el-tab-content.row{display:none;}
+     .el-tab-content.row.active{display:block;}
+     select#select-location {color:666; padding-top:0;}
+     #broadband .braodband-form input[type="text"]{color:#666; padding-top:15px;}
+     #broadband .braodband-form input[type="text"] {color:#666; padding-top:15px;}
+     #offermodal {background:#d9d8d8;}
+     #ie8-only{display:block;}
+     #ajax-loader-addresss{display:none;}
+     div.el-tab-menu div.list-group > a{min-height:115px;}
+     #broadband .list-group > a{min-height:115px;}
+     .letsgo-form input {padding-top:10px;}
+     </style>
+
+     <![endif]-->
+     <script src="http://ello.com.au/wp-content/themes/ello/assets/js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+     <script src="http://ello.com.au/wp-content/themes/ello/assets/js/vendor/jquery-1.11.1.min.js"></script>
+     <!-- BootstrapValidator JS -->
+
+<!--<script src="assets/js/jquery.fittext.js"></script>
+  <script src="assets/js/jquery.quickfit.js"></script> -->
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/vendor/bootstrap.min.js"></script>
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/vendor/jquery.matchHeight.js"></script>
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/bootstrap-slider.js"></script>
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/jquery.validate.pack.js"></script>
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/main.js"></script>
+  <script src="http://ello.com.au/wp-content/themes/ello/assets/js/jquery.fs.picker.js"></script>
+
+
+
+  <link rel="stylesheet" type="text/css" href="http://ello.com.au/wp-content/themes/ello/assets/css/jquery-ui.min.css">
+  <script type="text/javascript" src="http://ello.com.au/wp-content/themes/ello/assets/js/jquery-ui.min.js"></script>
+  <!--[if lt IE 9]>
+       <script type="text/javascript" src="http://ello.com.au/wp-content/themes/ello/assets/js/vendor/jquery.placeholder.min.js"></script>
+       <script type="text/javascript">
+          $(document).ready(function(){
+              $('input, textarea').placeholder();
+          });
+
+       </script>
+
+       <![endif]-->
+
+       <style>
+        #para_boradband {
+          /*overflow: hidden;*/
+        }
+        #broadband .table-cell.make-bottom {
+          vertical-align: bottom;
+          transition: all .4s ease-in-out;
+        }
+        /*added css for mobile parallax*/
+        #para_mobile {
+          overflow: hidden;
+        }
+        #mobile .table-cell.make-bottom {
+          vertical-align: bottom;
+        }
+        /*added css for entertainment  parallax*/
+        #para_entertainment {
+          overflow: hidden;
+        }
+        #entertainment .table-cell.make-bottom {
+          vertical-align: bottom;
+        }
+        /*added css for bundles  parallax */
+        #para_bundles {
+          overflow: hidden;
+        }
+        #ello_bundles .table-cell.make-bottom {
+          vertical-align: bottom;
+        }
+
+        #ajax-loader-address{
+          display:none;
+        }
+        .inside-ello{
+          display:none;
+        }
+
+        .outside-ello {
+          display:none;
+        }
+
+        .show-processing{
+          display:none;
+        }
+
+        .processing-text {
+          display:none;
+        }
+
+        .broadband-findmore{
+          display:none;
+        }
+        #ie8-only{display:none;}
+
+
+
+      </style>
+
+
+
+
+    </head><style type="text/css">
+  .ui-autocomplete { max-height: 400px; overflow-y: scroll; overflow-x: hidden;}
+
+</style>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="60" >
+<!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+            <![endif]-->
+
+                        <section id="paybillform" class="paybill-form">
+              <div id="paybill-close"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/paybill-close.png"></div>
+                                    <div class="container">
+                                      <div class="row">
+                                        <div class="form-block form-block--Step1">
+                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center form-pitch">Which bill would you like to pay?</div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-60">
+                                              <button type="button" class="btn btn-yellow m-15 btn-ello-type" data-value="people"  >Ello People</button>
+                                              <button type="button" class="btn btn-yellow m-15 btn-ello-type" data-value="business"  >Ello Business</button>
+
+
+
+                                            </div>
+
+
+
+                                        </div>
+                                          <div class="form-block form-block--Step2">
+                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center form-pitch">Please choose a payment method </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center mb-60">
+                                              <button type="button" class="btn btn-yellow m-15 btn-ello-pay-type" id="pay-credit-card">Credit Card</button>
+                                              <button type="button" class="btn btn-yellow m-15 btn-ello-pay-type" id="pay-paypal" >Paypal</button>
+
+
+
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="form-block  form-block--Step3">
+
+                                          <div class="toogle-block js-toggle-block">
+
+                                              <fieldset>
+    <input type="checkbox" id="checkbox_1" name="checkbox_1" value="Checkbox One" />
+
+    <label for="checkbox_1">One</label>
+</fieldset>
+
+                                          </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center form-pitch">Pay a Bill using PayPal</div>
+                                        <form role="form"  method="post" id="paypal_form" name="paypal_form" action="https://www.paypal.com/cgi-bin/webscr">
+                                          <div class="col-xs-12 col-sm-6 col-md-3  col-lg-3 ">
+                                            <div class="form-group">
+                                              <input type="text" class="form-control" name="item_number" id="accountno" placeholder="Account Number">
+                                            </div>
+                                          </div>
+                                          <div class="col-xs-12 col-sm-6 col-md-3  col-lg-3 ">
+                                            <div class="form-group">
+                                              <input type="text" class="form-control" name="invoice" id="invoiceno" placeholder="Invoice Number">
+                                            </div>
+                                          </div>
+                                          <div class="col-xs-12 col-sm-6 col-md-3  col-lg-3 ">
+                                            <div class="form-group">
+                                              <input type="email" class="form-control" id="paypal_contact_email" name="email" placeholder="Contact email">
+                                            </div>
+                                          </div>
+                                          <div class="col-xs-12 col-sm-6 col-md-3  col-lg-3 ">
+                                            <div class="form-group">
+                                              <input type="text" class="form-control" id="show_amount" name="show_amount" placeholder="Payment amount">
+                                              <input type="hidden" class="form-control" id="amount" name="amount" placeholder="Payment amount">
+                                            </div>
+                                          </div>
+                                          <!-- work here -->
+                                          <div class="show-processing col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center"><img src="assets/images/ajax-loader-old.gif"></div>
+                                          <div class="processing-text col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">Your message is successfully sent.</div>
+                                          <!-- work ends -->
+                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+
+
+                                            <input type="hidden" id="paypal_business" name="business" value="seller_1329215415_biz@live.com">
+                                            <input type="hidden" name="cmd" value="_xclick">
+                                            <input type="hidden" name="item_name" id="item_name" value="Ello Bill Payment">
+
+
+                                            <input type="hidden" name="no_shipping" value="1">
+                                            <input type="hidden" name="currency_code" value="AUD">
+                                            <input type="hidden" name="handling" value="0">
+                                            <input type="hidden" name="cancel_return" value="http://ello.com.au/?payment=cancel">
+                                            <input type="hidden" name="return" value="http://ello.com.au/?payment=success">
+                                            <a href="javascript:void(0);" class="change-link">Change Payment Method</a>
+                                            <button type="submit" class="btn btn-yellow" id="paypal_submit"  >Proceed to PayPal</button>
+                                          </div>
+                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 icon-paypal"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-paypal.png"></div>
+                                        </form>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </section>
+
+  <style>
+  .form-block--Step2, .form-block--Step3{
+    display: none;
+  }
+   .form-block--Step1{
+    /*display: none;*/
+  }
+
+  .paybill-form .btn-yellow.m-15{
+    margin: 0 15px;
+  }
+
+   .paybill-form .mb-60{
+
+    margin-bottom: 86px;
+   }
+
+   a.change-link{
+    font-size: 16px;
+margin-right: 30px;
+color: #053d4e;
+text-decoration: underline;
+}
+
+   a.change-link:hover{
+    text-decoration: none;
+   }
+
+   /*
+ * Picker v3.1.2 - 2014-11-25
+ * A jQuery plugin for replacing default checkboxes and radios. Part of the formstone library.
+ * http://formstone.it/picker/
+ *
+ * Copyright 2014 Ben Plum; MIT Licensed
+ */
+
+.picker-element {
+  opacity: 0;
+  position: absolute;
+  -webkit-transition: none;
+          transition: none;
+  z-index: -1;
+}
+.no-touch .picker-element {
+  left: -99999px;
+}
+.picker {
+  cursor: pointer;
+  margin: 0 0 10px 0;
+  overflow: hidden;
+}
+.picker .picker-label {
+  color: #888;
+  cursor: pointer;
+  display: block;
+  float: left;
+  font-size: 14px;
+  line-height: 16px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.picker .picker-handle {
+  border: 1px solid #ccc;
+  display: block;
+  float: left;
+  height: 16px;
+  margin: 0 5px 0 0;
+  width: 16px;
+}
+.no-touch .picker:hover .picker-label {
+  color: #555;
+}
+.no-touch .picker:hover .picker-handle {
+  border-color: #aaa;
+}
+.picker.focus .picker-label {
+  color: #555;
+}
+.picker.focus .picker-handle {
+  border-color: #aaa;
+}
+.picker.picker-radio .picker-handle {
+  border-radius: 8px;
+}
+.picker.picker-radio .picker-flag {
+  background: #fff;
+  border-radius: 4px;
+  display: block;
+  height: 8px;
+  margin: 3px;
+  width: 8px;
+}
+.picker.picker-radio.focus .picker-flag {
+  background: #ddd;
+}
+.picker.picker-radio.checked .picker-flag {
+  background: #999;
+}
+.no-touch .picker.picker-radio:hover .picker-flag {
+  background: #ddd;
+}
+.no-touch .picker.picker-radio.disabled:hover .picker-flag {
+  background: #fff;
+}
+.picker.picker-checkbox .picker-handle {
+  border-radius: 3px;
+}
+.picker.picker-checkbox .picker-flag {
+  background: #fff;
+  border-radius: 2px;
+  display: block;
+  height: 100%;
+  margin: 0;
+  width: 100%;
+}
+.picker.picker-checkbox.checked .picker-flag {
+  background: #ffffff url(jquery.fs.picker-icon.png) no-repeat center;
+}
+.picker.picker-toggle {
+  padding: 0 0 0;
+  position: relative;
+  max-width: 200px;
+}
+.picker.picker-toggle .picker-toggle-label {
+  color: #053d4e;
+  font-size: 16px;
+  position: absolute;
+  text-transform: none;
+  top: 0;
+  z-index: 9;
+  width: 50%;
+  text-align: center;
+  line-height: 30px;
+}
+.picker.picker-toggle .picker-toggle-label.on {
+  left: 0;
+}
+.picker.picker-toggle .picker-toggle-label.off {
+  color: #fff;
+  right: 0;
+}
+.picker.picker-toggle .picker-label {
+  display: none;
+}
+.picker.picker-toggle .picker-handle {
+  border-radius: 5px;
+  height: 30px;
+  position: relative;
+  width: 100%;
+}
+.picker.picker-toggle .picker-flag {
+  background: #053d4e;
+  border-radius: 2px;
+  display: block;
+  height: 100%;
+  left: 50%;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  width: 50%;
+  -webkit-transition: left 0.1s linear;
+          transition: left 0.1s linear;
+}
+.picker.picker-toggle.checked .picker-toggle-label.on {
+  color: #fff;
+}
+.picker.picker-toggle.checked .picker-toggle-label.off {
+  color: #053d4e;
+}
+.picker.picker-toggle.checked .picker-flag {
+  background: #1c4656;
+  left: 0;
+}
+.picker.disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.picker.disabled .picker-label,
+.picker.disabled .picker-handle {
+  cursor: default;
+}
+.no-touch .picker.disabled:hover .picker-label {
+  color: #fff;
+}
+.no-touch .picker.disabled:hover .picker-handle {
+  border-color: #053d4e;
+}
+
+
+  </style>
+
+  <script>
+  var ello_type="people";
+
+  /*var paydata={
+      card:{
+        business:"https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=business",
+        people:"https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=people"
+      },
+      paypal:{
+        business:"finance.business@ello.com.au",
+        people:"finance.people@ello.com.au"
+      }
+  };*/
+
+  var paydata={
+      card:{
+        business:"https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=business",
+        people:"https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=people"
+      },
+      paypal:{
+        business:"finance.business@ello.com.au",
+        people:"finance.people@ello.com.au"
+      }
+  };
+
+
+
+
+  /*var paydata['paypal_business']="finance.business@ello.com.au";
+  var paydata['paypal_people']="finance.people@ello.com.au";
+
+  var paydata['card_business']="https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=business";
+  var paydata['card_people']="https://paybyweb.nab.com.au/SecureBillPayment/start?org_id=I8W&bill_name=people";*/
+
+  $(document).ready(function(){
+
+    $(".js-toggle-block input[type=checkbox]").picker({
+      toggle: true,
+      labels:{
+        on  : "People",
+        off: "Business"
+      },
+      onStateChange:function(state){
+          if(state==true){
+                $("#pay-credit-card").attr('data-url',paydata.card['people']);
+                $("#pay-paypal").attr('data-url',paydata.paypal['people']);
+                $("#paypal_business").attr('value',paydata.paypal['people']);
+          }
+          else
+          {
+
+                $("#pay-credit-card").attr('data-url',paydata.card['business']);
+                $("#pay-paypal").attr('data-url',paydata.paypal['business']);
+                $("#paypal_business").attr('value',paydata.paypal['business']);
+          }
+      }
+    });
+
+    $(".btn-ello-type").on('click',function(){
+       var pay_type=$(this).data('value');
+       //alert(paydata.card.business);
+
+          $("#pay-credit-card").attr('data-url',paydata.card[pay_type]);
+          $("#pay-paypal").attr('data-url',paydata.paypal[pay_type]);
+          $("#paypal_business").attr('value',paydata.paypal[pay_type]);
+          $(".form-block--Step1").hide();
+          $(".form-block--Step2").show();
+
+          if(pay_type=="people") {
+            $(".picker-toggle").addClass('checked');
+          }
+
+    });
+
+
+    $('#pay-paypal').on('click',function(){
+        $(".form-block--Step2").hide();
+        $(".form-block--Step3").show();
+    });
+
+
+    $('#pay-credit-card').on('click',function(){
+      window.location.href=$(this).data('url');
+
+    });
+
+    $('.change-link').on('click',function(){
+       $(".form-block--Step2").show();
+       $(".form-block--Step3").hide();
+
+    });
+
+
+
+
+  });
+  </script>
+            <header class="el-header el-header__fixed">
+  <div class="container">
+    <div class="row">
+      <nav id="myScrollspy" class="navbar navbar-default navbar-static" role="navigation">
+        <div class="navbar-header">
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-js-navbar-scrollspy"> <img src="http://ello.com.au/wp-content/themes/ello/assets/images/mobile-menu-navicon.png"> </button>
+          <a href="" class="navbar-brand"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/logo.png" alt=""></a> </div>
+          <div class="collapse navbar-collapse bs-js-navbar-scrollspy nav-default-color pull-right">
+            <ul class="nav navbar-nav">
+              <li><a href="#broadband" class="js-scrollTo">Broadband</a></li>
+              <li ><a href="#mobile" class="js-scrollTo">Mobile</a></li>
+              <li><a href="#entertainment" class="js-scrollTo">Entertainment</a></li>
+              <li><a href="#bundles" class="js-scrollTo">Bundles</a></li>
+              <li class="dropdown"> <a href="tel:1300355635" id="callUs" class="dropdown-toggle" data-toggle="dropdown"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-phone.png" class="visible-xs">1300 ello ello </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="callUs">
+                  <li><a href="tel:1300355635" tabindex="-1" class="freecall visible-xs" id="">Call ello</a></li>
+                  <li><a href="#jmeter" tabindex="-1" class="requestcall" id="requestacall">Request a call</a></li>
+                </ul>
+              </li>
+              <!--<li class="paybill"><a id="paybill">Pay Bill</a></li>-->
+              <li class="dropdown" id="myaccount"><a class="myaccount" class="dropdown-toggle" data-toggle="dropdown">ACCOUNTS</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="callUs">
+                  <li><a id="paybill">Pay Bill</a></li>
+                  <!--<li><a href="https://ua.selcomm.com:8118/ello/SelfCare" target="_blank">My Account</a></li>-->
+                  <li><a href="https://portal.selcomm.com/Ello/SelfCare" target="_blank">My Account</a></li>
+                </ul>
+              </li>
+
+            </ul>
+          </div>
+        </nav>
+        <!-- end of nav -->
+
+      </div>
+    </div>
+  </header>
+                          <section class="main-header js-full--height">
+                <div class="main-bg"></div>
+                <div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+
+                  <ol class="carousel-indicators">
+                                    </ol>
+
+                <div class="carousel-inner" role="listbox">
+
+
+
+
+                  <div class="item active ">
+                    <div class="slider-container">
+                      <div class="table-cell">
+                        <div class="main-header--top">
+                          <div class="container"> </div>
+                        </div>
+                        <div class="main-header--descBox">
+                          <div class="main-header--priceblock js-fittext-price">
+
+                            <div class="banner-offer">
+
+
+
+                               <div class="yellow-offer yellow " >
+                                                                  <div class="offer-text">
+                                   <div class="text-details">
+                                     free WiFi modem                                                                        </div>
+                                 </div>
+                               </div>
+
+
+
+                               <div class="yellow-offer yellow " >
+                                                                  <div class="offer-text">
+                                   <div class="text-details">
+                                     free shipping                                                                        </div>
+                                 </div>
+                               </div>
+
+
+
+                               <div class="yellow-offer yellow " >
+                                                                  <div class="offer-text">
+                                   <div class="text-details">
+                                     no connection fee                                                                        </div>
+                                 </div>
+                               </div>
+
+
+
+                               <div class="yellow-offer blue big" >
+                                   <div class="offer-text">
+                                       <div class="text-details">
+                                         save                                                                          <br/><span>$650</span>
+                                       </div>
+                                    </div>
+                               </div>
+
+                            </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+            </div>
+
+            <!-- Pure Chat Snippet -->
+    <!--
+<script type='text/javascript'>
+  (function () {  var done = false;
+          var script = document.createElement('script');
+          script.async = true;
+          script.type = 'text/javascript';
+          script.src = 'https://app.purechat.com/VisitorWidget/WidgetScript';
+          document.getElementsByTagName('HEAD').item(0).appendChild(script);
+          script.onreadystatechange = script.onload = function (e) {
+                                      if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+                                        var w = new PCWidget({ c: '3644478c-8811-4528-a8a1-95d128242176', f: true });
+                                        done = true;
+                                        }
+                                        };
+                                        })();
+                                      </script> -->
+                                      <!--[if !(IE 8)]><!-->
+                                      <script src="path/to/external/script"></script>
+                                      <script type='text/javascript'>
+                                        (function () {            var done = false;         var script = document.createElement('script');          script.async = true;          script.type = 'text/javascript';          script.src = 'https://app.purechat.com/VisitorWidget/WidgetScript';         document.getElementsByTagName('HEAD').item(0).appendChild(script);          script.onreadystatechange = script.onload = function (e) {            if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {              var w = new PCWidget({ c: '68731bd8-c529-456e-8b0d-7bf1bbeb3a71', f: true });             done = true;            }         };        })();
+                                      </script>
+                                      <!--<![endif]-->
+
+
+
+
+                                      <!-- End Pure Chat Snippet -->
+                                      <div class="text-center main-header--button">
+                                        <button type="button" class="btn btn-yellow dropdown-toggle" data-toggle="dropdown" id="letsgo" onclick="ga('set', 'nonInteraction', true);ga('send', 'event', { eventCategory: 'Contact', eventAction: 'Lets Go-HomePage', eventLabel: 'Went to Details Form', eventValue: 1});">Let’s go</button>
+                                      </div>
+                                    </div>
+                                  </section>
+
+
+  <!-- el section bundled end -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="footer-left col-lg-4 col-md-4 col-sm-4 col-xs-12">
+          <div class="row">
+            <div class="footer-logo col-lg-12 col-md-12 col-sm-12 col-xs-12">ello</div>
+          </div>
+          <div class="row">
+            <div class="contact col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <ul>
+                <li><a href="tel:1300355635"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-phone-white.png">1300 ello ello (1300 355 635)</a></li>
+                <li><a href="mailto:sales@ello.com.au"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-bubble-white.png"> General Enquiries</a></li>
+                <li><a href="mailto:care@ello.com.au"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-support-person.png"> Customer Support</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+           <div class="connect col-lg-12 col-md-12 col-sm-12 col-sm-12">
+
+             <ul>
+               <li>Connect With Us</li>
+               <li><a href="https://twitter.com/ElloAustralia" target="_blank"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-twitter.png"></a></li>
+               <li><a href="https://www.facebook.com/ElloAustralia" target="_blank"><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-facebook.png"></a></li>
+             </ul>
+           </div>
+         </div>
+       </div>
+       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+          <div class="row">
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable ">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Legal <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li><a href="http://ello.com.au/download/?id=71">Privacy Statement</a></li>
+	<li><a href="http://ello.com.au/download/?id=73">Warranty Information Statement</a></li>
+	<li><a href="http://ello.com.au/download/?id=69">Information About Our Services</a></li>
+	<li><a href="http://ello.com.au/download/?id=72">Standard Form Of Agreement</a></li>
+	<li><a href="http://ello.com.au/download/?id=68">Complaint Handling Process</a></li>
+	<li><a href="http://ello.com.au/download/?id=74">Appointment Of Representative</a></li>
+	<li><a href="http://ello.com.au/download/?id=67">Acceptable Usage Policy</a></li>
+	<li><a href="http://ello.com.au/download/?id=76">Financial Hardship Policy</a></li>
+	<li><a href="http://ello.com.au/download/?id=181">Information on Billing</a></li>
+	<li><a href="http://ello.com.au/download/?id=182">Networks Used</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable no-space">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Critical Info Summaries &#8211; Current <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul class="ul1"><li class="li2"><a href="http://ello.com.au/download/?id=174">Home Premium (23032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=134">Home Value (23012015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=173">Home Basic (23032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=133">Home Saver (23012015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=254">Home Broadband Plan Unlimited (04062015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=253">Home Broadband Plan 100GB (05062015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=252">Home Broadband Plan 40GB (05062015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=279">Home Ultimate Easy (17062015-v4)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=257">Home Ultimate with Tablet (05062015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=154">Home Bundle Plan Unlimited (19032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=255">Home Bundle Plan 250GB (19032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=155">Home FTTB Bundle (19032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=130">Home NBN Fibre Value Bundle (27022015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=129">Home NBN Fibre Saver Bundle (27022015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=245">Home Mobile Broadband 24 Months (05052015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=246">Home Mobile Broadband Monthly (05052015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=156">Mobile Buck Plans (19032015)</a></li>
+	<li class="li2"><a href="http://ello.com.au/download/?id=251">Broadband&Acirc;&nbsp;Modem (05062015)</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable no-space">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Critical Info Summaries &#8211; Archived <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li><a href="http://ello.com.au/download/?id=65">Consumer Saver Plan (Home Phone Service)</a></li>
+	<li><a href="http://ello.com.au/download/?id=61">Consumer Broadband Plan 40GB</a></li>
+	<li><a href="http://ello.com.au/download/?id=62">Consumer Broadband Plan 100GB</a></li>
+	<li><a href="http://ello.com.au/download/?id=63">Consumer Broadband Plan Unlimited</a></li>
+	<li><a href="http://ello.com.au/download/?id=60">Consumer Broadband Plan Unlimited (DL3)</a></li>
+	<li><a href="http://ello.com.au/download/?id=175">Home Broadband Unlimited DL3- Monthly (25032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=136">Home Broadband Unlimited DL3 (02032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=159">Home Broadband Unlimited DL3 (19032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=122">Home Broadband Plan Unlimited (04022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=121">Home Broadband Plan 100GB (04022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=120">Home Broadband Plan 40GB (04022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=131">Home Ultimate Easy (06032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=157">Home Ultimate Easy (19032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=132">Home Ultimate with Tablet (29012015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=158">Home Ultimate with Tablet (19032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=138">Home Ultimate with TV (02032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=161">Home Ultimate with TV (19032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=163">Home Ultimate with TV (24032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=137">Home Ultimate with Kollab Voucher (13022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=160">Home Ultimate with Kollab Voucher (19032015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=124">Home Bundle Plan Unlimited (23012015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=123">Home Bundle Plan 250GB (23012015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=125">Home FTTB Bundle (25022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=64">Consumer Mobile Buck Plans</a></li>
+	<li><a href="http://ello.com.au/download/?id=135">Mobile Buck Plans (24022015-v3)</a></li>
+	<li><a href="http://ello.com.au/download/?id=126">Home Mobile Broadband 24 Months (10022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=242">Home Mobile Broadband 24 Months (22042015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=127">Home Mobile Broadband Monthly (10022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=128">Home Modem (17022015)</a></li>
+	<li><a href="http://ello.com.au/download/?id=256">Home Ultimate Easy (04062015)</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable no-space">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Mobile Coverage Checker <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li><a href="http://www.optus.com.au/network/mobile/coverage">Optus</a></li>
+	<li><a href="http://www.vodafone.com.au/aboutvodafone/network/checker">Vodafone</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+                              </div>
+               </div>
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+             <div class="row">
+
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable ">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Hardware Information <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li><a href="http://www.netcommwireless.com/product/adsl/nb604n">Netcomm ADSL2+ Wireless N300 Modem Router</a></li>
+	<li><a href="http://www.netcommwireless.com/product/vdsl/nf4v">Netcomm VDSL/ADSL Wifi Gigabit Modem Router NF4V</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable no-space">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>Download Forms <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li>ello People</li>
+	<li><a href="http://ello.com.au/download/?id=225">Direct Debit Request Form (People)</a></li>
+	<li><a href="http://ello.com.au/download/?id=205">Change of Ownership Application Form- New Owner (Home)</a></li>
+	<li><a href="http://ello.com.au/download/?id=204">Change of Ownership Application Form- Existing Owner (Home)</a></li>
+	<li>ello Business</li>
+	<li><a href="http://ello.com.au/download/?id=224">Direct Debit Request Form (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=199">Change of Ownership Application Form- New Owner (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=198">Change of Ownership Application Form - Existing Owner (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=201">Hosted PBX/SIP Application Form (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=200">Data Application Form (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=203">Number Porting Application Form - ISDN/SIP (Business)</a></li>
+	<li><a href="http://ello.com.au/download/?id=202">Number Porting Application Form- Inbound ISDN/SIP (Business)</a></li>
+</ul>
+&nbsp;
+
+&nbsp;</body></html>
+
+                  </div>
+              </div>
+
+
+              <div class="footer-mid col-lg-12 col-md-12 col-sm-12 col-xs-12 footer-expandable no-space">
+                  <div class="legal col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <span>International Rates <a href="javascript:void(0);" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-toggle.png"></a></span>
+
+                      <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body><ul><li><a href="http://ello.com.au/download/?id=264">Mobile International Rates</a></li>
+	<li><a href="http://ello.com.au/download/?id=263">Home Phone International Rates</a></li>
+	<li><a href="http://ello.com.au/download/?id=266">Business Standard International Rates</a></li>
+	<li><a href="http://ello.com.au/download/?id=265">Business Saver International Rates</a></li>
+</ul></body></html>
+
+                  </div>
+              </div>
+
+
+         </div>
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+<div class="digitalagency">
+  <div class="container">
+   <div class="row">
+    <div class="poweredby col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <a href="http://andmine.com" title="" target="_blank">Digital Agency Sydney<img src="http://andmine.com/AndMine Icon/footer/andmine3.png" style="margin:0 0 -2px 4px; height:12px;" alt="" /></a></span>
+   </div>
+ </div>
+</div>
+</div>
+<div class="livechat">
+  <button class="purechat-button-expand" type="button">
+    <img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-livechat.png"> Live Chat
+  </button>
+</div>
+
+
+
+
+<!-- added by sabi-->
+<script type="text/javascript">
+
+
+var curmonth='24months';
+
+var curtype="onnet";
+var curtypenbn="offnet";
+
+var curpackage="40-gb";
+
+var activeindex=2;
+
+var network="TELSTRA";
+
+var responsemessage="";
+var responsemessagenbn="";
+var nbnloaded=false;
+var telstraloaded=false;
+
+
+$(window).load(function(){
+
+
+  $('body').scrollTop(0);
+
+
+});
+
+ $(window).scroll(function(){
+
+   var scrolltop=$('body').scrollTop();
+ //console.log(scrolltop);
+
+});
+
+
+
+
+
+</script>
+
+<script>
+
+
+
+  $(document).ready(function() {
+
+    $("#ajax-loader-address").hide();
+
+
+
+
+    $('#processing').modal('hide');
+
+    //populateRate(curmonth,curtype,curpackage);
+
+     /**/
+
+
+
+
+
+
+
+
+
+$(window).scroll(function(){
+
+var top=$(window).scrollTop();
+    //console.log("top is "+top+" "+$("#para_boradband").height());
+
+    if(top>800) {
+      //console.log("paused");
+      $('.carousel').carousel('pause');
+    }
+    else
+    {
+      $('.carousel').carousel('cycle');
+    }
+
+
+  });
+
+
+
+
+
+
+
+$("#finish").click(function(){
+    //added by prakash only if
+
+    if($("#broadband_findmore").valid()) {
+      ga('set', 'nonInteraction', true);ga('send', 'event', { eventCategory: 'Email Enquiries', eventAction: 'Emailed Customer Support', eventValue: 1});
+
+      $.ajax({
+        type:'POST',
+        url:"http://ello.com.au/wp-content/themes/ello/remote/signup_form.php?to=sales@ello.com.au",
+        dataType:'json',
+        data:$("#broadband_findmore").serialize(),
+        beforeSend:function(xhr){
+                  //alert("data");
+
+                  $(".show-processing").show();
+
+
+                },
+                success:function(response){
+
+                // form.reset();
+                $("#broadband2").show();
+                $('.broadband-findmore').hide();
+
+                $('.processing-text').hide();
+
+                $(".show-processing").hide();
+
+				// add for prakash
+				(function() {
+  var _fbq = window._fbq || (window._fbq = []);
+  if (!_fbq.loaded) {
+    var fbds = document.createElement('script');
+    fbds.async = true;
+    fbds.src = '//connect.facebook.net/en_US/fbds.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(fbds, s);
+    _fbq.loaded = true;
+  }
+})();
+		window._fbq = window._fbq || [];
+window._fbq.push(['track', '6033867098276', {'value':'0.00','currency':'AUD'}]);
+		var nos=' <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6033867098276&amp;cd[value]=0.00&amp;cd[currency]=AUD&amp;noscript=1" /></noscript>';
+		  nos;
+
+	//
+                return true;
+              }
+            });
+    }
+  //end by praksh
+
+});
+
+
+$(".skip").click(function(event) {
+  /* Act on the event */
+  $("#broadband2").show();
+  $('.broadband-findmore').hide();
+
+  $("#fullpage").show();
+
+  $("#broadbandnbn-first").hide();
+  $("#switchbtn").show();
+
+});
+
+
+
+//by prakash contact form validation
+jQuery.validator.addMethod("notEqual", function(value, element, param) {
+  return this.optional(element) || value != param;
+}, "Please specify a different (non-default) value");
+
+
+
+$("#contact_form").validate({
+
+  rules:{
+    fullname:{
+      required:true,
+      notEqual:"Name"
+
+    },
+    mobile:{
+      required:true,
+      notEqual:"Mobile"
+
+    },
+    email:{
+      required:true,
+      email:true,
+      notEqual:"Email"
+
+    },
+    postcode:{
+      required:true,
+      notEqual:"Postcode"
+
+    }
+
+  },
+  messages:{
+    fullname:{
+      required:"Name is required",
+       notEqual:"Name is required",
+
+    },
+
+    mobile:{
+      required:"Mobile Number is required",
+      notEqual:"Mobile Number is required",
+
+    },
+
+
+    email:{
+      required:"Email is required",
+      email:"Please enter valid email",
+      notEqual:"Email is required",
+    },
+
+    postcode:{
+      required:"Postcode is required",
+      notEqual:"Postcode is required",
+
+
+    }
+
+  }
+
+
+
+});
+
+$("#contact_submit").click(function(){
+
+
+     if($("#contact_form").valid()){
+
+      ga('set', 'nonInteraction', true);ga('send', 'event', { eventCategory: 'Contact', eventAction: 'Lets Go-HomePage', eventLabel: 'Submitted Enquiry', eventValue: 1});
+
+      $.ajax({
+        type:'POST',
+        url:"http://ello.com.au/wp-content/themes/ello/remote/contact_submit.php?to=sales@ello.com.au",
+        dataType:'json',
+        data:$("#contact_form").serialize(),
+        beforeSend:function(xhr){
+           // $(form).find('.ajax-loader').show();
+           $(".show-processing").show();
+
+         },
+         success:function(response){
+
+          //$("#contact_form").reset();
+          $("#letsgo-top").hide();
+          $('.show-processing').hide();
+          $('#paybill-close-2').show();
+          $('#letsgo-bottom').show();
+          setTimeout(function(){
+            $('#letsgoform').slideUp();
+          },3000);
+
+          $('#contact_form')[0].reset();
+          var page="hello-world";
+        //add
+		(function() {
+  var _fbq = window._fbq || (window._fbq = []);
+  if (!_fbq.loaded) {
+    var fbds = document.createElement('script');
+    fbds.async = true;
+    fbds.src = '//connect.facebook.net/en_US/fbds.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(fbds, s);
+    _fbq.loaded = true;
+  }
+})();
+		 window._fbq = window._fbq || [];
+		window._fbq.push(['track', '6033868044676', {'value':'0.00','currency':'AUD'}]);
+		var nos=' <noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/tr?ev=6033868044676&amp;cd[value]=0.00&amp;cd[currency]=AUD&amp;noscript=1" /></noscript>';
+		  nos;
+		  //end
+
+		//  runfacebookcode(page);
+          return true;
+        }
+      });
+    }
+
+
+});
+    //end prakash
+
+//validate NBN Form
+$("#nbnform").validate({
+
+  rules:{
+    fullname:{
+      required:true,
+      notEqual:"Name"
+
+    },
+    mobile:{
+      required:true,
+      notEqual:"Mobile"
+
+    },
+    email:{
+      required:true,
+      email:true,
+      notEqual:"Email"
+
+    },
+    postcode:{
+      required:true,
+      notEqual:"Postcode"
+
+    }
+
+  },
+  messages:{
+    fullname:{
+      required:"Name is required",
+       notEqual:"Name is required",
+
+    },
+
+    mobile:{
+      required:"Mobile Number is required",
+      notEqual:"Mobile Number is required",
+
+    },
+
+
+    email:{
+      required:"Email is required",
+      email:"Please enter valid email",
+      notEqual:"Email is required",
+    },
+
+    postcode:{
+      required:"Postcode is required",
+      notEqual:"Postcode is required",
+
+
+    }
+
+  }
+
+
+
+});
+
+
+
+
+
+  });
+
+
+$("#nbn-submit").click(function(){
+
+
+     if($("#nbnform").valid()){
+
+      ga('set', 'nonInteraction', true);ga('send', 'event', { eventCategory: 'Contact', eventAction: 'Lets Go-HomePage', eventLabel: 'Submitted Enquiry', eventValue: 1});
+
+      $.ajax({
+        type:'POST',
+        url:"http://ello.com.au/wp-content/themes/ello/remote/contact_submit.php?to=nbn.alerts@ello.com.au",
+        dataType:'json',
+        data:$("#nbnform").serialize(),
+        beforeSend:function(xhr){
+           // $(form).find('.ajax-loader').show();
+           $(".show-processing").show();
+
+         },
+         success:function(response){
+
+          //$("#contact_form").reset();
+
+          $('.show-processing').hide();
+
+
+
+          $("#nbnnoaddressform").modal('hide');
+
+
+        }
+      });
+    }
+
+
+});
+//form toggle
+
+function runfacebookcode(opt) {
+
+
+  window._fbq = window._fbq || [];
+  if(opt=="kollab")
+    window._fbq.push(['track', '6032244006676', {'value':'0.01','currency':'AUD'}]);
+  else if(opt=="kogan")
+
+    window._fbq.push(['track', '6032244403876', {'value':'0.01','currency':'AUD'}]);
+
+}
+
+function loadBroadband2(){
+  $("#broadband2").show();
+  $('.broadband-findmore').hide();
+
+
+ }
+
+$(document).ready(function(){
+       $("#broadband_findmore").hide();
+       $(".show-processing").hide();
+       $(".processing-text").hide();
+
+
+       $("#frm_broadband_email").validate({
+
+        rules:{
+          address:{
+            required:true,
+
+          }
+
+        },
+        messages:{
+          address:{
+            required:"<span>This field is required</span>",
+
+          }
+
+        }
+
+      });
+
+
+
+
+       //by prakash
+       $("#broadband_findmore").validate({
+
+        rules:{
+          name:{
+            required:true,
+            notEqual:"Name",
+
+          },
+          contact_number:{
+            required:true,
+            notEqual:"Contact Number"
+
+
+          },
+          email:{
+            required:true,
+            email:true,
+            notEqual:"Email"
+
+          }
+
+        },
+        messages:{
+          name:{
+            required:"Name is required",
+            notEqual:"Name is required",
+
+          },
+
+          contact_number:{
+            required:"Contact Number is required",
+            notEqual:"Contact Number is required",
+
+          },
+          email:{
+            required:"Email is required",
+            email:"Please enter valid email",
+            notEqual:"Contact Number is required",
+          }
+
+        }
+
+
+
+
+      });
+
+    //end prakash
+
+
+    //paypal form validation
+
+     $("#paypal_form").validate({
+          rules:{
+              item_number:{
+                required:true,
+                number:true,
+                minlength:6
+              },
+              invoice:{
+                required:true,
+                number:true,
+                minlength:7
+              },
+              email:{
+                required:true,
+                email:true,
+
+              },
+              show_amount:{
+                required:true,
+                //number:true,
+
+              }
+          },
+          messages:{
+              item_number:{
+                required:"must be 6 digits",
+                number:"must be valid number",
+                minlength:"must be 6 digits"
+              },
+              invoice:{
+                required:"must be 7 digits",
+                number:"must be valid number",
+                minlength:"must be 7 digits"
+              },
+              email:{
+                required:"please enter valid email",
+                email:"please enter valid email",
+
+              },
+              show_amount:{
+                required:"please enter valid amount",
+                //number:"please enter valid amount",
+
+              }
+
+          },
+          submitHandler:function(form){
+            $("#item_name").val("Ello Bill Payment(By:"+$('#paypal_contact_email').val()+")");
+            form.submit();
+          }
+    });
+
+
+    $("#show_amount").keyup(function(event){
+         var txt="";
+        if(($(this).val()).length>1)
+          txt=($(this).val()).substring(1,($(this).val()).length);
+        else
+        {
+          if($(this).val()!="$")
+            txt=($(this).val()).substring(0,($(this).val()).length);
+        }
+
+        $(this).val("$"+txt);
+        $("#amount").val(txt);
+        //console.log(event);
+    });
+
+
+
+    $("#go-location, #go-location-switch").click(function(event) {
+     /* Act on the event */
+     address=$(this).find("#select-location option:selected").html();
+
+
+     $.ajax({
+      url: "http://ello.com.au/wp-content/themes/ello/remote/qualify_product_soap.php",
+      dataType: "json",
+      type:'POST',
+      data: {
+        location_id:$("#select-location").val(),
+      },
+      beforeSend:function(xhr){
+       $('#processing').modal('show');
+        $('#processing-switch').modal('show');
+       $('#location-modal').modal('hide');
+       $('#location-modal-switch').modal('hide');
+
+     },
+     success: function( response1 ) {
+
+
+      if(response1.result=="error" || response1.result==null || response1.result==undefined) {
+        $('#processing').modal('hide');
+        $('#processing-switch').modal('hide');
+        $('#error-modal').modal('show');
+        return true;
+      }
+      else
+      {
+       curtype=response1.result;
+       curtypenbn=response1.nbnresult;
+       initSlider(curtype);
+
+       //populateRate(24,response1.result);
+       $("#br-nbn").hide();
+       $("#check_availability").hide();
+       $("#broadband_findmore").show();
+       $('#address').val(address);
+       $('#nbn-address').val(address);
+       $("#broadband").addClass('skroll_stop');
+       //populateRate("24-months",curtype,"unlimited",true);
+
+                                             if(network=="TELSTRA") {
+                                                  populateRate("24-months",curtype,"unlimited",true);
+                                                    $("#nbn-sidebar").show();
+                                                    $("#broadband-sidebar").hide();
+                                                    telstraloaded=response1.result;
+                                               }
+                                                else{
+                                                  populateRateNBN("24-months",true);
+                                                  $("#nbn-sidebar").hide();
+                                                    $("#broadband-sidebar").show();
+                                                    nbnloaded=response1.nbnresult;
+                                                }
+
+
+                                        //hide outside ello
+                                        if(response1.result=="onnet") {
+                                          $('.outside-ello').hide();
+                                          $('.inside-ello').show();
+
+
+                                          $('#package-type').val("Onnet");
+
+                                        }
+                                        else
+                                        {
+                                          $('.outside-ello').show();
+                                          $('.inside-ello').hide();
+
+
+                                          $('#package-type').val("Offnet");
+
+
+                                        }
+
+
+                                      }
+
+                                      $('#processing').modal('hide');
+                                      $('#processing-switch').modal('hide');
+                                    },
+                                    error: function(xhr){
+                                      $('#processing').modal('hide');
+                                      $("#error-modal").modal('show');
+                                    }
+
+
+                                  });
+});
+
+$("#error-refresh").click(function(){
+  $("#error-modal").modal('hide');
+});
+
+$("#go-address").click(function(){
+
+            //return true;
+
+            var addressbox=$("#exampleInputEmail1");
+            if($("#frm_broadband_email").valid()){
+
+              var selected_data=addressbox.data('detail');
+                  //console.log(selected_data.detail);return true;
+                  if(selected_data==undefined || selected_data=="") {
+                    $(".error-address").html('<span>Please Input Valid Address</span>').show();
+                    return true;
+                  }
+
+                  ga('set', 'nonInteraction', true);ga('send', 'event', { eventCategory: 'Availability Check', eventAction: 'Checked Availability', eventValue: 1});
+
+                  var address = $("#exampleInputEmail1").val();
+                  $('.processing-text').hide();
+                  //event.preventDefault();
+                  //$("#processing").show();
+
+                  //now get detail address from QAS.
+
+                  $.ajax({
+                      url: "http://ello.com.au/wp-content/themes/ello/remote/QasAddress.php",
+                      dataType: "json",
+                      type:'GET',
+                      data:"Moniker="+selected_data.detail.Moniker,
+
+                      beforeSend:function(xhr){
+                        $('#processing').modal('show');
+
+                      },
+                      success: function( response_address ) {
+                          //console.log("sagar");
+                         // console.log(response_address);
+
+
+                        $.ajax({
+                              url: "http://ello.com.au/wp-content/themes/ello/remote/get_location_id_soap.php",
+                              dataType: "json",
+                              type:'POST',
+                              data: {
+                                address:response_address.docs
+                              },
+                              beforeSend:function(xhr){
+
+                              },
+                              success: function( response ) {
+                                  //var message=
+
+                                 // console.log(response.message);return true;
+                                    //console.log(response.nbnmessage);
+
+                                    if(response.message!="" && response.message!=undefined){
+                                      //load_address_or_proceed(response.message);
+                                      responsemessage=response.message;
+                                    }
+
+
+                                    if(response.nbnmessage!="" && response.nbnmessage!=undefined){
+                                      //load_address_or_proceed(response.nbnmessage);
+                                      responsemessagenbn=response.nbnmessage;
+                                    }
+
+                                    load_address_or_proceed(response.message,"TELSTRA");
+
+
+                                      //$("#check_availability").hide();
+                                     //$('#processing').modal('hide');
+
+
+                                      },
+                                      error: function(xhr){
+                                        $('#processing').modal('hide');
+                                        $('#processing-switch').modal('hide');
+                                        $("#error-modal").modal('show');
+                                      }
+
+
+                                  });
+
+
+                      }
+                    });
+
+
+
+
+
+    }
+
+
+
+  });
+
+ $("#switchbtn").click(function(event) {
+   /* Act on the event */
+   var text=$(this).html();
+   //alert(text);
+   if(text=="Switch to Broadband") {
+     network="TELSTRA";
+     //alert (telstraloaded);
+        if(telstraloaded==false)
+         populateRate("24-months",curtype,"unlimited",true);
+        else
+          populateRate("24-months",curtype,"unlimited",false);
+
+
+       $(this).html("Switch to NBN");
+
+        //hide outside ello
+        if(curtype=="onnet") {
+          $('.outside-ello').hide();
+          $('.inside-ello').show();
+
+
+        }
+        else
+        {
+          $('.outside-ello').show();
+          $('.inside-ello').hide();
+
+
+
+        }
+
+      }
+      else
+      {
+
+          network="NBN";
+         //alert("curtypenbn "+curtypenbn);
+        if(curtypenbn=="onnet") {
+          $('.outside-ello').hide();
+          $('.inside-ello').show();
+          if(nbnloaded==false)
+            populateRateNBN("24-months",true);
+          else
+             populateRateNBN("24-months",false);
+
+          $(this).html("Switch to Broadband");
+
+
+        }
+        else
+        {
+          $('.outside-ello').show();
+          $('.inside-ello').hide();
+           $(this).html("Switch to NBN");
+           $("#broadband").addClass('modal-backdrop-in');
+           $("#nbnnoaddressform").modal('show');
+
+
+
+        }
+
+
+
+
+      }
+
+
+
+
+
+
+ });
+
+$('#nbnnoaddressform').on('hidden.bs.modal', function () {
+    // do something…
+    $("#broadband").removeClass('modal-backdrop-in');
+})
+
+
+//nbn checkbox click
+
+
+$("#price-tab-container").on('click','.nbncheckbox',function(){
+  //alert("click");
+  var pricedivid=$(this).data('target');
+  var curprice=$(pricedivid).html();
+  //alert(curprice);
+
+  curprice=curprice.substring(1);
+  //alert(curprice+" "+this.checked);
+  curprice=parseFloat(curprice);
+
+  //pdf links
+  var cis=$(this).data('cis');
+  var bundle=$(this).data('bundle');
+
+  var pdflink=$(this).data('pdflink');
+
+
+   if(this.checked) {
+      curprice=(curprice+10).toFixed(decimalPlaces(curprice));
+      $(pricedivid).html("$"+((curprice)));
+       $(pdflink).attr('href',bundle);
+
+
+   }
+   else
+   {
+      curprice=(curprice-10).toFixed(decimalPlaces(curprice));
+      $(pricedivid).html("$"+((curprice)));
+      $(pdflink).attr('href',cis);
+   }
+
+
+});
+
+
+$("#price-tab-container").on('click','.nbnbundlecheckbox',function(){
+  //alert("click");
+  var pricedivid=$(this).data('target');
+  var curprice=$(pricedivid).html();
+
+
+  curprice=curprice.substring(1);
+
+  curprice=parseFloat(curprice);
+
+
+
+   if(this.checked) {
+
+
+      curprice=(curprice+10).toFixed(decimalPlaces(curprice));
+      $(pricedivid).html("$"+((curprice)));
+
+
+   }
+   else
+   {
+      curprice=(curprice-10).toFixed(decimalPlaces(curprice));
+      $(pricedivid).html("$"+((curprice)));
+   }
+
+
+});
+
+
+
+
+});
+
+function decimalPlaces(num) {
+  var match = (''+num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+  if (!match) { return 0; }
+  return Math.max(
+       0,
+       // Number of digits right of decimal point.
+       (match[1] ? match[1].length : 0)
+       // Adjust for scientific notation.
+       - (match[2] ? +match[2] : 0));
+}
+</script>
+
+
+
+<script>
+  $(function() {
+
+
+/*    $( "#exampleInputEmail1" ).autocomplete({
+      source: function( request, response ) {
+
+        $.ajax({
+          url: "https://rapidmatch.datasan.com.au/v1/address",
+          dataType: "jsonp",
+          type:'GET',
+          data: {
+            address: request.term,
+            auth_token:'vc4WPkJDJR_y7R0A8G1H0_QnH6Zcxn8ldwV7TvGKW545w3s0R_J8JApCfMeevz8E'
+          },
+          beforeSend:function(xhr){
+            $("#ajax-loader-address").show();
+          },
+          success: function( data ) {
+           var resp=data.response;
+           var docs=resp.docs;
+
+
+           var address=new Array();
+
+           for(i=0; i<docs.length; i++) {
+             address[i]={'label':docs[i].address,'value':docs[i].address,'detail':docs[i]};
+
+           }
+           response( address );
+           $("#ajax-loader-address").hide();
+
+         },
+         error: function(xhr){
+          $('#processing').modal('hide');
+          $("#error-modal").modal('show');
+        }
+
+      });
+      },
+      minLength: 1,
+      response:function(event,ui){
+
+         //console.log(event);
+       },
+
+       select: function( event, ui ) {
+        console.log(ui);
+        $(event.target).data('detail',ui.item);
+
+      },
+      open: function() {
+        //$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      },
+      close: function() {
+        //$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      },
+      search:function( event, ui ){
+        $(event.target).data('detail',"");
+      }
+    });*/
+
+
+    $( "#exampleInputEmail1" ).autocomplete({
+      source: function( request, response ) {
+
+        $.ajax({
+          url: "http://ello.com.au/wp-content/themes/ello/remote/QAS.php",
+          dataType: "json",
+          type:'GET',
+          data: {
+            q: request.term,
+            //auth_token:'vc4WPkJDJR_y7R0A8G1H0_QnH6Zcxn8ldwV7TvGKW545w3s0R_J8JApCfMeevz8E'
+          },
+          beforeSend:function(xhr){
+            $("#ajax-loader-address").show();
+          },
+          success: function( data ) {
+
+           var resp=data.response;
+           var docs=data.docs;
+
+
+           var address=new Array();
+
+           for(i=0; i<docs.length; i++) {
+             if(docs[i].PartialAddress!="")
+                address[i]={'label':docs[i].PartialAddress,'value':docs[i].PartialAddress,'detail':docs[i]};
+              else
+                address[i]={'label':"Too many matches....",'value':""};
+
+
+           }
+           //console.log(address);
+
+           response( address );
+           $("#ajax-loader-address").hide();
+
+         },
+         error: function(xhr){
+          $('#processing').modal('hide');
+          $("#error-modal").modal('show');
+        }
+
+      });
+      },
+      minLength: 3,
+      response:function(event,ui){
+
+         //console.log(event);
+       },
+
+       select: function( event, ui ) {
+        console.log(ui);
+        $(event.target).data('detail',ui.item);
+
+      },
+      open: function() {
+        //$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      },
+      close: function() {
+        //$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      },
+      search:function( event, ui ){
+        $(event.target).data('detail',"");
+      }
+    });
+
+
+
+});
+
+
+
+
+
+
+
+function initSlider(curtype) {
+ //range slider
+ $('.slider_other').slider({step:5,value:10}).on('slide', function(ev){
+   var target_index=ev.value/5;
+   $(".slider-value").find('ul').find('li').eq(target_index).addClass('active');
+   $(".slider-value").find('ul').find('li').eq(target_index).siblings().removeClass('active');
+
+   if(ev.value==0){
+     curmonth='monthly';
+     if(network=="TELSTRA")
+        populateRate(curmonth,curtype,curpackage);
+     else
+        populateRateNBN(curmonth);
+
+   }
+   else if(ev.value==5){
+     curmonth='12-months';
+     if(network=="TELSTRA")
+        populateRate(curmonth,curtype,curpackage);
+     else
+        populateRateNBN(curmonth);
+
+
+   }
+   else if(ev.value==10){
+     curmonth='24-months';
+     if(network=="TELSTRA")
+        populateRate(curmonth,curtype,curpackage);
+     else
+        populateRateNBN(curmonth);
+
+   }
+
+
+
+ });
+
+
+
+  //enable below comment if you want to disable 12 month option
+
+
+  //range slider
+  $('.slider_unlimited').slider({step:10,value:10}).on('slide', function(ev){
+       var target_index=ev.value/5;
+
+
+       //$(this).find(".slider-value").find('ul').find('li').eq(target_index).siblings().removeClass('active');
+       if(ev.value==0){
+         curmonth=0;
+         populateRate(curmonth,curtype);
+         $(".slider-value").find('ul').find('li').first().addClass('active');
+         $(".slider-value").find('ul').find('li').last().removeClass('active');
+       }
+       else if(ev.value==5){
+         curmonth=12;
+         populateRate(curmonth,curtype);
+       }
+       else if(ev.value==10){
+         curmonth=24;
+         populateRate(curmonth,curtype);
+         $(".slider-value").find('ul').find('li').first().removeClass('active');
+         $(".slider-value").find('ul').find('li').last().addClass('active');
+       }
+
+
+
+    });
+
+
+$('.rangeslider').show(); //hide first slider
+$('.rangeslider_unlimited').hide();
+
+$(".list-group").on('click','a',function(event) {
+
+  activeindex=$(this).index();
+
+  var text=$(this).find('span').html();
+  if(text=="Unlimited") {
+    //if 12 month is disabled, need to set hide to show and show to hide
+     $('.rangeslider').show();
+     $('.rangeslider_unlimited').hide();
+
+  }
+  else
+  {
+      $('.rangeslider').show();
+      $('.rangeslider_unlimited').hide();
+
+  }
+});
+
+}
+
+
+
+function populateRate(m_curmonth,m_curtype,m_curpackage,initial){
+
+
+    $.ajax({
+      url: "http://ello.com.au/wp-content/themes/ello/remote/get_prices.php",
+      dataType: "json",
+      type:'POST',
+      data: {
+        curmonth:m_curmonth,
+        curtype:m_curtype,
+        curpackage:m_curpackage,
+
+
+      },
+      beforeSend:function(xhr){
+       $('#processing').modal('show');
+       $('#location-modal').modal('hide');
+       $('#location-modal-switch').modal('hide');
+       $('.package-loader-container').show();
+
+      },
+      success:function(response){
+        //console.log(response);
+        $('#processing').modal('hide');
+        appendPrice(response);
+        $('.package-loader-container').hide();
+        //alert("Broadband init "+initial);
+        if(response.showoffermodal=="on" && initial==true){
+          $("#offermodal").modal('show');
+          $("#offer-content").html(response.offer_content);
+
+          if(m_curtype=="onnet"){
+             $('#offer-price').html(response.offerpriceonnet);
+
+          }
+          else
+          {
+             $('#offer-price').html(response.offerpriceoffnet);
+          }
+
+
+        }
+        else
+        {
+          //alert("broadband modal hide");
+          $("#offermodal").modal('hide');
+          $("#offermodal").hide();
+        }
+
+        telstraloaded=true;
+
+
+      }
+
+
+    });
+
+ }
+
+
+
+ function populateRateNBN(m_curmonth,initial){
+
+
+    $.ajax({
+      url: "http://ello.com.au/wp-content/themes/ello/remote/get_prices_nbn.php",
+      dataType: "json",
+      type:'POST',
+      data: {
+        curmonth:m_curmonth
+
+
+      },
+      beforeSend:function(xhr){
+       $('#processing').modal('show');
+       $('#location-modal').modal('hide');
+       $('#location-modal-switch').modal('hide');
+       $('.package-loader-container').show();
+
+      },
+      success:function(response){
+        //console.log(response);
+        $('#processing-switch').modal('hide');
+        appendPriceNBN(response);
+        $('.package-loader-container').hide();
+        //alert("NBN init "+initial);
+        if(response.showoffermodal=="on" && initial==true){
+          $("#offermodal").modal('show');
+          $("#offer-content").html(response.offer_content_nbn);
+           $('#offer-price').html(response.offerpricenbn);
+
+        }
+        else
+        {
+          //alert("nbn modal hide");
+          $("#offermodal").modal('hide');
+          $("#offermodal").hide();
+        }
+
+       nbnloaded=true;
+
+
+      }
+
+
+    });
+
+ }
+
+
+
+ function appendPrice(response) {
+
+    var count=response.count;
+    var results=response.results;
+    var output="";
+    var slugs=["40-gb","100-gb","unlimited"];
+    var categories=response.categories;
+    for(i=0; i<count; i++) {
+          var record=results[categories[i].slug];
+          var active=(i==activeindex)?'active':'';
+          //record.plan_alert=(record.plan_alert!="")?'<div class="plan-alert col-lg-12 col-md-12 col-sm-12 col-xs-12">'+record.plan_alert+'</div>':'';
+
+
+           record.notes=(record.notes!="")?"<sup>*</sup>"+record.notes:"";
+
+
+
+          var stickers=record.stickers;
+           /*var stickers_dom='<div id="tabbed-offer" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pull-right">'
+                           +'       <div class="row">';
+          if(stickers!="") {
+
+              for(j=0; j<stickers.length; j++){
+
+                  var sticker_text2=(stickers[j]._broadband_sticker_text_2!="" && stickers[j]._broadband_sticker_text_2!=undefined)?'<br/><span id="offer-percent">'+stickers[j]._broadband_sticker_text_2+'</span>':'';
+
+                  var sticker=  '         <div class="'+stickers[j]._broadband_sticker_type+'-offer pull-right broadband--offer nomargin" id="offer_3">'
+                               +'           <div class="offer-text">'+stickers[j].__broadband_sticker_text_1+sticker_text2+'</div>'
+                               +'         </div>';
+
+                   stickers_dom+=sticker;
+
+
+              }
+
+
+
+          }
+          else
+          {
+             stickers_dom+="";
+          }
+
+           stickers_dom+= '       </div>'
+                            +'     </div>';
+*/
+
+        var stickers_dom='<div id="tabbed-offer" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pull-right">'
+                           +'       <div class="row">';
+
+
+          if(stickers!="") {
+
+             stickers_dom+='           <div class="features-list col-xs-12">'
+                           +'             <ul>';
+              for(j=0; j<stickers.length; j++){
+
+
+
+                  var sticker= '<li>'+stickers[j].__broadband_sticker_text_1+' '+stickers[j]._broadband_sticker_text_2+'</li>';
+
+
+                  stickers_dom+=sticker;
+
+
+              }
+
+              stickers_dom+='</ul></div>';
+
+
+
+          }
+          else
+          {
+             stickers_dom+="";
+          }
+
+           stickers_dom+= '</div>'
+                            +' </div>';
+
+
+          record.stickers=stickers_dom;
+
+          var row= '<div class="el-tab-content removable-tab-row row '+active+'">'
+
+                 +'    <div class="top-divider">'
+                 +'      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">'
+                 +'       <div class="row">'
+                 +'            <h3 class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><span  id="price-unlimited">'+record.price+'</span> '+record.price_type+'</h3>'
+                 +'            <div class="plan-alert col-lg-12 col-md-12 col-sm-12 col-xs-12">'+record.plan_alert+'</div>'
+                 +'        </div>'
+                 +'       </div>'
+                 +      record.stickers
+                 +'     </div>'
+                 +'     <div class="bottom-divider">'
+                 +'     <div class="col col-right col-lg-6 col-md-6 col-sm-6 col-xs-12">'
+                 +'       <div class="package-includes"> <span>Features</span>'
+                 +          record.features
+
+
+                 +'       </div>'
+                 +'       <div class="features-list col-xs-12">'
+                 +'         <ul>'
+                 +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-music.png"><sup>*</sup>'+record.music+'</li>'
+                 +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-youtube.png"><sup>*</sup>'+record.video+'</li>'
+                 +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-dark-hd.png"><sup>*</sup>'+record.movie+'</li>'
+                 +'         </ul>'
+                 +'       </div>'
+                 +'     <div class="terms">'+record.notes+'</div>'
+
+                 +'     </div>'
+
+                 +'     <div class="col col-left col-lg-6 col-md-6 col-sm-6 col-xs-12">'
+                 +'       <div class="terms col-xs-12 hidden-xs"> <span>Terms</span>'
+
+                 +            record.terms
+
+                 +'       </div>'
+                 +'       <div class="download-info hidden-xs"><a id="unlimited-download-info" href="'+record.pdf+'" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-download.png">Download Critical Info Summary</a></div>'
+
+                 +'     </div>'
+
+                 +'     <div class="terms-mobile-only col-xs-12 visible-xs"> <span>Terms</span>'
+
+                 +        record.terms
+
+                 +'     </div>'
+                 +'    </div>'
+                 +'  </div>';
+
+                  output+=row;
+
+    }
+
+
+    var cat_str='';
+    for(j=0; j<categories.length; j++) {
+       var active=(j==activeindex)?'active':'';
+      cat_str+='<a href="javascript:void(0);" class="list-group-item  text-center 50gb '+active+'" data-slug="'+categories[j].slug+'"><span>'+categories[j].cat_name+'</span></a>'
+    }
+    $(".list-group").html(cat_str);
+
+    $( "#price-tab-container").find('.removable-tab-row').remove();
+    $(".package-loader-container").after(output);
+    $('.col').matchHeight();
+    $('.el-tab').matchHeight();
+    $('.listgroup a').matchHeight();
+    $('.el-tab-container > div').matchHeight();
+    $('a.list-group-item').matchHeight();
+    $("#broadbandimage").show();
+    $("#nbnimage").hide();
+    $("#nbnbroadbandmessage").html("Broadband is right for you");
+
+     var fullpage=$("#fullpage");
+     var section=$("#broadband");
+     console.log(fullpage.height());
+     console.log(section.height());
+
+      section.height(fullpage.height());
+
+     /*if(fullpage.height()<section.height()) {
+        fullpage.css({'height':section.height()+"px"});
+        section.height(section.height());
+
+        fullpage.hide();
+     }
+     else if(fullpage.height()>section.height()) {
+
+       fullpage.css({'height':fullpage.height()+"px"});
+
+     }
+   */
+
+
+
+
+
+
+ }
+
+
+
+function appendPriceNBN(response) {
+
+    var count=response.count;
+    var results=response.results;
+    var output="";
+    var slugs=["40-gb","100-gb","1-tb"];
+    var categories=response.categories;
+    for(i=0; i<count; i++) {
+          var record=results[categories[i].slug];
+          var active=(i==activeindex)?'active':'';
+          //record.plan_alert=(record.plan_alert!="")?'<div class="plan-alert col-lg-12 col-md-12 col-sm-12 col-xs-12">'+record.plan_alert+'</div>':'';
+
+
+           record.notes=(record.notes!="")?"<sup>*</sup>"+record.notes:"";
+
+
+           if(record.highlights!="") {
+                record.highlights='    <div class="features-list col-xs-12">'
+                                  +           record.highlights
+                                  +'    </div>';
+           }
+           else
+           {
+                record.highlights='<div class="features-list col-xs-12 not-showing">'
+
+                                  +'</div>';
+           }
+
+
+
+
+          var row=''
+          +'<div class="el-tab-content removable-tab-row row '+active+'" id="nbn-custom-plan">'
+          +'  <div class="col col-left col-lg-6 col-md-6 col-sm-6 col-xs-12">'
+          +'    <h3><span id="nbntabprice'+i+'">'+record.price+'</span> '+record.price_type+'</h3>'
+          +'    <div class="package-includes"> <span>Features</span>'
+          +         record.includes
+          +'    </div>'
+          +'    <div class="features-list col-xs-12">'
+          +'    <ul>'
+          +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-music.png"><sup>*</sup>'+record.music+'</li>'
+          +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-youtube.png"><sup>*</sup>'+record.video+'</li>'
+          +'           <li><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-dark-hd.png"><sup>*</sup>'+record.movie+'</li>'
+          +'    </ul>'
+          +'    </div>'
+          +'    <div class="checkbox">'
+          +'       <label>'
+          +'          <input type="checkbox" name="nbncheckbox" class="nbncheckbox" value="option1" data-target="#nbntabprice'+i+'" data-pdflink="#nbnpdf'+i+'" data-cis="'+record.pdf+'" data-bundle="'+record.bundle_pdf+'">'
+          +'          Add Unlimited standard national calls for $10 p/month'
+          +'       </label>'
+          +'     </div>'
+          +'    <div class="checkbox">'
+          +'       <label>'
+          +'          <input type="checkbox" name="nbnbundlecheckbox" class="nbnbundlecheckbox" value="option1" data-target="#nbntabprice'+i+'">'
+          +'          Increase speed to 25/5mbps for $10 p/month'
+          +'       </label>'
+          +'     </div>'
+          +'  </div>'
+          +'  <div class="col col-right col-lg-6 col-md-6 col-sm-6 col-xs-12" style="height: 339px;">'
+          +     record.highlights
+          +'    <div class="terms col-xs-12 hidden-xs">'
+          +'        <span>Terms</span>'
+          +             record.terms
+          +'        <div class="download-info hidden-xs">'
+          +'           <div class="download-info hidden-xs"><a id="nbnpdf'+i+'" href="'+record.pdf+'" ><img src="http://ello.com.au/wp-content/themes/ello/assets/images/icon-download.png">Download Critical Info Summary</a></div>'
+          +'        </div>'
+          +'    </div>'
+          +'  </div>'
+          +'     <div class="terms-mobile-only col-xs-12 visible-xs"> <span>Terms</span>'
+          +        record.terms
+          +'     </div>'
+          +'</div>';
+
+
+      output+=row;
+
+    }
+
+
+    var cat_str='';
+    for(j=0; j<categories.length; j++) {
+      var active=(j==activeindex)?'active':'';
+      cat_str+='<a href="javascript:void(0);" class="list-group-item  text-center 50gb '+active+'" data-slug="'+categories[j].slug+'"><span>'+categories[j].cat_name+'</span></a>'
+    }
+    //alert(cat_str);
+    $(".list-group").html(cat_str);
+
+    $("#broadband div #broadband-listgroup").hide();
+    $( "#price-tab-container").find('.removable-tab-row').remove();
+    $(".package-loader-container").after(output);
+    $('.col').matchHeight();
+    $('.el-tab').matchHeight();
+    $('.listgroup a').matchHeight();
+    $('.el-tab-container > div').matchHeight();
+    $('a.list-group-item').matchHeight();
+    $("#broadband div #broadband-listgroup").hide();
+    $("#broadband div #nbn-listgroup").show();
+
+    $("#broadbandimage").hide();
+    $("#nbnimage").show();
+    $("#nbnbroadbandmessage").html('<span class="text-logo">ello</span> NBN that’s right for you');
+
+
+   var fullpage=$("#fullpage");
+     var section=$("#broadband");
+     section.height(fullpage.height());
+     //console.log(fullpage.height());
+     //console.log(section.height());
+
+    /* if(fullpage.height()<section.height()) {
+        fullpage.css({'height':section.height()+"px"});
+        section.height(section.height());
+
+        fullpage.hide();
+     }
+     else if(fullpage.height()>section.height()) {
+      section.height(fullpage.height());
+       fullpage.css({'height':fullpage.height()+"px"});
+
+     }
+    */
+
+
+
+ }
+
+
+
+
+ function load_address_or_proceed(message,network) {
+  //alert("herre");
+  //console.log("sagar");
+  //console.log(message);
+
+    if(message.length>0){
+
+                                      //show location select modal
+                                      //$('#processing').modal('hide');
+
+                                      $('#location-modal').modal('show');
+                                      $('#location-modal-switch').modal('show');
+                                      $("#select-location").html('');
+                                       $("#select-location-switch").html('');
+                                      for(i=0; i<message.length; i++){
+                                         var loc=message[i];
+                                         //console.log(loc);
+                                         $('#location-modal').find("#select-location").append('<option value="'+loc.locationId+'">'+loc.displayAddress+'</option>');
+                                         $('#location-modal-switch').find("#select-location").append('<option value="'+loc.locationId+'">'+loc.displayAddress+'</option>');
+
+                                       }
+
+
+                                     }
+                                     else
+                                     {
+
+                                        // move here
+                                        var locid=message.locationId;
+                                        //console.log('location id'+locid);
+                                        if(locid!="" && locid!=undefined) {
+
+
+                                          $.ajax({
+                                            url: "http://ello.com.au/wp-content/themes/ello/remote/qualify_product_soap.php",
+                                            dataType: "json",
+                                            type:'POST',
+                                            data: "location_id="+locid,
+
+                                            beforeSend:function(xhr){
+                                                $('#processing').modal('show');
+                                                //$('#processing-switch').modal('show');
+                                            },
+                                            success: function( response1 ) {
+                                              //console.log("AAPT");
+                                              // console.log(response1);
+                                              if(response1.result=="error" || response1.result==null || response1.result==undefined) {
+                                                $('#processing').modal('hide');
+                                                //$('#processing-switch').modal('hide');
+                                                $('#error-modal').modal('show');
+                                                return true;
+                                              }
+                                              else
+                                              {
+                                               curtype=response1.result;
+                                                curtypenbn=response1.nbnresult;
+                                               initSlider(curtype);
+                                               if(network=="TELSTRA") {
+                                                  populateRate("24-months",curtype,"unlimited",true);
+                                                    $("#nbn-sidebar").show();
+                                                    $("#broadband-sidebar").hide();
+
+                                               }
+                                                else{
+                                                  populateRateNBN("24-months",true);
+                                                  $("#nbn-sidebar").hide();
+                                                    $("#broadband-sidebar").show();
+
+                                                }
+
+                                               //populateRate(24,response1.result);
+                                               $("#br-nbn").hide();
+                                               $("#check_availability").hide();
+                                               $("#broadband_findmore").show();
+                                               $('#address').val(address);
+                                               $('#nbn-address').val(address);
+                                               $("#broadband").addClass('skroll_stop');
+
+                                                        //hide outside ello
+                                                        if(response1.result=="onnet") {
+                                                          $('.outside-ello').hide();
+                                                          $('.inside-ello').show();
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                          $('.outside-ello').show();
+                                                          $('.inside-ello').hide();
+
+
+
+                                                        }
+
+
+
+                                                      }
+                                                      $('#processing').modal('hide');
+                                                     // $('#processing-switch').modal('hide');
+                                                    },
+                                                    error: function(xhr){
+                                                      $('#processing').modal('hide');
+                                                     // $('#processing-switch').modal('hide');
+                                                      $("#error-modal").modal('show');
+                                                    }
+
+
+                                          });
+
+                                        }
+                                        else
+                                        {
+                                         $('#processing').modal('hide');
+                                       //  $('#processing-switch').modal('hide');
+                                         $('#error-modal').modal('show');
+                                        }
+
+
+                                      }
+
+}
+
+
+</script>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function($) {
+
+    $('.footer-expandable').find('ul li').hide();
+
+
+      $('.footer-expandable a').click(function(event) {
+        /* Act on the event */
+         $(this).parent().parent().find('ul li').toggle();
+
+      });
+});
+
+</script>
+
+
+<style>
+
+  .el-z-index-5{z-index: 5;}
+  .el-z-index-6{z-index: 6;}
+  .el-z-index-7{z-index: 7;}
+  .el-z-index-8{z-index: 8;}
+
+
+  #broadband2{display: none;}
+}
+</style>
+  <!-- css display none used to hide iframe issue-->
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-58472007-1', 'auto');
+    ga('require', 'displayfeatures');
+    ga('send', 'pageview');
+
+  </script>
+
+<!-- Google Code for Remarketing Tag -->
+<script type="text/javascript">
+var google_tag_params = {
+local_id: 'REPLACE_WITH_VALUE',
+local_pagetype: 'REPLACE_WITH_VALUE',
+local_totalvalue: 'REPLACE_WITH_VALUE',
+};
+</script>
+<div style="display:none;">
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 954436956;
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;"><!-- display none as this disrupts UX -->
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/954436956/?value=0&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+</div></body>
+</html>

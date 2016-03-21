@@ -1,0 +1,632 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script type="text/javascript">
+
+var newlab_online_arr = Array();
+var newlab_online_modules = Array();
+var sealedonline_done = false
+
+$(function () {
+    $('#myTab a:first').tab('show')
+
+    {% if data.module %}
+    $("#module").val("{{data.module}}")
+    {% endif %}
+    {% if data.create %}
+    $("#create").val("{{data.create}}")
+    {% endif %}
+    var hrefString="http://agile.meiliworks.com/media/report/report{{data.create}}.html";
+    document.getElementById("report_detail").href=hrefString;
+
+    newlab_online();
+
+
+
+
+});
+
+
+function newlab_online() {
+    
+      $.ajax({url: "/data_mgr/get/sealonline", success: function(result){
+          console.log("sealonline");
+          //alert(result.data);
+          html_str = '<div class="banner-offer">';
+          var json_arr = result.data
+          var module_arr = Array();
+          if(json_arr){
+              for(var i=0;i<json_arr.length;i++){
+                  //去重
+                  var if_exists = 0;
+                  for(j in module_arr){
+                      //console.log(module_arr[j][0] + ":" + json_arr[i].module);
+                      if(module_arr[j][0] == json_arr[i].module){
+                          // add project and endflag
+                          module_arr[j][1] += ("," + json_arr[i].project);
+                          module_arr[j][5] += ("," + json_arr[i].endflag);
+                          if_exists = 1;
+                      }
+                  }
+                  if(if_exists){
+
+                      continue;
+                  }
+                  else{
+                      // 0 module, 1 project, 2 newlab, 3 sealed, 4 version(online), 5 endflag
+                      var detail = Array(json_arr[i].module, json_arr[i].project, json_arr[i].newlab, json_arr[i].sealed, json_arr[i].version, json_arr[i].endflag)
+                      module_arr.push(detail);
+
+                      newlab_online_modules.push(json_arr[i].module)
+                      console.log(newlab_online_modules)
+                  }
+
+                  //var func_para = "'" + json_arr[i].module + "','" + json_arr[i].newlab + "','" + json_arr[i].sealed + "','" + json_arr[i].version + "','" + json_arr[i].project + "'";
+                  var func_para = "'"+ json_arr[i].module + "'";
+
+                  var this_html = '<div class="yellow-offer red " data-toggle="modal" data-target="#dialog2"><div class="offer-text"  data-toggle="tooltip" data-placement="right" title="点击查看详情"><div class="text-details" onclick="set_online_info(' + func_para + ')">' + json_arr[i].module + '</div></div></div>';
+                  html_str += this_html;
+                  console.log(module_arr);
+              }
+              html_str += "</div>"
+              //alert(html_str);
+              $("#online").html(html_str);
+              newlab_online_arr = module_arr
+
+              $("#onlinediv").show();
+          }else{
+              $("#onlinediv").hide();
+              //alert("no sealonline info");
+          }
+          //alert('hehe');
+          sealedonline_done = true
+          sealed_newlab();
+      }});
+
+      
+    }
+
+    // 点击模块圆圈的时候， 修改弹窗信息
+    function sealed_newlab(){
+        $.ajax({url: "/data_mgr/get/sealed/info", success: function(result){
+            //alert(result.data);
+            /*
+            while(sealedonline_done != true){
+              // 等待直到sealed online 拉取结束
+              a = 1
+            }
+            */
+            console.log("oh my god");
+            console.log(newlab_online_modules);
+
+            html_str = '<div class="banner-offer">';
+            var json_arr = result.data
+            if(json_arr){
+                for(var i=0;i<json_arr.length;i++){
+                    if (jQuery.inArray(json_arr[i].module, newlab_online_modules) != -1){ // 如果已经上线了就不在newlab sealed diff里面出现了
+                      console.log(jQuery.inArray(json_arr[i].module, newlab_online_modules));
+                      console.log(json_arr[i].module);
+                      continue;
+                    }
+                    var func_para = "'" + json_arr[i].module + "','" + json_arr[i].newlab + "','" + json_arr[i].sealed + "'";
+                    //alert(func_para);
+                    var this_html = '<div class="yellow-offer yellow" data-toggle="modal" data-target="#dialog1"><div class="offer-text"  data-toggle="tooltip" data-placement="right" title="点击查看详情"><div class="text-details" onclick="set_version_info(' + func_para + ')">' + json_arr[i].module + '</div></div></div>';
+                    html_str += this_html;
+                }
+                html_str += "</div>"
+                $("#sealed").html(html_str);
+                $("#sealdiv").show();
+            }else{
+                $("#sealdiv").hide();
+                //alert("no sealed info");
+            }
+        }});
+    }
+
+</script>
+
+
+
+<script type="text/javascript">
+
+function set_version_info(module, newlab, sealed){
+        $("#module_title").html("<b>" + module + "</b>");
+        $("#newlab_version").html(newlab)
+        //$("#newlab_version_svn_log").html("<a onclick＝'javascript:get_branch_svnlog(" + module + "," + newlab + ")'>查看svnlog</a>");
+        $("#sealed_version").html(sealed);
+        //$("#sealed_version_svn_log").html("<a onclick＝'javascript:get_branch_svnlog(" + module + "," + newlab + ")'>查看svnlog</a>");
+
+    }
+
+
+function set_online_info(module){
+        for( i in newlab_online_arr){
+            if(newlab_online_arr[i][0] == module){
+            // 0 module, 1 project, 2 newlab, 3 sealed, 4 version(online), 5 endflag
+                $("#module_title1").html("<b>" + module + "</b>");
+                $("#newlab_version1").html(newlab_online_arr[i][2]);
+                $("#sealed_version1").html(newlab_online_arr[i][3]);
+                $("#online_version1").html(newlab_online_arr[i][4]);
+                $("#project1").html(newlab_online_arr[i][1]);
+                $("#endflag1").html(newlab_online_arr[i][5]);
+            }
+        }
+
+    }
+
+function get_branch_svnlog(module, branch){
+  $.ajax({url:"/data_mgr/get/branchsvnlog?module=" + module + "&" + "branch=" + branch, success:function(result){
+
+
+  }});  
+
+}
+
+
+function setCommitUser(module){
+  $("#commitUser_" + module).display("block");
+}
+</script>
+
+<SCRIPT type="text/javascript">
+    function isHidden(oDiv){
+        var arr=document.getElementsByTagName("tr");
+         for(var i=0;i<arr.length;i++) {
+             if (arr[i].id.indexOf(oDiv) > -1) {
+                 arr[i].style.display = (arr[i].style.display == 'none')?'block':'none';
+             }
+         }
+
+    }
+
+
+
+</SCRIPT>
+{% endblock %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(2)").parent().addClass("active")
+    });
+    {% endblock %}
+{% block left %}
+
+{% endblock %}
+{% block main %}
+
+<form class="form-inline right" method="post" action="/svn/test">
+    模块：
+    <select class="input-small form-control" name="module" id="module">
+    <option value="all">所有模块</option>
+    <option value="wap">wap</option>
+    <option value="lm">lm</option>
+    <option value="common">common</option>
+    <option value="zhaoshang">zhaoshang</option>
+    <option value="shop">shop</option>
+    <option value="snake">snake</option>
+    <option value="zhifu">zhifu</option>
+    <option value="whornbill">whornbill</option>
+    <option value="pro">pro</option>
+    <option value="virus">virus</option>
+    <option value="mall">mall</option>
+    </select>
+    &nbsp;&nbsp;时间：
+    <input class="pick_date input-small form-control" name="create" id="create" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn btn-info">确定</button>
+</form>
+<br/>
+<br/>
+<br/>
+<!--h2>总共修改代码行数为:<font color="green">{{data.total}}</font></h2-->
+
+<div class="container-fluid">
+<div class="row">
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+    <div class="panel-heading">模块统计</div>
+        <!--div class="accordion-inner">
+            <div class="hint">
+                    <div class="hint-line">
+                        <div id="red-circle" ></div><div class="single-hint">newlab版本与线上版本不符</div>
+                    </div>
+
+                    <div class="hint-line">
+                        <div id="yellow-circle" ></div><div class="single-hint">newlab版本与封版版本不符</div>
+                    </div>
+             </div>
+
+        </div-->
+    <div class="panel-body">
+        <div class="row-fluid">
+                <div class="col-xs-5 col-md-5 offset1" id="sealdiv">
+                 <div class="accordion-group">
+                     <div class="accordion-heading">
+                        <div class="accordion-toggle" style="text-align:center"><b>封版版本与newlab版本不符</b></div>
+                     </div>
+                     <div class="accordion-body">
+                         <div class="accordion-inner">
+                            <div id="sealed"></div>
+                         </div>
+                     </div>
+
+                 </div>
+                </div>
+                <div class="col-xs-5 col-md-5" id="onlinediv">
+                    <div class="accordion-group">
+                         <div class="accordion-heading">
+                            <div class="accordion-toggle" style="text-align:center"><b>今天上线版本与newlab版本不符</b></div>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="accordion-inner">
+                                <div id="online"></div>
+                            </div>
+                     </div>
+                    </div>
+                </div>
+
+        </div>
+	
+            <!-- Small modal -->
+            <div id="dialog1" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+              <div class="modal-dialog modal-sm">
+                <div class="modal-content" style="width:120%">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                      <h4 class="modal-title" id="mySmallModalLabel"><div id="module_title" align="center"></div></h4>
+                    </div>
+                    <div id="detail_info" class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                      <th>newlab</th>
+                                      <th>封版</th>
+                                    </tr>
+                                  </thead>
+                                <tbody>
+                                    <tr>
+                                      <td><div id="newlab_version" style="float:left"></div><div id="newlab_version_svn_log" style="float:right"></div></td>
+                                      <td><div id="sealed_version" style="float:left"></div><div id="sealed_version_svn_log" style="float:right"></div></td>
+                                    </tr>
+                                 </tbody>
+
+                            </table>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            <!-- Large modal -->
+            <div id="dialog2" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" >
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                      <h4 class="modal-title" id="myLargeModalLabel"><div id="module_title1" align="center"></div></h4>
+                    </div>
+                    <div id="detail_info1" class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                      <th>newlab</th>
+                                      <th>封版</th>
+                                      <th>online</th>
+                                      <th>项目</th>
+                                      <th>结束状态</th>
+
+                                    </tr>
+                                  </thead>
+                                <tbody>
+                                    <tr>
+                                      <td><div id="newlab_version1"></div></td>
+                                      <td><div id="sealed_version1"></div></td>
+                                        <td><div id="online_version1"></div></td>
+                                      <td><div id="project1"></div></td>
+                                      <!--td><div id="updatetime1"></div></td-->
+                                      <td><div id="endflag1"></div></td>
+
+                                    </tr>
+                                 </tbody>
+
+                            </table>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+		<br>
+            <!--div id="dialog2" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                      <h4 class="modal-title" id="myLargeModalLabel"><div id="module_title1" align="center"></div></h4>
+                    </div>
+                    <div id="detail_info1" class="modal-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                      <th>newlab</th>
+                                      <th>封版</th>
+                                      <th>online</th>
+                                      <th>项目</th>
+                                      <th>结束状态</th>
+
+                                    </tr>
+                                  </thead>
+                                <tbody>
+                                    <tr>
+                                      <td><div id="newlab_version1"></div></td>
+                                      <td><div id="sealed_version1"></div></td>
+                                        <td><div id="online_version1"></div></td>
+                                      <td><div id="project1"></div></td>
+                                      <td><div id="endflag1"></div></td>
+
+                                    </tr>
+                                 </tbody>
+
+                            </table>
+                    </div>
+                  </div>
+              </div>
+            </div-->
+
+        {% if data.detail %}
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>模块名</th>
+              <th>今天封版号</th>
+              <th>昨天封版号</th>
+              <th>修改行数</th>
+            </tr>
+          </thead>
+            {% for detail in data.detail%}
+            <tr>
+              <td><a href="/svn/test?module={{detail.module}}">{{detail.module}}</a></td>
+              <td>{{detail.options.todayBranchNo}}</td>
+              <td>{{detail.options.yestodayBranchNo}}</td>
+              <td>{{detail.modify}}</td>
+            </tr>
+            {% endfor %}
+          <tbody>
+          </tbody>
+        </table>
+        {% else %}
+        {{data.create}}的上线信息不存在！！！
+        {% endif %}
+        </div>
+</div>
+</div>
+
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+    <div class="panel-heading">模块详情</div>
+    {% if data.detail %}
+        <div role="tabpanel">
+
+            <!-- tab nav -->
+            <ul id="myTab" class="nav nav-pills" role="tablist" style="margin:10px 10px 10px;">
+                {% for detail in data.detail%}
+                    <li role="presentation" ><a href="#{{ detail.module }}" onclick＝"setCommitUser({{detail.module}})" id="{{ detail.module }}-tab" role="tab" data-toggle="tab" aria-controls="{{ detail.module }}" aria-expanded="true">{{ detail.module }}</a></li>
+                    <!--li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">Profile</a></li-->
+                {% endfor %}
+                <!--li role="presentation" >
+                  <li class="dropdown" >
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">递交者 <b class="caret"></b></a>
+                  <ul id="menu1" class="dropdown-menu">
+                    {% for key, value in commitUserdict.items %}
+                      <div class="commitUser" id="commitUser_{{ key }}" >
+                          {% for i in value %}
+                            <li><a>{{i}}</a></li>
+                          {% endfor %}
+                      </div>
+                    {% endfor %}
+
+
+                  </ul>
+                </li>
+                </li-->
+
+            </ul>
+
+            <!-- Tab panes -->
+            <div id="myTabContent" class="tab-content">
+                {% for detail in data.detail%}
+                <div role="tabpanel" class="tab-pane fade" id="{{ detail.module }}" aria-labelledby="{{ detail.module }}-tab">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr id = "{{ detail.module }}" >
+                                <td style="width: 100px;">提交者</td>
+                                <td style="width: 140px;">修改时间</td>
+                                <td style="width: 50px;">svn版本</td>
+                                <td style="width: 110px;">评论</td>
+                                <td>修改文件</td>
+                                <td style="width: 30px;">代码</td>
+                            </tr>
+                            {% for svn in detail.options.svnCommitList%}
+                                <tr id ="{{ detail.module }}" >
+                                    <td style="width: 100px;">{{svn.commitUser}}</td>
+                                    <td style="width: 150px;">{{svn.timestamp}}</td>
+                                    <td style="width: 50px;">{{svn.trunkVersion}}</td>
+                                    <td style="width: 120px;">{{svn.comment}}</td>
+                                    <td >
+                                        <ul>
+                                        {% for m in svn.modifiedFileList%}
+
+                                                <li>{{m}}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                        {% for m in svn.modifiedFileUrl%}
+                                        <li><a href="{{m}}"  target="view_window"> > </a></li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                    {#{ detail.module }#}
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    {% else %}
+    <div class="panel-body">
+    {{data.create}}的上线信息不存在！！！
+    </div>
+    {% endif %}
+</div>
+</div>
+
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+<div class="panel-heading">自动化确认</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>项目</th>
+      <th>描述</th>
+      <th>case 总数</th>
+      <th>失败数</th>
+      <th>很功率</th>
+      <th>分值</th>
+    </tr>
+  </thead>
+  <thead>
+    {% for json in data_report%}
+     {% for key,value in json.items %}
+            {% for key2,value2 in value.items %}
+                <tr>
+                <td>{{ value2.project }}</td>
+                <td>{{ value2.description }}</td>
+                {% if "0.0" == value2.mark %}
+                    <td colspan="3">测试失败！测试人员请查看！</td>
+                {% else %}
+                    <td>{{ value2.caseAll }}</td>
+                    <td>{{ value2.fail }}</td>
+                    <td>{{ value2.success }}</td>
+                {% endif %}
+                    <td>{{ value2.mark }}</td>
+                </tr>
+            {% endfor %}
+
+     {% endfor %}
+    {% endfor %}
+  <tr><td colspan="6"><a id="report_detail" href="http://agile.meiliworks.com/media/report/report{{ data.create }}.html">点击查看详情！！</a></td></tr>
+  </thead>
+  <tbody>
+  <tbody>
+  </tbody>
+</table>
+
+</div>
+</div>
+
+
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+<div class="panel-heading">上线包确认(所有更改的包是否都上线)</div>
+{% if notinplan %}
+<table class="table table-hover">
+     </tr>
+      <tr>
+      <td style="width: 100px;">包名</td>
+    {% for detail in notinplan%}
+        <tr><td>{{ detail.module }}  未发布！</td></tr>
+    {% endfor %}
+  <tbody>
+  <tbody>
+  </tbody>
+</table>
+{% else %}
+<div class="panel-body">
+{{data.create}}的包暂无发现问题！！！
+</div>
+{% endif %}
+</div>
+</div>
+
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+    <div id="online_status" class="panel-heading">上线状态</div>
+{% if data_push %}
+<table class="table table-hover">
+{#    <tr><td colspan="4"><font color="green">⭐️ 上线状态：0 未开始， 1 开始进行， 2 结束</font></td></tr>#}
+    <tr>
+        <td>项目</td>
+        <td>版本</td>
+        <td>上线状态</td>
+        <td>更新时间</td>
+    </tr>
+    {% for json in data_push%}
+    {% for key,value in json.items %}
+       {% if key == "jsonString" %}
+            {% for key2,value2 in value.items %}
+                {% if key2 != NULL %}
+                    <tr>
+                    <td>{{ key2 }}</td>
+                    <td>{{ value2.version }}</td>
+                    {% if value2.endflag == 0 %}
+                        <td style="color: blue;">未开始</td>
+                    {% elif value2.endflag == 1%}
+                        <td style="color: blue;">进行中</td>
+                    {% else %}
+                        <td style="color: blue;">完成</td>
+                    {% endif %}
+                    <td>{{ value2.updated_at }}</td>
+                    </tr>
+                {% else %}
+                <tr><td colspan="4">
+                {{data.create}}的上线状态信息未发布！！！
+                </td></tr>
+                  {% endif %}
+            {% endfor %}
+
+       {% endif %}
+    {% endfor %}
+    </tr>
+    {% endfor %}
+
+</table>
+{% else %}
+{{data.create}}的上线状态信息不存在！！！
+{% endif %}
+</div>
+</div>
+
+<div class="col-xs-12 col-md-12">
+<div class="panel panel-info">
+    <div class="panel-heading">回归状态</div>
+{% if get_goback %}
+<table class="table table-hover">
+  <tbody>
+  <tbody>
+    {% for index in get_goback %}
+        <tr><td>{{ index.project }}</td>
+        {% if index.success == 'SUCCESS' %}
+            <td><img src="/static/normal/img/green.png" style="width:30px;"/> </td>
+        {% else %}
+            <td><img src="/static/normal/img/red.png" style="width:30px;" /></td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="panel-body">
+{{data.create}}的回归信息不存在！！！
+</div>
+{% endif %}
+</div>
+</div>
+
+</div>
+{% endblock %}
+{% block right %}
+
+{% endblock %}
+

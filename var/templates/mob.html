@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("active")
+    });
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            zoomType: 'x'
+        },
+        title: {
+            text: '{{data.type}}趋势图',
+            x: -20 //center
+        },
+        subtitle: {
+            text: '环境:{{data.env}}, 场景:{{data.scene}}',
+            x: -20
+        },
+        xAxis: {
+            categories: [{% autoescape off %}{% for d in data.categories %}'{{d}}',{% endfor %}{% endautoescape %}]
+        },
+        yAxis: {
+            title: {
+                text: '{{data.unit_name}}({{data.unit}})'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '{{data.unit}}'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{% autoescape off %}{% for d in data.series %}{name:'{{d.name}}',data:{{d.data}},},{% endfor %}{% endautoescape %}]
+    });
+    {% if data.env %}
+    $("#env").val("{{data.env}}")
+    {% endif %}
+    {% if data.type %}
+    $("#type").val("{{data.type}}")
+    {% endif %}
+    {% if data.scene %}
+    $("#scene").val("{{data.scene}}")
+    {% endif %}
+    {% if data.start %}
+    $("#start").val("{{data.start}}")
+    {% endif %}
+    {% if data.end %}
+    $("#end").val("{{data.end}}")
+    {% endif %}
+    var param = "?env=" + $("#env").val() + "&type=" + $("#type").val() + "&scene=" + $("#scene").val() + "&start=" + $("#start").val() + "&end=" + $("#end").val()
+    $("#pic").attr("href","/mob" + param);
+    $("#data").attr("href","/mob/detail" + param);
+});
+</script>
+{% endblock %}
+
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/mob">
+    环境：
+    <select class="form-control input-small" name="env" id="env">
+    <option value="MOB">MOB</option>
+    </select>
+    &nbsp;&nbsp;类型：
+    <select class="form-control input-small" name="type" id="type">
+    <option value="CPU">CPU</option>
+    <option value="MEMORY">MEMORY</option>
+    <option value="POWER">POWER</option>
+    <option value="TRAFFIC">TRAFFIC</option>
+     <option value="TIME">TIME</option>
+    </select>
+    &nbsp;&nbsp;场景：
+    <select class="form-control input-small" name="scene" id="scene">
+    <option value="MONKEY">MONKEY</option>
+    <option value="AUTO">AUTO</option>
+    <option value="SLEEP">SLEEP</option>
+    </select>
+    &nbsp;&nbsp;开始：
+    <input class="form-control pick_date input-small" name="start" id="start" type="text" placeholder="请选择时间">
+    &nbsp;&nbsp;结束：
+    <input class="form-control pick_date input-small" name="end" id="end" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn btn-info">确定</button>
+</form>
+<ul class="nav nav-tabs">
+  <li class="active">
+    <a id="pic">趋势图</a>
+  </li>
+  <li><a id="data">数据详情</a></li>
+</ul>
+<div class="bs-border"><div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div></div>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

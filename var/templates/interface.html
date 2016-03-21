@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("active")
+    });
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+$(function(){
+  {% if data.interface %}
+  $("#interface").val("{{data.interface}}")
+  {% endif %}
+  {% if data.interface_type %}
+  $("#interface_type").val("{{data.interface_type}}")
+  {% endif %}
+  {% if data.start %}
+  $("#start").val("{{data.start}}")
+  {% endif %}
+  {% if data.end %}
+  $("#end").val("{{data.end}}")
+  {% endif %}
+  var param = "?env=" + $("#env").val() + "&interface_type=" + $("#interface_type").val() + "&start=" + $("#start").val() + "&end=" + $("#end").val()
+  if ($("#interface").val() != "all") {
+      param += "&interface=" + $("#interface").val()
+    }
+    else{
+      param += "&interface=1"
+    }
+  $("#pic").attr("href","/performance" + param);
+  $("#interface_list").attr("href","/get/interface" + param);
+  $("#data").attr("href","/performance/detail" + param);
+});
+</script>
+{% endblock %}
+
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/get/interface">
+    <center>
+    <select class="form-control input-small" name="env" id="env" style="display:none">
+    <option value="NEWLAB">NEWLAB</option>
+    </select>
+    &nbsp;&nbsp;接口：
+    <select class="form-control input-small" name="interface" id="interface">
+    <option value="all">所有接口</option>
+    {% for i in data.interface_info %}
+    <option value="{{i.id}}">{{i.desc}}</option>
+    {% endfor %}
+    </select>
+    &nbsp;&nbsp;接口类型：
+    <select class="form-control input-small" name="interface_type" id="interface_type">
+    <option value="all">所有类型</option>
+    <option value="HOT">高频接口</option>
+    <option value="WEB">页面接口</option>
+    </select>
+    &nbsp;&nbsp;开始：
+    <input class="form-control pick_date input-small" name="start" id="start" type="text" placeholder="请选择时间">
+    &nbsp;&nbsp;结束：
+    <input class="form-control pick_date input-small" name="end" id="end" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn btn-info">确定</button>
+    </center>
+</form>
+<ul class="nav nav-tabs">
+  <li class="active"><a id="interface_list">接口列表</a></li>
+  <li>
+    <a id="pic">趋势图</a>
+  </li>
+  <li><a id="data">数据详情</a></li>
+</ul>
+<table class="table bs-border table-striped table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>最新运行时间</th>
+      <th>接口描述</th>
+      <th>接口类型</th>
+      <th>接口状态</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in data.fail_list%}
+    <tr>
+      <td>{{d.runEndTime}}</td>
+      <td><a href="{{d.path}}" target="_blank">{{d.desc}}</a></td>
+      <td>{% if d.interface_type == "HOT"%}高频接口{% else %}页面接口{% endif %}</td>
+      <td><a href="/performance/detail/?interface={{d.interface}}">
+          <img class="img-small" src="/static/normal/img/red.png" data-toggle="tooltip" data-placement="right" title="FAIL">
+      </a></td>
+    </tr>
+  {% endfor %}
+  {% for d in data.pass_list%}
+    <tr>
+      <td>{{d.runEndTime}}</td>
+      <td><a href="{{d.path}}" target="_blank">{{d.desc}}</a></td>
+      <td>{% if d.interface_type == "HOT"%}高频接口{% else %}页面接口{% endif %}</td>
+      <td><a href="/performance/detail/?interface={{d.interface}}">
+          <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">
+      </a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

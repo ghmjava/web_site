@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(5)").parent().addClass("active")
+    });
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+$(function(){
+  {% if data.type %}
+  $("#type").val("{{data.type}}")
+  {% endif %}
+  {% if data.scene %}
+  $("#scene").val("{{data.scene}}")
+  {% endif %}
+  {% if data.start %}
+  $("#start").val("{{data.start}}")
+  {% endif %}
+  {% if data.end %}
+  $("#end").val("{{data.end}}")
+  {% endif %}
+  var param = "?env=" + $("#env").val() + "&type=" + $("#type").val() + "&scene=" + $("#scene").val() + "&start=" + $("#start").val() + "&end=" + $("#end").val()
+  $("#pic").attr("href","/mob" + param);
+  $("#data").attr("href","/mob/detail" + param);
+});
+</script>
+{% endblock %}
+
+{% block left %}
+
+{% endblock %}
+{% block main %}
+<form class="form-inline right" method="post" action="/mob/detail">
+    环境：
+    <select class="form-control input-small" name="env" id="env">
+    <option value="MOB">MOB</option>
+    </select>
+    &nbsp;&nbsp;类型：
+    <select class="form-control input-small" name="type" id="type">
+    <option value="CPU">CPU</option>
+    <option value="MEMORY">MEMORY</option>
+    <option value="POWER">POWER</option>
+    <option value="TRAFFIC">TRAFFIC</option>
+    <option value="TIME">TIME</option>
+    </select>
+    &nbsp;&nbsp;场景：
+    <select class="form-control input-small" name="scene" id="scene">
+    <option value="MONKEY">MONKEY</option>
+    <option value="AUTO">AUTO</option>
+    <option value="SLEEP">SLEEP</option>
+    </select>
+    &nbsp;&nbsp;开始：
+    <input class="form-control pick_date input-small" name="start" id="start" type="text" placeholder="请选择时间">
+    &nbsp;&nbsp;结束：
+    <input class="form-control pick_date input-small" name="end" id="end" type="text" placeholder="请选择时间">
+    <button type="submit" class="btn btn-info">确定</button>
+</form>
+<ul class="nav nav-tabs">
+  <li>
+    <a id="pic">趋势图</a>
+  </li>
+  <li class="active"><a id="data">数据详情</a></li>
+</ul>
+<table class="table bs-border table-striped table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>结束时间</th>
+      <th>环境</th>
+      <th>类型</th>
+      <th>场景</th>
+      <th>相关值</th>
+      <th>详情图</th>
+      <!--th>趋势图</th-->
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in data.detail%}
+    <tr>
+      <td>{{d.runEndTime}}</td>
+      <td>{{d.env}}</td>
+      <td>{{d.type}}</td>
+      <td>{{d.scene}}</td>
+      <td>
+          {% if d.options.max != None %}最大值:{{d.options.max}},{% endif %}
+          {% if d.options.avg != None %}平均值:{{d.options.avg}},{% endif %}
+          {% if d.options.min != None %}最小值:{{d.options.min}},{% endif %}
+          {% if d.options.tx != None %}上行(MB):{{d.options.tx}},{% endif %}
+          {% if d.options.rx != None %}下行(MB):{{d.options.rx}},{% endif %}
+          {% if d.options.main_time != None %}首页启动时间:{{d.options.main_time}},{% endif %}
+          {% if d.options.install_time != None %}安装需要时间:{{d.options.install_time}},{% endif %}
+          {% if d.options.welcome_time != None %}欢迎页启动时间:{{d.options.welcome_time}},{% endif %}
+      </td>
+      <td>{% if d.options.pic %}<a href="{{d.options.pic}}" target="_blank">查看</a>{%else%}无{% endif %}</td>
+      <!--td><a href="/mob/detail/?type={{d.type}}&scene={{d.scene}}">查看</a></td-->
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "assess/assess_base.html" %}
+
+
+{% block script %}
+<script>
+$(function(){
+  $("#save_api").click(function(){
+    var res = []
+    $(".resource").each(function(index, element) {
+	  if(element.checked == true)
+	  {
+	    var tmp = {
+	      id: $(this).val(),
+	      threshold: $("#threshold_" + $(this).val()).val(),
+	    }
+	    res.push(tmp)
+	  }
+    });
+    var data={
+      module_id: "{{request.GET.module_id}}",
+      id: $("#id").val(),
+      name: $("#name").val(),
+      desc: $("#desc").val(),
+      resource_list: res,
+    }
+    post("/assess_mgr/save/api", data)
+  })
+})
+
+</script>
+{% endblock %}
+
+{% block specify %}
+<div class="panel panel-info no-pd-mg">
+<div class="panel-heading">接口信息
+<div class="right">
+<a id="save_api" class="btn btn-xs btn-info">保存</a>
+<a href="/assess_mgr/module_api?module_id={{request.GET.module_id}}" class="btn btn-xs btn-success">返回</a>
+</div>
+</div>
+<div class="panel-body">
+    <div class="form-horizontal" role="form">
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <div class="form-group">
+            <label class="col-xs-3 col-md-3 control-label no-padding-right"><s>*</s>接口名称:</label>
+            <div class="col-xs-9 col-md-9">
+            <input type="hidden" value="{{data.api.id}}" id="id">
+            <input class="col-xs-10 col-sm-10 form-control" type="text" id="name" value="{{data.api.name}}" placeholder="简要介绍接口">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 col-md-3 control-label no-padding-right">接口描述:</label>
+            <div class="col-xs-9 col-md-9">
+            <textarea class="form-control" id="desc" placeholder="详情介绍接口" style="height: 130px; width: 100%;">{{data.api.desc}}</textarea>
+            </div>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <label class="col-xs-3 col-md-3 control-label no-padding-right"><s>*</s>请选择资源:</label>
+        <div class="col-xs-9 col-md-9">
+        {% for d in data.resource%}
+        <div class="col-xs-12 col-md-12 form-inline">
+          {% if d.id in data.resource_list.resource_id%}
+          <input type="checkbox" class="resource" value="{{d.id}}" checked>
+          {% else %}
+          <input type="checkbox" class="resource" value="{{d.id}}">
+          {% endif %}
+          <s data-toggle="tooltip" data-original-title="{{d.desc}}">{{d.name}}</s>
+          <input class="form-control right" id="threshold_{{d.id}}" value="{%for r in data.resource_list.resource_list%}{% if d.id == r.resource_id%}{{r.threshold}}{%endif%}{%endfor%}" placeholder="{{d.name}}的门限值(数字)">
+        </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

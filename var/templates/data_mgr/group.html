@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block menu_script %}
+$(function(){
+    $("ul#menu li a:eq(1)").parent().addClass("active")
+})
+{% endblock %}
+{% block script %}
+<script>
+function rm_group(id){
+    if(confirm("确定要删除该项吗？该操作将无法恢复！"))
+    {
+      post("/data_mgr/rm/group", {"id": id})
+    }
+}
+
+function get_job(group_id){
+  url = "/data_mgr/get/job_html?group_id=" + group_id
+  $.get(url,
+    function(ret){
+      $("#show_main").html(ret)
+    })
+}
+
+function reset_data(){
+  var id = arguments[0] ? arguments[0] : "";
+  $("#id").val(id)
+  if(id){
+    url="/data_mgr/get/group?id=" + id
+    $.get(url, function(data){
+        if(data.status == "success"){
+          $("#name").val(data.data.name);
+          $("#desc").val(data.data.desc);
+        }
+    })
+  }else{
+    $("#name").val("");
+    $("#desc").val("");
+  }
+}
+
+$(function() {
+    $("#bandJob").click(function() {
+        var id_list = get_checkbox_value("cklist")
+        var data = {
+          group_id: $('#group_id').val(),
+          job_list: id_list,
+        }
+        post("/data_mgr/bind/job", data)
+    });
+});
+</script>
+{% endblock %}
+
+{% block main %}
+<div class="panel panel-info">
+<div class="panel-heading">分组列表
+    {% if data.public.auth.write%}
+    <a href="#Modal" class="btn btn-xs btn-info right" onclick="reset_data()" data-toggle="modal">添加分组</a>
+    {% endif %}
+</div>
+<table class="table table-striped table-bordered table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>描述</th>
+      {% if data.public.auth.write%}
+      <th style="width:150px">操作</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in data.group %}
+    <tr>
+      <td>{{d.name}}</td>
+      <td>{{d.desc}}</td>
+      {% if data.public.auth.write%}
+      <td>
+          <a href="#Modal" class="btn btn-xs btn-info" onclick="reset_data({{d.id}})" data-toggle="modal">编辑</a>
+          <a onclick="get_job({{d.id}})" href="#ModalAdd" class="btn btn-xs btn-success" data-toggle="modal">设置job</a>
+          <a class="btn btn-danger btn-xs" onclick="rm_group({{d.id}})">删除</a>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<!--添加数据对话框-->
+<form method="POST" action="/data_mgr/save/group" accept-charset="UTF-8">
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h5 class="modal-title">添加/编辑分组</h5>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-xs-3 col-md-3 control-label no-padding-right" for="name"><s>*</s>名称:</label>
+                <div class="col-xs-8 col-md-8">
+                <input class="form-control" type="hidden" name="id" id="id" value="">
+                <input class="form-control" type="text" name="name" id="name" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 col-md-3 control-label no-padding-right" for="desc">描述:</label>
+                <div class="col-xs-8 col-md-8">
+                <textarea class="form-control" name="desc" id="desc" style="height: 130px"></textarea>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger btn-sm" data-dismiss="modal">关闭</a>
+        <input type="submit" class="btn btn-success btn-sm" value="保存"/>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<div class="modal fade" id="ModalAdd" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h5 class="modal-title">添加job</h5>
+      </div>
+      <div class="modal-body">
+      <div id="show_main">
+
+      </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger btn-sm" data-dismiss="modal">关闭</a>
+        <a class="btn btn-success btn-sm" id="bandJob" data-dismiss="modal">设置</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

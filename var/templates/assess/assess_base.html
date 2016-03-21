@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block menu_script %}
+    function clear_module(){
+        $("#module_id").val("")
+        $("#module_name").val("")
+        $("#module_desc").val("")
+    }
+    function save_module(){
+        module_id = $("#module_id").val()
+        if(module_id){
+            data = {
+                id:module_id,
+                name:$("#module_name").val(),
+                desc:$("#module_desc").val(),
+            }
+        }else{
+            data = {
+                name:$("#module_name").val(),
+                desc:$("#module_desc").val(),
+            }
+        }
+        post("/assess_mgr/save/module", data)
+    }
+    $(function(){
+        $('#side-menu').metisMenu();
+        var location_str = window.location.pathname
+        $("#side-menu li a").each(
+          function(){
+            var tmp = this.href.split("//")[1]
+            var path = tmp.substr(tmp.search('/'),tmp.length)
+            if(path == location_str){
+                this.style.textDecoration = ""
+                this.style.backgroundColor = '#eee'
+            }
+          }
+        );
+        $("ul#menu li a:eq(4)").parent().addClass("active")
+
+        $("#save_module").click(function(){
+            save_module()
+        })
+    });
+
+
+    function addEvent(obj,type,handle){
+        try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+            obj.addEventListener(type,handle,false);
+        }catch(e){
+            try{  // IE8.0及其以下版本
+                obj.attachEvent('on' + type,handle);
+            }catch(e){  // 早期浏览器
+                obj['on' + type] = handle;
+            }
+        }
+    }
+
+    function sleep(d){
+      for(var t = Date.now();Date.now() - t <= d;);
+    }
+
+{% endblock %}
+
+{% block main %}
+<div class="row-fluid">
+    <div class="col-md-2 col-lg-2" style="margin-left:-40px">
+          <div class="sidebar-nav navbar-collapse active">
+                <ul class="nav in" id="side-menu">
+                    <li class="active">
+                        <a href="#"><b><i class="fa fa-tasks fa-fw"></i> 模块</b><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse" aria-expanded="false">
+                            {% for i in data.public.module_list %}
+                            <li style="margin-left: 10px;">
+                                <a href="/assess_mgr/module?module_id={{i.id}}"><i class="fa fa-files-o fa-fw"></i> {{ i.name | capfirst }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if data.public.auth.auth or data.public.auth.admin%}
+                            <li style="margin-left: 10px;">
+                                <a href="#SaveModule" data-toggle="modal" onclick="clear_module()">
+                                    <i class="fa fa-plus fa-fw"></i> 增加模块
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="active">
+                        <a href="#"><b><i class="fa fa-cog fa-fw"></i> 配置</b><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse" aria-expanded="false">
+                            <li style="margin-left: 10px;">
+                                <a href="/assess_mgr/scene"><i class="fa fa-road fa-fw"></i> 场景</a>
+                            </li>
+                            <li style="margin-left: 10px;">
+                                <a href="/assess_mgr/resource"><i class="fa fa-globe fa-fw"></i> 资源</a>
+                            </li>
+                            <li style="margin-left: 10px;">
+                                <a href="/get/user?work_id=4" target="_blank"><i class="fa fa-globe fa-fw"></i> 权限</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+    </div>
+
+    <!-- /.sidebar-collapse -->
+    <div class="col-md-10 col-lg-10">
+    {% block specify %}
+
+    {% endblock %}
+    </div>
+    <!--添加模块-->
+    <div class="modal fade" id="SaveModule" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h5 class="modal-title">添加模块</h5>
+          </div>
+          <div class="modal-body">
+              <div class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-xs-3 col-md-3 control-label no-padding-right"><s>*</s>名称:</label>
+                    <div class="col-xs-8 col-md-8">
+                    <input class="form-control" type="hidden" id="module_id" value="">
+                    <input class="form-control" type="text" id="module_name" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 col-md-3 control-label no-padding-right">描述:</label>
+                    <div class="col-xs-8 col-md-8">
+                    <textarea class="form-control" id="module_desc" style="height: 130px"></textarea>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-danger btn-sm" data-dismiss="modal">关闭</a>
+            <a class="btn btn-success btn-sm" id="save_module" data-dismiss="modal">保存</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

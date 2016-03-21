@@ -1,0 +1,345 @@
+{% extends "ci_mgr/ci_base.html" %}
+
+{% block script %}
+<script>
+var alert_str = '<div class="alert alert-danger">content</div>'
+var create_task_data = {}
+$(function(){
+    
+    addEvent($("#newTaskForm button")[1], 'click', TaskFormHandler); // form submit button onclick binding
+    if($("#newTaskForm button").length > 2){
+            addEvent($("#newTaskForm button")[2], 'click', resetForm); // form submit button onclick binding
+    }
+    addEvent($("#submit-dialog button")[2], 'click', createTask); // dialog confirm button binding
+});
+function TaskFormHandler(){
+    if(this.type == "reset")
+    {
+        $("#newTaskForm form button")[0].click()
+    }
+    else if(this.type == "submit"){
+        var str = ""
+        // get all create task info and put in dialog body
+        /*for(var this_input in $("#newTaskForm input")) {
+            str += this_input.name  + " : " + this_input.value + "\n";
+        }*/
+        var task_id = false
+        var name = $("#newTaskForm input")[0].value
+        var module_id = $("#newTaskForm input")[1].value
+        var desc = $("#newTaskForm textarea")[0].value
+        var type = $("#newTaskForm select")[0].value
+        try{
+            task_id = $("#task_id_input")[0].value
+        }catch(err){
+            console.log("create task")
+        }
+            
+
+        create_task_data['name'] = name
+        create_task_data['module_id'] = module_id
+        create_task_data['desc'] = desc
+        create_task_data['type'] = type
+
+        if(task_id != false){
+            create_task_data['id'] = task_id
+        }   
+
+        // set 全局变量
+        if (name != "" && desc != "" && type != ""){
+            str += "name: " + name + "<br>"
+            str += "module_id: " + module_id + "<br>"
+            str += "desc: " + desc + "<br>"
+            str += "type: " + type + "<br>"
+            str = "<div align='center' style='font-size:20px'>" + str + "</div>"
+        }
+        else{
+            str = alert_str.replace("content", "所有信息都不能为空")
+        }
+        $("#submit-dialog .modal-body").html(str)
+        $("#submit-dialog").modal()
+
+    }
+}
+
+
+function resetForm(){
+    $("#newTaskForm button")[0].click()
+}
+
+function createTask(){
+    // show confirm dialog
+    var post_data = create_task_data
+    //$("#submit-dialog").modal();
+    $.post(
+        "/ci_mgr/save/task",
+        JSON.stringify(post_data),
+        function(data, status){
+          if(status == 'success'){
+              $("#submit-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+
+          }else{
+              $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+          }
+          location.reload();
+        }
+      );//这里返回的类型有：json,html,xml,text
+}
+
+
+function addEvent(obj,type,handle){
+    try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+        obj.addEventListener(type,handle,false);
+    }catch(e){
+        try{  // IE8.0及其以下版本
+            obj.attachEvent('on' + type,handle);
+        }catch(e){  // 早期浏览器
+            obj['on' + type] = handle;
+        }
+    }
+}
+
+function sleep(d){
+  for(var t = Date.now();Date.now() - t <= d;);
+}
+
+
+function run_task(task_id){
+    var post_data = {}
+    post_data['task_id'] = task_id
+    $.post(
+        "/ci_mgr/start/task",
+        JSON.stringify(post_data),
+        function(data, status){
+            //console.log(status)
+            if(status == 'success'){
+                $("#dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+                $("#dialog").modal()
+                //sleep(10000)
+                //$("#dialog").modal('hide')
+            }else{
+                $("#dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+                $("#dialog").modal()
+            }
+
+        }
+    ).error(function() { 
+        $("#dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+        $("#dialog").modal()
+    });
+}
+</script>
+{% endblock %}
+
+{% block specify %}
+
+<div class="col-md-10 col-lg-10 " style="margin-top:-40px; margin-left:20px">
+    <div class="row">
+        <div class="col-md-12 col-lg-12" id="tasks">
+            <div class="page-header" style="font-size:20px">{{ data.current_module.name | capfirst }} 的 Task 
+                <a class='btn btn-success btn-xs' style='float:right' href='/ci/task/?module={{data.current_module.name}}#operation'> 新建Task </a>
+            </div>
+            <!--div class="panel panel-default">
+                <div class="panel-heading" style="font-size:15px">
+                    Task Name
+                </div-->
+                <!--div class="panel-body"-->
+            {% for i in data.task %}
+                <div class="row">
+                    
+                        
+                        
+                        <div class="col-md-12 col-lg-12">
+                        
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style='font-size:18px;'>
+                                   {{ i.name }}
+                                    <a class='btn btn-xs btn-link' href="?module={{data.current_module.name}}&task_id={{i.id}}&type=modify#operation" style='float:right'> 编辑</a>
+                                    
+                                </div>
+                                <div class="panel-body">
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="panel panel-green">
+                                            <div class="panel-heading">
+                                                <div class="row">
+                                                    <div class="col-xs-3" style='margin-left:10px'>
+                                                        <i class="fa fa-tasks fa-5x"></i>
+                                                    </div>
+                                                    <div class="col-xs-8 text-right">
+                                                        <div class="huge">{{i.sub_task|length}}</div>
+                                                        <div>SubTasks</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="/ci/subtask/?task_id={{i.id}}" target="_blank" >
+                                                <div class="panel-footer">
+                                                    <span class="pull-left">查看详情</span>
+                                                    <span class="pull-right">
+                                                        <i class="fa fa-arrow-circle-right"  h>
+                                                        </i>
+                                                    </span>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!--div class='left'>
+                                        <div class='h4'>模块</div>
+                                        
+                                            <p>{{i.module_name}}</p>
+                                        
+                                        <div class='h4'>创建人</div>
+                                        
+                                            <p>{{i.user}}</p>
+                                        
+                                        <div class='h4'>类型</div>
+                                        
+                                            <p>{{i.type}}</p>
+                                        
+                                        <div class='h4'>自任务数量</div>
+                                       
+                                            <p></p>
+                                        
+                                        <div class='h4'>描述</div>
+                                        
+                                            <p>{{i.desc}}</p>
+                                    </div-->
+                                    <div class="right" >
+                                        <a onclick='run_task("{{i.id}}")' class='btn btn-success btn-mid' style='display:block;margin: 10px 0 10px 0' >立即运行</a>
+                                        <a class='btn btn-primary btn-mid' href="/ci/subtask/?task_id={{i.id}}#record" target='_blank' style='display:block;margin: 10px 0 10px 0'>运行记录</a>
+
+                                    </div>
+                                        
+                                </div>
+                               
+                            </div> 
+                     
+                        </div>
+                    
+                    <!--/div>
+                </div-->
+                </div>
+            {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            {% if data.current_task %}
+            <div class="page-header" style="font-size:20px">编辑Task</div>
+            {% else %}
+            <div class="page-header" style="font-size:20px">新建Task</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="font-size:15px">
+                    {% if data.current_task %}
+                    编辑Task
+                    {% else %}
+                    新建Task
+                    {% endif %}
+                         
+                </div>
+                <div class="panel-body">
+                    {% if data.module_not_match == 1 %}
+                    <div class="alert alert-fail" role="alert">该module下不存在这个task哦</div>
+                    {% else %}
+                    <div class="row" id="operation">
+                        <div id="newTaskForm" class="col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                            <form role="form" >
+                                <div class="form-group">
+                                    <label>Task名</label>
+                                    <input class="form-control" name="name" value="{{ data.current_task.name }}">
+                                    <p class="help-block">起一个听起来diao一点的名字</p>
+                                </div>       
+                                <div class="form-group"> 
+                                    <label>Module id</label>
+                                    <input class="form-control" name="module_id" value="{{data.current_module.id}}" disabled></>    
+                                </div>
+                                <div class="form-group">
+                                    <label>描述</label>
+                                    <textarea class="form-control" name="desc" >{{data.current_task.desc}}</textarea>
+                                    <p class="help-block">详细的描述可以帮助到其他人哦</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>类型</label>
+                                    <select class="form-control" name="type">
+                                        {% for i in data.types %}
+                                            {% if data.current_task.type == i %}
+                                                <option value='{{i}}' selected='selected'>{{i}}</option>
+                                            {% else %}
+                                                <option value='{{i}}'>{{i}}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                    </select>
+                                </div>    
+                                
+                                <button type="reset" style="display:none;"></button>
+                                {% if data.current_task %}
+                                    <input id='task_id_input'style="display:none" name="name" value="{{ data.current_task.id }}">
+                                {% endif %}
+                            </form>
+                            {% if data.current_task %}
+                                <button type="submit" class="btn btn-default">编辑</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-default">创建</button>
+                                <button type="reset" class="btn btn-default">重置</button>
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+  
+    <div id="submit-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label"></h4>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+
+    <div id="dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">运行</h4>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(1)").parent().addClass("active")
+    });
+
+{% endblock %}
+
+{% block main %}
+<div class="row-fluid">
+    <div class="col-md-2 col-lg-2" style="margin-left:-20px">
+            <ul class="nav nav-pills nav-stacked">
+                {% for tmp in data %}
+              <li role="presentation" {% if tmp.id == group_id %}class="active"{% endif %}>
+                  <a style="padding: 6px;" href="/onlinecard_mgr/online_card/showlist?page=1&group={{ tmp.id }}"><i class="fa fa-tasks fa-fw"></i> {{tmp.name}}</a>
+              </li>
+                {% endfor %}
+               <li role="presentation" {% if 0 == group_id %}class="active"{% endif %}>
+                  <a style="padding: 6px;" href="/onlinecard_mgr/online_card/showlist?page=1&group=0"><i class="fa fa-tasks fa-fw"></i> 未分组</a>
+              </li>
+            </ul>
+        </div>
+    <div class="col-md-10 col-lg-10">
+    <div class="row">
+      <div class="col-md-12 col-lg-12">
+        <ul class="nav nav-tabs">
+          <li role="presentation" ><a href="/jenkins?group_id={{group_id}}">Newlab</a></li>
+          <li role="presentation"><a href="/sh?group_id={{group_id}}&page=1">版本库</a></li>
+          <li role="presentation" class="active"><a href="/onlinecard_mgr/online_card/showlist?page=1&group={{group_id}}">上线单</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12" style="margin-top: 10px;">
+        <div class="panel panel-info">
+        <div class="panel-heading">上线单列表
+        </div>
+        <table class="table table-striped table-hover table_style">
+                <thead>
+                  <tr>
+                    <th style="width:300px">版本号</th>
+                    <th style="width:100px">生成者</th>
+                    <th style="width:180px">日期</th>
+                    <th style="align-content: center;">状态(<div class='job-building-static' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px" ></div>待上线
+                                <div class='job-exclude' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>上线中
+                                <div class='job-success' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>已上线)</th>
+                    <th style="width:180px">操作</th>
+                  </tr>
+                  {% for list in group.data %}
+                  <tr  id="list">
+                        <td><b><a target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="left" ></a></b>
+                            <a  data-toggle="modal" class="left" style="color: black;">{{ list.group_version }}</a>
+                        </td>
+
+                        <td><b><a target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="right" ></a></b>
+                            <a  data-toggle="modal" class="left" style="color: black;">{{ list.user }}</a>
+                        </td>
+                        <td><b><a target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="left"></a></b>
+                            <a  data-toggle="modal" class="left" style="color: black;">{{ list.update_time }}</a>
+                        </td>
+                      <td style="align-content: center;"><b><a target="blank" style="color:#5cb85c" data-toggle="tooltip" data-placement="left" ></a></b>
+                            <a  data-toggle="modal" class="left" style="color: black;text-align: center;width: 200px;">{% if list.status == 0 %}<div class='job-building-static' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px" ></div>待上线{% elif list.status == 1 %}<div class='job-exclude' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>上线中{% else %}<div class='job-success' style="width:12px;height:12px;margin-bottom:-1px;margin-right:2px"></div>已上线{% endif %}</a>
+                        </td>
+                    <td>
+                        <a href="/onlinecard_mgr/online_card/card_detail?group_id={{ group_id }}&card_id={{ list.id }}" class="btn btn-primary btn-xs">
+                            详情
+                        </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                  </thead>
+        </table>
+        </div>
+        </div>
+    </div>
+         <nav class="pagination pagination-lg"  url="/onlinecard_mgr/online_card/showlist?group={{ group_id }}" currentPage="{{ pageNum }}" pageCount="14" style="margin-top: 0px;">
+
+         </nav>
+    </div>
+    <form name="searchForm" method="post"></form>
+    <script type="application/javascript">
+        $(function(){
+             $(".pagination").my_page("searchForm");
+
+        });
+        (function($){
+    $.fn.extend({
+    "my_page":function(form){
+    var $this=this;
+    //定义分页结构体
+    var pageinfo={
+             url:$(this).attr("url"),
+             currentPage : {{ pageNum }}, // 当前页码
+             pageCount : {{ group.pageCount }},// 总页码
+
+    };
+
+
+    if(pageinfo.pageCount<2)
+        return false;
+    //初始起始页数、结束页数
+            var start=0,end=5;
+    if(pageinfo.currentPage>=5)
+        start=pageinfo.currentPage-3;
+
+      if(pageinfo.pageCount>pageinfo.currentPage+3)
+            end=pageinfo.currentPage+3;
+        else
+            end=pageinfo.pageCount;
+    var html=[];
+    html.push("<ul>");
+    if(pageinfo.currentPage!=1)
+        //如果不是第一页则有前一页
+        html.push("<li class='page_prev'><a>前一页</a></li>");
+    if(pageinfo.pageCount>10&&pageinfo.currentPage>9)
+        html.push("<li class='nomal'><a >1</a></li>");
+    for(var i=start;i<end;i++){
+        if((i+1)==pageinfo.currentPage)
+            html.push("<li class='active'><a >"+(i+1)+"</a></li>");
+        else
+            html.push("<li class='nomal'><a >"+(i+1)+"</a></li>");
+    }
+
+    if(pageinfo.pageCount>10&&pageinfo.currentPage<pageinfo.pageCount-4)
+        html.push("<li class='nomal'><a >"+pageinfo.pageCount+"</a></li>");
+    if(pageinfo.currentPage!=pageinfo.pageCount)
+        html.push("<li class='page_next'><a >后一页</a></li>");
+    html.push("</ul>");
+
+
+    $this.html(html.join(""));
+    //绑定数据处理函数
+    $this.find(".nomal a").bind("click",function(){
+                redirectTo($(this).html());
+    });
+    $this.find(".page_prev a").bind("click",function(){
+                  redirectTo(pageinfo.currentPage-1);
+    });
+    $this.find(".page_next a").bind("click",function(){
+         redirectTo(pageinfo.currentPage+1);
+    });
+    function redirectTo(page){
+            var url=pageinfo.url;
+            if(url.indexOf("?")==-1)
+                url+="?";
+            else
+                url+="&";
+            url+="page="+page;
+            $("form[name='"+form+"']").attr("action",url);
+            $("form[name='"+form+"']").submit();
+    }
+    return $this;
+    }
+    });
+    })(jQuery);
+    </script>
+<style>
+.pagination li {list-style: none;margin: 10px;padding: 0px;display:inline-block;}
+</style>
+</div>
+{% endblock %}

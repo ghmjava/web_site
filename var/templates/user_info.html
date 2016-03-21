@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script type="text/javascript">
+$(function() {
+   $("#ckall").click(function() {
+        $('input[name="cklist"]').prop("checked",this.checked);
+    });
+    var cklist = $("input[name='cklist']");
+    cklist.click(function(){
+        $("#ckall").prop("checked",cklist.length == $("input[name='cklist']:checked").length ? true : false);
+    });
+    $("#setAuth").click(function() {
+        var cklist = get_checkbox_value("cklist")
+        var data = {
+          set_type: "set",
+          flag: "{{data.flag}}",
+          work_id: "{{data.work_id}}",
+          id_list: cklist,
+        }
+        post("/set/auth", data)
+    });
+    $("#unsetAuth").click(function() {
+        if(confirm("您所勾选的用户权限将会全部取消，是否继续？"))
+        {
+            var cklist = get_checkbox_value("cklist")
+            var data = {
+              set_type: "unset",
+              flag: "{{data.flag}}",
+              work_id: "{{data.work_id}}",
+              id_list: cklist,
+            }
+            post("/set/auth", data)
+        }
+    });
+    $("#search_user").click(function() {
+      var q = $("#user_query").val()
+      var url =  "/get/user?work_id={{data.work_id}}&q=" + q +"&flag=" + "{{data.flag}}"
+      window.location.href = url
+    });
+});
+</script>
+{% endblock %}
+{% block main %}
+<div class="row-fluid">
+<div class="col-md-12 col-lg-12">
+{%if data.auth.auth or data.auth.admin%}
+<div class="right">
+{%if data.flag == "super"%}
+{%if data.auth.auth%}
+<a href="#Dialog" role="button" class="btn btn-primary btn-sm" data-toggle="modal" id="setAuth">设置管理员</a>
+<a href="#Dialog" role="button" class="btn btn-danger btn-sm" data-toggle="modal" id="unsetAuth">取消管理员</a>
+{%endif%}
+{%else%}
+<a href="#Dialog" role="button" class="btn btn-primary btn-sm" data-toggle="modal" id="setAuth">设置写权限</a>
+<a href="#Dialog" role="button" class="btn btn-danger btn-sm" data-toggle="modal" id="unsetAuth">取消写权限</a>
+{%endif%}
+</div>
+<br/>
+<br/>
+{%endif%}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">用户信息列表
+    <div class="input-group input-group-sm no-pd-mg right" style="width:200px;top:-5px;">
+      <input type="text" class="form-control" placeholder="姓名/邮箱/部门" id="user_query" value="{{data.q}}">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" id="search_user">搜索</button>
+      </span>
+    </div>
+    </h3>
+  </div>
+<table class="table table-striped table-bordered table-hover table-condensed">
+  <thead>
+    <tr>
+      <th><input type="checkbox" id="ckall" name="ckall"></th>
+      <th>姓名</th>
+      <th>权限</th>
+      <th>邮箱</th>
+      <th>部门</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for d in data.user.user_list %}
+    <tr>
+      <td>
+          {%if data.flag == "super"%}
+          <input type="checkbox" name="cklist" value="{{d.id}}" {%if d.admin or d.auth%}checked="checked"{%endif%}></td>
+          {%else%}
+          <input type="checkbox" name="cklist" value="{{d.id}}" {%if d.admin or d.write%}checked="checked"{%endif%}></td>
+          {%endif%}
+      <td>{{d.name}}</td>
+      <td>
+          {%if data.flag == "super"%}
+          {%if d.auth%}<font color="red">超级用户</font>{%elif d.admin%}<font color="blue">管理员</font>{%else%}非管理员{%endif%}</td>
+          {%else%}
+          {%if d.admin%}<font color="blue">管理员</font>{%elif d.write%}<font color="green">可写用户</font>{%else%}普通用户{%endif%}</td>
+          {%endif%}
+      <td><a href="mailto:{{d.mail}}">{{d.mail}}</a></td>
+      <td>{{d.depart}}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if data.user.page %}
+<nav class="left no-pd-mg">
+   <font class="right" style="margin-top:15px;color:#999999;">&nbsp;&nbsp;&nbsp;&nbsp;总页数 / 总用户数：{{data.user.page.page.total}} / {{data.user.page.total}}</font>
+  <ul class="pagination pagination-sm no-pd-mg" style="margin-top:10px;">
+    {% if "start" != data.user.page.flag %}
+      <li>
+      <a href="/get/user?work_id={{data.work_id}}&page_current=1&q={{data.q}}&flag={{data.flag}}">
+          <span aria-hidden="true">首页</span>
+      </a>
+    </li>
+    {%endif%}
+    {% for d in data.user.page.page.list %}
+    {% if d == data.user.page.page.current %}
+    <li class="active"><a>{{d}}</a></li>
+    {% else %}
+    <li><a href="/get/user?work_id={{data.work_id}}&page_current={{d}}&q={{data.q}}&flag={{data.flag}}">{{d}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if "end" != data.user.page.flag %}
+      <li>
+      <a href="/get/user?work_id={{data.work_id}}&page_current={{data.user.page.page.total}}&q={{data.q}}&flag={{data.flag}}">
+        <span aria-hidden="true">末页</span>
+      </a>
+    </li>
+    {%endif%}
+  </ul>
+</nav>
+{% endif %}
+</div>
+</div>
+<br/>
+{% endblock %}

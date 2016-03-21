@@ -1,0 +1,31 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").addClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li><a href="/cov">所有任务</a></li>
+        <li><a href="{% url 'cov:detail' task.id %}">{{ task.name }}</a></li>
+        <li class="active"><a href="{% url 'cov:upload' task.id %}">上传分析文件</a></li>
+    </ul>
+    {% if 'upload' == op %}
+    <form method="post" enctype="multipart/form-data" >{% csrf_token %}
+        {{ uf.data }}<input class="btn btn-primary btn-xs" type="submit" value="上传"/>
+    </form>
+    {% elif 'success' == op %}
+        <p>上传成功！</p>
+    {% elif 'failed' == op %}
+        <p>上传失败！</p>
+    {% endif %}
+{% endblock %}
+
+{% block cov_endscript %}
+{% endblock %}

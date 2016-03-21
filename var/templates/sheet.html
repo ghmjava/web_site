@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Pre Launch</title>
+    <script type="text/javascript" src="{% static 'react/build/react.js' %}"></script>
+    <script type="text/javascript" src="{% static 'react/build/react-dom.js' %}"></script>
+    <script type="text/javascript" src="{% static 'react/marked.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'react/browser.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'react/jquery.min.js' %}"></script>
+
+    <!--script type="text/javascript" src="{% static 'react/build/react.js' %}"></script>
+    <script type="text/javascript" src="{% static 'react/build/react-dom.js' %}"></script>
+    <script type="text/javascript" src="{% static 'react/jquery.min.js' %}"></script-->
+    <script type="text/javascript" src="{% static 'react/react-bootstrap.min.js' %}"></script>
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.28.1/react-bootstrap.min.js"></script-->
+	<script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+
+	<link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+
+	<div id='version'></div>
+	
+
+	
+
+</body>
+<script type="text/babel">
+// 通用组件
+
+	var IframeDialog = React.createClass({
+		// bootstrap 模态框, 输入参数  title src(iframe) 
+		getInitialState: function(){
+            return {
+            	iframestyle: {
+            		width : "100%",
+            		height : "600px", 
+            		border: 'none'
+            	},
+
+        	};
+        },
+		render: function(){
+			return (
+					<div className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+					  <div className="modal-dialog modal-lg">
+					    <div className="modal-content">
+					      <div className="modal-header">
+					        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					        <h4 className="modal-title">{this.props.title}</h4>
+					      </div>
+					      <div className="modal-body">
+					        <iframe src={this.props.src}  style={this.props.iframestyle}></iframe>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+			);
+		}
+	});
+	
+	var TextDialog = React.createClass({
+		render: function(){
+			return (
+					<div className="modal fade bs-example-modal-lg " tabIndex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+					  <div className="modal-dialog modal-lg">
+					    <div className="modal-content">
+					      <div className="modal-header">
+					        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					        <h4 className="modal-title">{this.props.title}</h4>
+					      </div>
+					      <div className="modal-body">
+					        {this.this.props.body}
+					      </div>
+					    </div>
+					  </div>
+					</div>
+			);
+		}
+	});
+
+	var TableDialog = React.createClass({
+		getVersion: function(){
+			return $.ajax({
+	                url: this.props.url ,
+	                dataType: 'json',
+	                cache: false,
+	                async: false,
+	                success: function(data) {
+	                    this.data = data.data;
+	                    //return data.data
+	                }.bind(this),
+	                error: function(xhr, status, err) {
+	                    console.error(this.props.status_url, status, err.toString());
+	                }.bind(this)
+	            }).responseJSON;
+		},
+		loadVersion: function(){
+			// get info
+			var version_data = this.getVersion();
+			var tbody_arr = Object.keys(version_data.data).map(function (key){
+							return (<tr key={key}>
+										<td>{key}</td>
+										<td>{version_data.data[key]}</td>
+									</tr>);
+			});
+			return(
+					<table className="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>module</th>
+								<th>version</th>
+							</tr>
+						</thead>
+						<tbody>
+							{tbody_arr}
+						</tbody>
+					</table>
+			);
+		},
+		componentWillMount: function(){
+			this.setState({style: 
+				{
+            		display : "none",
+            	}
+			});
+			this.setState({ classname: "modal fade bs-example-modal-lg" });
+		},
+		closeDialog: function(){
+			
+		},
+		render: function(){
+			return (
+					<div id={this.props.title} className="modal fade bs-example-modal-lg" tabIndex="-1" role="dialog" aria-labelledby="myLargeModalLabel" style={this.state.style}>
+					  <div className="modal-dialog modal-lg">
+					    <div className="modal-content">
+					      <div className="modal-header">
+					        <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					        <h4 className="modal-title">{this.props.title}</h4>
+					      </div>
+					      <div className="modal-body">
+					        {this.loadVersion()}
+					      </div>
+					    </div>
+					  </div>
+					</div>
+			);
+		}
+	});
+
+
+
+
+	var column = ["发布者","时间","版本号","小模块信息"];
+
+	var Jobtable = React.createClass({
+		loadVersionInfo: function() {
+			//alert(this.props.url);
+            $.ajax({
+                url: this.props.url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({version_info: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+
+            $.ajax({
+                url: this.props.url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({version_info: data.data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+
+        },
+        
+        getInitialState: function(){
+        	// get versions
+            return {version_info:[]};
+        },
+        componentDidMount: function(){
+            this.loadVersionInfo();
+            // setInterval(this.getRunningStatus, this.props.pollInterval);
+        },
+        handleShowDialog:function(){
+        	this.setState({
+        		showDialog: true,
+        	});
+        },
+		render: function(){
+			return (
+				<div>
+					<table className="table table-striped table-hover">
+						<Tablehead column={column}/>
+						<Tablebody version_info={this.state.version_info} />
+					</table>
+				</div>
+			);
+		}
+	});
+
+	var Tablehead = React.createClass({
+		render: function(){
+			var ths = this.props.column.map(function (col) {
+                    return (
+                        <th key={col}>{col}</th>
+                	);
+            });
+			return (
+				<thead>
+					<tr>
+						{ths}				
+					</tr>
+				</thead>
+			);
+		}
+	});
+
+
+
+	var Tablebody = React.createClass({
+		
+		render: function(){
+			console.log(this.props.version_info);
+			var rows = this.props.version_info.map(function (info){
+				return (<JobRow version_info={info} group_version_id={info.id} />);
+			});
+			return (
+				<tbody>
+				 {rows}
+				</tbody>
+				);
+		}
+	});
+
+
+	var JobRow = React.createClass({
+
+		render: function(){
+			console.log({this.props.group_version_id});
+			return (
+				<tr>
+					<td>{this.props.version_info.user}</td>
+					<td>{this.props.version_info.update_time}</td>
+					<td>{this.props.version_info.version_num}</td>
+					<td>{this.props.group_version_id}</td>
+				</tr>
+			);
+		}
+	});
+
+
+
+
+	/*
+	var Row = React.createClass({ 
+		getInitialState: function(){
+            return {versions:[]};
+        },
+		showHistory: function(){
+			return function(){
+				alert('hehe');
+			}
+		},
+		showBranchDiff: function(){
+			return function() {
+				alert('haha');
+			}
+		},
+		showCheckVersion: function(check_version){
+			// Show modal
+			return function(){
+				alert(check_version);
+				$("#" + check_version + "_version").modal();
+			}
+		},
+		getNewlabVersionStyle: function(){
+			var style = {	color:"#fff", backgroundColor:"#FFBF00"};
+			var title = "与封板不符";
+			if (this.props.job.newlab_version != this.props.job.sealed_version){
+ 				return (<td ><a style={style} data-toggle="tooltip" data-placement="right" title={title}>{this.props.job.newlab_version}</a></td>);
+			}else{
+				return (<td>{this.props.job.newlab_version}</td>);
+			}
+		},
+		getSealedVersionStyle: function(){
+			var check_version = null;
+			var need_diff = false;
+			if(this.props.job.online_version != this.props.sealed_version){
+				var style = { color: "red"};
+				var title = "与上线版本不符, 线上版本" + this.props.online_version;
+			}else{
+				var style = { color: "#5cb85c"};
+				var title = "已上线";
+			}
+			if(this.props.job.name == 'biz' || this.props.job.name == 'shanghaife'){
+				check_version = this.props.job.name;
+				
+			}
+
+			if(this.props.newlab_version != this.props.sealed_version  && check_version == null){
+				// biz和shanghaife不做封板newlab版本对比
+				need_diff = true;
+			}
+			if(check_version == null){
+				if (need_diff){
+					var diff_style = {float: "right"};
+					return (
+						<td><b><a onClick={this.showHistory()} style={style} data-toggle="tooltip" data-placement="right" title={title} target="blank" >{this.props.job.sealed_version}</a></b>
+							<a style={diff_style} data-toggle="tooltip" data-placement="right" title="产看branch代码diff" onClick={showBranchDiff()}><span class="glyphicon glyphicon-search"></span>
+							</a>
+		           		</td>
+		           	);
+				}else{
+					return (
+					<td><b><a onClick={this.showHistory()} style={style} data-toggle="tooltip" data-placement="right" title={title} target="blank">{this.props.job.sealed_version}</a></b>
+	           		</td>
+					);
+				}
+				
+			}else{
+				return (
+					<td><b><a onClick={this.showHistory()} style={style} data-toggle="tooltip" data-placement="right" title={title} target="blank">{this.props.job.sealed_version}</a></b>
+						<a onClick={this.showCheckVersion(check_version)} data-toggle="modal" className="right">所有封板</a>
+	           		</td>
+				);
+			}
+		},                  
+		render: function(){
+			if (this.props.job.collection == 1){
+				var collect = function (){ return <a onclick="collect({this.props.job.id}, 1)" href=""><i className="glyphicon glyphicon-star" data-toggle="tooltip" title="取消收藏"></i></a>}
+			}
+			else{
+				var collect = function (){ return <a onclick="collect({this.props.job.id}, 0)" href=""><i className="glyphicon glyphicon-star-empty" data-toggle="tooltip" title="收藏"></i></a>}
+			}
+
+			
+			return(
+				<tr>
+					<td>{collect}</td>
+					<td><Jobstatus job={this.props.job} /></td>
+					<td>{this.props.job.jobname}</td>
+					{this.getSealedVersionStyle()}
+					{this.getNewlabVersionStyle()}
+					<td>{this.props.job.user}</td>
+					<td>
+						<div>
+							<a href="javascript:setLogDialog('{this.props.job.jobname}',0, '{ job.lastBuild }' )">最新</a>
+                  			<a href="javascript:setLogDialog('{this.props.job.jobname}',1 )" >历史</a>
+                  		</div>
+                  	</td>
+                  	<td>
+                  		<Operation job={this.props.job}/>
+                  	</td>
+				</tr>
+			);
+		}
+	});
+
+	// 实时获取job信息
+	var Jobstatus = React.createClass({
+		handleClick: function(){
+			show_module_history(this.props.job.name);
+		},
+		render: function(){	
+			var classname = "job-" + this.props.job.lastbuild_status;
+			return (
+					<div className={classname} data-toggle="tooltip" data-placement="right" onClick={this.handleClick} data-original-title={this.props.job.lastbuild_status} title={this.props.job.lastbuild_status}></div>
+			);		
+		}
+	});
+
+	var Operation = React.createClass({
+
+		getAllOperations: function(){
+			if (this.props.job.buildable){
+				return (	
+							<div>
+								<a className="btn btn-success btn-xs" >发布 </a>
+								<a className="btn btn-info btn-xs" >封板 </a>
+								<a className="btn btn-primary btn-xs" >合入</a>
+			                    <a className="btn btn-danger btn-xs" >禁用</a>
+			                </div>
+			            );
+                    
+			}else{
+				return(
+						<div>
+							<a className="btn btn-primary btn-xs">启用</a>
+						</div>
+                    );
+			}
+		},
+		render: function(){
+			return ( <div>{this.getAllOperations()}</div> );
+		}
+
+	});
+	*/
+	ReactDOM.render(
+        <Jobtable url='/onlinecard/api/group_versions?group=3&page=1'/>,
+        document.getElementById('version')
+    );
+
+</script>
+
+
+
+
+
+
+</html>

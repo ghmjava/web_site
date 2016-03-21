@@ -1,0 +1,220 @@
+{% extends "ci_mgr/ci_base.html" %}
+{% block script %}
+<script>
+
+var form_info = {}
+
+$(function(){
+  addEvent($("#moduleForm button")[1], 'click', FormHandler); // form submit button onclick binding
+  if($("#moduleForm button").length > 2){
+    addEvent($("#moduleForm button")[2], 'click', resetForm); // form submit button onclick binding
+  }
+  //addEvent($("#submit-dialog button")[2], 'click', createModule); // dialog confirm button binding
+}
+);
+
+
+function FormHandler(){
+  if (this.type != 'submit'){
+    return false
+  }
+  form_info[$("#moduleForm input")[0].name] = $("#moduleForm input")[0].value
+  form_info[$("#moduleForm input")[1].name] = $("#moduleForm input")[1].value
+  //form_info[$("#moduleForm input")[2].name] = $("#moduleForm input")[2].value
+  form_info[$("#moduleForm select")[0].name] = $("#moduleForm select")[0].value
+  var all_right = true
+  var str = ""
+  for(var i in form_info){
+    if(i == 'branch' || i == 'trunk'){
+      /*if(form_info[i].indexOf('http://svn.meilishuo.com') == -1){
+        str = '<div class="alert alert-danger" role="alert">svn信息提供错误</div>'
+        all_right = false
+        alert('error');
+        break
+      }*/
+    }
+    str += i + " : " + form_info[i] + "<br>"
+  }
+  if( all_right){
+    addEvent($("#submit-dialog button")[2], 'click', createModule); // dialog confirm button binding
+  }else{
+    addEvent($("#submit-dialog button")[2], 'click', close_dialog); // dialog confirm button binding
+
+  }
+  $("#submit-dialog .modal-body").html(str)
+  $("#submit-dialog").modal()
+
+}
+
+function close_dialog(){
+  $('#submit-dialog').modal('hide')
+}
+
+function resetForm(){
+    //console.log($("#SubTaskForm button")[0])
+    $("#moduleForm form")[0].reset()
+}
+
+
+function createModule(){
+  // show confirm dialog
+  var post_data = form_info
+  //$("#submit-dialog").modal();
+  $.post(
+      "/ci_mgr/save/module",
+      JSON.stringify(post_data),
+      function(data, status){
+        if(status == 'success'){
+            $("#submit-dialog .modal-body").html('<div class="alert alert-success" role="alert">操作成功</div>')
+
+        }else{
+            $("#submit-dialog .modal-body").html('<div class="alert alert-danger" role="alert">操作失败</div>')
+        }
+        location.reload();
+      }
+    );//这里返回的类型有：json,html,xml,text
+
+}
+
+function gather_input(form_id){
+  var inputs = $("#" + form_id + " input")
+  var textareas = $("#" + form_id + " textarea")
+  var selects = $("#" + form_id + " select")
+
+  var ret = new Array()
+  for(i in inputs){
+    ret[inputs[i].value] = inputs[i].value
+  }
+
+  for(i in textareas){
+    ret[inputs[i].value] = inputs[i].value
+  }
+
+  for(i in selects){
+    ret[inputs[i].value] = inputs[i].value
+  }
+  return ret;
+}
+
+
+</script>
+{% endblock %}
+
+
+{% block specify %}
+<div class="col-md-9 col-lg-9 " style="margin-top:-40px">
+  <div class="page-header" style="font-size:15px">Module
+    {% if data.current_module %}
+      <a class='btn btn-xs btn-success' style="float:right; margin:0px 0 10px 0" href="/ci/module">新建</a>
+    {% endif %}
+  </div>
+  <div class='col-md-12 col-lg-12' style="margin-bottom:20px">
+    <table class='table table-striped'>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Trunk</th>
+          <th>Branch</th>
+          <th>Type</th>
+          <th>Operaion</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in data.module %}
+          <tr>
+            <td>{{m.name}}</td>
+            <td>{{m.trunk}}</td>
+            <td>{{m.branch}}</td>
+            <td>{{m.type}}</td>
+            <td><a class='btn btn-xs btn-success' href="?module={{m.name}}" >编辑</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class='col-md-12 col-lg-12' style="margin-bottom:20px">
+    <div class="panel panel-default">
+      <div class="panel-heading" style="font-size:15px">
+          {% if data.current_module %}
+          编辑
+          {% else %}
+          新建
+          {% endif %}
+               
+      </div>
+      <div class="panel-body">
+          
+          <div class="row" id="operation">
+              <div id="moduleForm" class="col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                  <form role="form" >
+                      <div class="form-group">
+                          <label>Module名</label>
+                          <input class="form-control" name="name" value="{{ data.current_module.name }}">
+                          <p class="help-block">e.g. snake mall...</p>
+                      </div>       
+                      <div class="form-group"> 
+                          <label>trunk url</label>
+                          <input class="form-control" name="trunk" value="{{ data.current_module.trunk }}">
+                          <p class="help-block">trunk的svn地址</p>   
+                      </div>
+                      <!--div class="form-group">
+                          <label>branch url</label>
+                          <input class="form-control" name="branch" value="{{ data.current_module.branch }}">
+                          <p class="help-block">branch的svn地址</p>
+                      </div-->
+                      <div class="form-group">
+                          <label>类型</label>
+                          <!-- TODO -->
+                          <select class="form-control" name="type">
+                              {% for i in data.types %}
+                                  {% if data.current_module.type == i %}
+                                      <option value='{{i}}' selected='selected'>{{i}}</option>
+                                  {% else %}
+                                      <option value='{{i}}'>{{i}}</option>
+                                  {% endif %}
+                              {% endfor %}
+                          </select>
+                      </div>    
+                      
+                      <button type="reset" style="display:none;"></button>
+                      
+                  </form>
+                  {% if data.current_module %}
+                      <button type="submit" class="btn btn-default">编辑</button>
+                  {% else %}
+                      <button type="submit" class="btn btn-default">创建</button>
+                      <button type="reset" class="btn btn-default">重置</button>
+                  {% endif %}
+                  
+              </div>
+          </div>
+          
+      </div>
+
+    </div>
+  </div>
+
+  <div id="submit-dialog" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div  class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="submit-dialog-label"></h4>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">确认</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    <!-- /.modal-dialog -->
+    </div>
+</div>
+
+
+{% endblock %}
+

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %} 测试服务化平台{% endblock %}</title>
+    <meta name="author" content="刘礼 <liliurd@meilishuo.com>">
+    {% load staticfiles %}
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-popover.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/modules/exporting.js' %}"></script>
+
+    <link rel="shortcut icon" href="{% static 'normal/img/favicon.ico' %}"/>
+    <style>
+    body{font-family:"ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande","Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei UI","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;}
+    </style>
+    <script type="text/javascript">
+    {% block menu_script %}
+    $(function(){
+        $("ul#menu li a:eq(0)").parent().addClass("current")
+    });
+    {% endblock %}
+    </script>
+    {% block script %}{% endblock %}
+</head>
+<body>
+    <div id="body_page" name='body_page'>
+        <div id="body-bg">
+            <!--Header-->
+            <div id="header" name="header">
+                <div class="header-wrap">
+                    <div class="head-bd">
+                        <!-- menu -->
+                        <div class="nav navbar-nav">
+                            <ul id="menu">
+                                <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+                                <li><a href="/mob"><i class="glyphicon glyphicon-signal"></i> MOB</a></li>
+                                <li><a href="/performance"><i class="glyphicon glyphicon-th"></i> 性能</a></li>
+                                <li><a href="/promotion"><i class="glyphicon glyphicon-fire"></i> 大促</a></li>
+                                <li><a href="/svn/history"><i class="glyphicon glyphicon-filter"></i> 上线</a></li>
+                                <li><a href="/jenkins"><i class="glyphicon glyphicon-flash"></i> Jenkins</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="nav navbar-nav navbar-right">
+                            <ul>
+                                <li class="user">
+                                    <a target="_blank" href="http://speed.meilishuo.com/user/profile/">
+                                    <i class="glyphicon glyphicon-user"></i> {{request.session.django_name}}
+                                    </a>
+                                </li>
+                                <li ><a href="/user/logout"><i class="glyphicon glyphicon-log-out"></i> 退出</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Main-->
+            <div id="page-wrap">
+                {% block left %}
+                {% endblock %}
+            <div class="container">
+                {% block main %}
+                {% endblock %}
+            </div>
+                {% block right %}
+                {% endblock %}
+            </div>
+            <!--Footer-->
+            <!--div class="footer">
+               <div class="login-footer">
+                <p><span class="right">美丽说网络科技有限公司</span>©2015 Meilishuo All Rights Reserved.</p>
+              </div>
+            </div-->
+        </div>
+    </div>
+{% block endscript %}
+<script type="text/javascript">
+$(".pick_date").datetimepicker({format: 'yyyy-mm-dd', minView: 'month', autoclose:true});
+$("[data-toggle='tooltip']").tooltip()
+</script>
+{% endblock %}
+</body>
+</html>
+
+
+
+

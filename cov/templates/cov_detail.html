@@ -1,0 +1,213 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").addClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li><a href="/cov">所有任务</a></li>
+        <li class="active"><a href="{% url 'cov:detail' task.id %}">{{ task.name }}</a></li>
+    </ul>
+    <!--h2>任务：{{ task.id }}.{{ task.name }}</h2-->
+    <div class="panel panel-default">
+        <div class="panel-heading">任务信息</div>
+        <div class="panel-body">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>模块：</th>
+                        <td>{{ task.module }}</td>
+                    </tr>
+                    <tr>
+                        <th>版本库：</th>
+                        <td>[{{ module.repos_type }}] {{ module.repos_addr }}</td>
+                    </tr>
+                    <tr>
+                        <th>版本：</th>
+                        <td>{{ task.version }}</td>
+                    </tr>
+                    <tr>
+                        <th>创建人：</th>
+                        <td>{{ task.created_by }}</td>
+                    </tr>
+                    <tr>
+                        <th>创建时间：</th>
+                        <td>{{ task.created_on }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">获取版本</div>
+        <div class="panel-body">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>打包状态：</th>
+                        <td>
+                            <div class="row-fluid">
+                                {% if task.pack_state == "init" %}
+                                    <span class="label label-default">{{ task.pack_state }}</span>
+                                    <button class="btn btn-primary btn-xs disabled" type="" herf="#">打包</button>
+                                {% elif task.pack_state == "doing" %}
+                                    <span class="label label-primary">{{ task.pack_state }}</span>
+                                    <!--div class="progress progress-striped active">
+                                        <div class="bar" style="width: 40%;"></div>
+                                    </div-->
+                                    <div class="spinner" >
+                                        <div class="spinner-container container1">
+                                            <div class="circle1"></div>
+                                            <div class="circle2"></div>
+                                            <div class="circle3"></div>
+                                            <div class="circle4"></div>
+                                        </div>
+                                        <div class="spinner-container container2">
+                                            <div class="circle1"></div>
+                                            <div class="circle2"></div>
+                                            <div class="circle3"></div>
+                                            <div class="circle4"></div>
+                                        </div>
+                                        <div class="spinner-container container3">
+                                            <div class="circle1"></div>
+                                            <div class="circle2"></div>
+                                            <div class="circle3"></div>
+                                            <div class="circle4"></div>
+                                        </div>
+                                    </div>
+                                {% elif task.pack_state == "success" %}
+                                    <span class="label label-success">{{ task.pack_state }}</span>
+                                    <button class="btn btn-primary btn-xs disabled" type="button" herf="#">重新打包</button>
+                                {% else %}
+                                    <span class="label label-danger">{{ task.pack_state }}</span>
+                                    <button class="btn btn-primary btn-xs disabled" type="" herf="#">打包</button>
+                                {% endif %}
+                            </div>
+                        </td>
+                        {% if task.pack_state == "success" %}
+                            <tr>
+                                <td>下载链接：</td>
+                                <td><a class="btn btn-link btn-xs" type="button" href="{% url 'cov:download' task.id %}">
+                                    Meilishuo_{{ task.name }}.apk
+                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">分析文件</div>
+        <div class="panel-body">
+        <a class="btn btn-primary btn-xs" href="{% url 'cov:upload' task.id %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            上传分析数据
+        </a>
+        {% if 0 < task.covdata_set.count %}
+            {% if 'init' == task.report_state %}
+                <a class="btn btn-primary btn-xs" href="{% url 'cov:gen_report' task.id %}">生成报告</a>
+            {% elif 'begining' == task.report_state or 'generating' == task.report_state %}
+                <a class="btn btn-primary btn-xs disabled">生成报告</a>
+                <a class="btn btn-primary btn-xs" href="{% url 'cov:results' task.id %}">查看报告</a>
+            {% else %}
+                {% if task.last_report_time and task.last_upload_time and task.last_upload_time <= task.last_report_time %}
+                    <a class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#report_confirm" >重新生成报告</a>
+                    <div id="report_confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h3 id="myModalLabel">Modal header</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p>分析文件无更新，确认重新生成报告？</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn" data-dismiss="modal" aria-hidden="true">取消</a>
+                                    <a class="btn btn-primary" href="{% url 'cov:gen_report' task.id  %}">重新生成</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="btn btn-primary btn-xs" href="{% url 'cov:gen_report' task.id %}">重新生成报告</a>
+                {% endif %}
+                <a class="btn btn-primary btn-xs" href="{% url 'cov:results' task.id %}">查看报告</a>
+            {% endif %}
+            {% if task.last_report_time and task.last_upload_time and task.last_upload_time > task.last_report_time %}
+                <p><br/></p>
+                <div class="alert alert-info alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> &nbsp; 分析文件有更新，请重新生成报告！
+                </div>
+            {% endif %}
+        {% endif %}
+                <p><br/></p>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>用户</th>
+                        <th>文件</th>
+                        <th>大小</th>
+                        <th>md5</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for covdata in task.covdata_set.all %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ covdata.user_name }}</td>
+                        <td>{{ covdata.file_name }}</td>
+                        <td>{{ covdata.data.file.size }}</td>
+                        <td>{{ covdata.file_md5 }}</td>
+                        <td><button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delete_confirm_{{ covdata.id }}" >删除</button></td>
+                    </tr>
+                    <!-- Modal -->
+                    <div id="delete_confirm_{{ covdata.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h3 id="myModalLabel">Modal header</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p>{{ covdata.id }}确认删除？</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn" data-dismiss="modal" aria-hidden="true">取消</a>
+                                    <a class="btn btn-danger" href="{% url 'cov:delete_upload' task.id covdata.id %}">删除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block cov_endscript %}
+    <script type="text/javascript" language="javascript">
+        function iFrameHeight() {
+            var ifm= document.getElementById("iframepage");
+            var subWeb = document.frames ? document.frames["iframepage"].document : ifm.contentDocument;
+            if(ifm != null && subWeb != null) {
+            ifm.height = subWeb.body.scrollHeight;
+            }
+        }
+    </script>
+{% endblock %}

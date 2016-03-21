@@ -1,0 +1,100 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").addClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li class="active"><a href="/cov">所有任务</a></li>
+    </ul>
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>ID</th>
+                <th>任务</th>
+                <th>模块</th>
+                <th>版本</th>
+                <th>创建人</th>
+                <th>创建于</th>
+                <th>打包状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="{% url 'cov:detail' task.id %}">{{ task.id }}</a></td>
+                    <td><a href="{% url 'cov:detail' task.id %}">{{ task.name }}</a></td>
+                    <td>{{ task.module }}</td>
+                    <td>{{ task.version }}</td>
+                    <td>{{ task.created_by }}</td>
+                    <td>{{ task.created_on }}</td>
+                    <td>
+                        {% if task.pack_state == "init" %}
+                            <span class="label label-default">{{ task.pack_state }}</span>
+                        {% elif task.pack_state == "doing" %}
+                            <span class="label label-primary">{{ task.pack_state }}</span>
+                            <div class="spinner">
+                                <div class="spinner-container container1">
+                                    <div class="circle1"></div>
+                                    <div class="circle2"></div>
+                                    <div class="circle3"></div>
+                                    <div class="circle4"></div>
+                                </div>
+                                <div class="spinner-container container2">
+                                    <div class="circle1"></div>
+                                    <div class="circle2"></div>
+                                    <div class="circle3"></div>
+                                    <div class="circle4"></div>
+                                </div>
+                                <div class="spinner-container container3">
+                                    <div class="circle1"></div>
+                                    <div class="circle2"></div>
+                                    <div class="circle3"></div>
+                                    <div class="circle4"></div>
+                                </div>
+                            </div>
+                        {% elif task.pack_state == "success" %}
+                            <span class="label label-success">{{ task.pack_state }}</span>
+                        {% else %}
+                            <span class="label label-danger">{{ task.pack_state }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" href="#">
+                                操作
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'cov:detail' task.id %}">查看详情</a></li>
+                                {% if "success" != task.pack_state %}
+                                    <li class="disabled"><a href="#">下载版本</a></li>
+                                    <li class="disabled"><a href="#">上传数据</a></li>
+                                    <li class="disabled"><a href="#">查看结果</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'cov:download' task.id %}">下载版本</a></li>
+                                    <li><a href="{% url 'cov:upload' task.id %}">上传数据</a></li>
+                                    {% if 0 < task.covdata_set.count and 'init' != task.report_state %}
+                                        <li><a href="{% url 'cov:results' task.id %}">查看结果</a></li>
+                                    {% else %}
+                                        <li class="disabled"><a href="#">查看结果</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+   <head>
+    <meta charset="utf-8">
+
+    {% load staticfiles %}
+       <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap-3.3.5-dist/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-responsive.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/bootstrap/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'normal/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'cool/css/main.css' %}" rel="stylesheet" type="text/css" />
+
+       <script type="text/javascript" src="{% static 'normal/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/bootstrap-3.3.5-dist/js/bootstrap.min.js' %}"></script>
+      <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-popover.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'normal/bootstrap/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'normal/highcharts/js/modules/exporting.js' %}"></script>
+
+    <link rel="shortcut icon" href="{% static 'normal/img/favicon.ico' %}"/>
+       <script type="text/javascript" charset="utf8" src="{% static 'normal/js/jquery.dataTables.js' %}"></script>
+
+
+    </head>
+    <script >
+        $(function(){
+            $("#table").DataTable({
+                paging: false,//分页
+                ordering: true,//是否启用排序
+                searching: false,//搜索
+                aaSorting: [[ 3, "desc" ]]
+            });
+        });
+
+
+        function addEvent(obj,type,handle){
+            try{  // Chrome、FireFox、Opera、Safari、IE9.0及其以上版本
+                obj.addEventListener(type,handle,false);
+            }catch(e){
+                try{  // IE8.0及其以下版本
+                    obj.attachEvent('on' + type,handle);
+                }catch(e){  // 早期浏览器
+                    obj['on' + type] = handle;
+                }
+            }
+        }
+        //DOM加载完毕,图片,js等未加载完成
+        $(document).ready(function(){
+            //转菊花,等待...
+            $("#loading").css("display", "block")
+            $("#content").css("display", "none")
+        });
+
+        //所有资源都加载完毕,移除转菊花...
+        $(window).load(function(){
+            //移除转菊花...
+            $("#loading").css("display", "none")
+            $("#content").css("display", "block")
+
+
+
+        });
+
+
+        function get_record_by_sn(){
+            var val = $("#testsheet").val();
+            window.location = window.location + "&sn=" + val
+
+        }
+    </script>
+  <body>
+    <div id="content" style="margin-top:-50px">
+        <!--form class="form-inline" style="float:right">
+          <div class="form-group" >
+            <label for="testsheet">提测单：</label>
+            <select class="form-control" style='width:100px;margin:10px' id="testsheet" onchange='get_record_by_sn()'>
+                    <option>all</option>
+                {% for i in sns %}
+                    <option>{{i}}</option>
+                {% endfor %}
+            </select>
+          </div>
+        </form-->
+        {% if data.data %}
+            <div class="accordion" id="accordion2">
+                <table id='table' class="table" style='table-layout:fixed'  width="100%">
+                    <thead>
+                        <tr>
+                            <th style="width:150px;" >用户</th>
+                            <th style="width:150px;" >Comment</th>
+                            <th style='width:200px;'>时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in data.data %}
+                        <tr>
+                            <td>{{i.user}}</td>
+                            <td>{{i.comment}}</td>
+                            <td sytle="width:200px">{{i.timestamp}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">没有记录</div>
+        {% endif %}
+    </div>
+  </body>
+</html>

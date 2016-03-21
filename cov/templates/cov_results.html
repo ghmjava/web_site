@@ -1,0 +1,126 @@
+{% extends "cov_base.html" %}
+
+{% block cov_script %}
+    <script type="text/javascript">
+        $(function(){
+            $("ul#cov_navi li#index").addClass("active")
+            $("ul#cov_navi li#new").removeClass("active")
+            $("ul#cov_navi li#module").removeClass("active")
+        });
+    </script>
+{% endblock %}
+
+{% block cov_main %}
+    <ul class="breadcrumb">
+        <li><a href="/cov">所有任务</a></li>
+        <li><a href="{% url 'cov:detail' task.id %}">{{ task.name }}</a></li>
+        <li class="active"><a href="{% url 'cov:results' task.id %}">查看报告</a></li>
+    </ul>
+    {% if task.last_upload_time > task.last_report_time %}
+        <div class="alert alert-info alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+            &nbsp;
+            分析文件有更新，请
+            <a class="btn btn-xs btn-primary" href="{% url 'cov:gen_report' task.id %}">重新生成</a>
+            报告！
+        </div>
+    {% endif %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>用户名</th>
+                <th>状态</th>
+                <th>类覆盖率</th>
+                <th>方法覆盖率</th>
+                <th>行覆盖率</th>
+                <th>详细</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for covreport in task.covreport_set.all %}
+                {% if 'total' != covreport.account %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ covreport.name }}</td>
+                        <td>
+                            {{ covreport.state }}
+                            {% if 'generating' == covreport.state %}
+                                <div class="spinner">
+                                    <div class="spinner-container container1">
+                                        <div class="circle1"></div>
+                                        <div class="circle2"></div>
+                                        <div class="circle3"></div>
+                                        <div class="circle4"></div>
+                                    </div>
+                                    <div class="spinner-container container2">
+                                        <div class="circle1"></div>
+                                        <div class="circle2"></div>
+                                        <div class="circle3"></div>
+                                        <div class="circle4"></div>
+                                    </div>
+                                    <div class="spinner-container container3">
+                                        <div class="circle1"></div>
+                                        <div class="circle2"></div>
+                                        <div class="circle3"></div>
+                                        <div class="circle4"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ covreport.cov_class }}</td>
+                        <td>{{ covreport.cov_method }}</td>
+                        <td>{{ covreport.cov_line }}</td>
+                        <td>
+                            {% if 'success' == covreport.state %}
+                                <a class="btn btn-primary btn-xs" type="button" href="{% url 'cov:results_user' task.id covreport.account %}">详情</a>
+                            {% else %}
+                                <a class="btn btn-primary btn-xs disabled" type="button" href="{% url 'cov:results_user' task.id covreport.account %}">详情</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            <tr>
+                <td>总</td>
+                <td>{{ total_report.name }}</td>
+                <td>
+                    {{ total_report.state }}
+                    {% if 'generating' == total_report.state %}
+                        <div class="spinner">
+                            <div class="spinner-container container1">
+                                <div class="circle1"></div>
+                                <div class="circle2"></div>
+                                <div class="circle3"></div>
+                                <div class="circle4"></div>
+                            </div>
+                            <div class="spinner-container container2">
+                                <div class="circle1"></div>
+                                <div class="circle2"></div>
+                                <div class="circle3"></div>
+                                <div class="circle4"></div>
+                            </div>
+                            <div class="spinner-container container3">
+                                <div class="circle1"></div>
+                                <div class="circle2"></div>
+                                <div class="circle3"></div>
+                                <div class="circle4"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </td>
+                <td>{{ total_report.cov_class }}</td>
+                <td>{{ total_report.cov_method }}</td>
+                <td>{{ total_report.cov_line }}</td>
+                <td>
+                    {% if 'success' == total_report.state %}
+                        <a class="btn btn-primary btn-xs" type="button" href="{% url 'cov:results_user' task.id total_report.account %}">详情</a>
+                    {% else %}
+                        <a class="btn btn-primary btn-xs disabled" type="button" href="{% url 'cov:results_user' task.id total_report.account %}">详情</a>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

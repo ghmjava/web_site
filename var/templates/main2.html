@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block left %}
+
+{% endblock %}
+{% block main %}
+    <link rel="stylesheet" type="text/css" href="../static/normal/css/main2-styles.css">
+
+<div class="wrapper">
+	<ul class="gallery">
+		<li><a href="http://agile.meiliworks.com/" class="gallery_links" data-tooltip="Agile平台"><img src="../static/normal/img/logo/agile.jpg"/></a></li>
+		<li><a href="http://mpp.meiliworks.com/" class="gallery_links" data-tooltip="Mpp平台" target="_blank"><img src="../static/normal/img/logo/mpp.jpg"/></a></li>
+		<li><a href="http://alarm.meiliworks.com/" class="gallery_links" data-tooltip="监控告警平台" target="_blank"><img src="../static/normal/img/logo/alarm.svg" width="250px" height="150px"/></a></li>
+		<li><a href="http://interfaces.meiliworks.com/" class="gallery_links" data-tooltip="接口管理平台" target="_blank"><img src="../static/normal/img/logo/interface.jpg" width="250px" height="150px"/></a></li>
+		<li><a href="http://beat.meiliworks.com/" class="gallery_links" data-tooltip="Beat平台" target="_blank"><img src="../static/normal/img/logo/beat.jpg"/></a></li>
+		<li><a href="http://story.meiliworks.com/" class="gallery_links" data-tooltip="Story平台" target="_blank"><img src="../static/normal/img/logo/story.jpg"/></a></li>
+		<li><a href="http://casemaster.meiliworks.com/" class="gallery_links" data-tooltip="Case master平台" target="_blank"><img src="../static/normal/img/logo/casemaster.jpg"/></a></li>
+		<li><a href="http://lab.meiliworks.com/" class="gallery_links" data-tooltip="标准环境" target="_blank"><img src="../static/normal/img/logo/lab.jpg"/></a></li>
+	</ul>
+</div>
+
+
+
+{#<div class="row-fluid">#}
+{#<div class="col-xs-6 col-md-6">#}
+{##}
+{#<div class="panel panel-info">#}
+{#    <div class="panel-heading">预上线管理</div>#}
+{#    <table class="table table-striped table-hover table-condensed">#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th>名称</th>#}
+{#          <th>发布人</th>#}
+{#          <th>版本</th>#}
+{#          <th>来源</th>#}
+{#          <th>状态</th>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <tbody>#}
+{#      {% for d in data.job_record%}#}
+{#        <tr>#}
+{#          <td>{{d.job_name}}</td>#}
+{#          <td>{{d.user}}</td>#}
+{#          <td>{{d.version}}</td>#}
+{#          <td>{%if d.type == 2%}手动发布{%elif d.type == 3%}自动封板{%else%}CI{%endif%}</td>#}
+{#          <td>#}
+{#              <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">#}
+{#          </td>#}
+{#        </tr>#}
+{#      {% endfor %}#}
+{#      </tbody>#}
+{#    </table>#}
+{#    </div>#}
+{##}
+{#<div class="panel panel-info">#}
+{#    <div class="panel-heading">MOB监控</div>#}
+{#    <table class="table table-striped table-hover table-condensed">#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th>类型</th>#}
+{#          <th>MONKEY</th>#}
+{#          <th>SLEEP</th>#}
+{#          <!--th>AUTO</th-->#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <tbody>#}
+{#      {% for d in data.MOB%}#}
+{#        <tr>#}
+{#          <td>#}
+{#              {{d.type_alias}}#}
+{#          </td>#}
+{#          <td><a href="/mob?type={{d.type}}&scene=MONKEY">#}
+{#              {% if d.MONKEY == "fail"%}#}
+{#              <img class="img-small" src="/static/normal/img/red.png" data-toggle="tooltip" data-placement="right" title="FAIL">#}
+{#              {% else %}#}
+{#              <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">#}
+{#              {% endif %}#}
+{#          </a></td>#}
+{#          <td><a href="/mob?type={{d.type}}&scene=SLEEP">#}
+{#              {% if d.SLEEP == "fail"%}#}
+{#              <img class="img-small" src="/static/normal/img/red.png" data-toggle="tooltip" data-placement="right" title="FAIL">#}
+{#              {% else %}#}
+{#              <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">#}
+{#              {% endif %}#}
+{#          </a></td>#}
+{#        </tr>#}
+{#      {% endfor %}#}
+{#      </tbody>#}
+{#    </table>#}
+{#    </div>#}
+{##}
+{#<div class="panel panel-info">#}
+{#<div class="panel-heading">待续</div>#}
+{#<div class="panel-body">#}
+{#    其他类型待添加#}
+{#</div>#}
+{#</div>#}
+{##}
+{#</div>#}
+{##}
+{#<div class="col-xs-6 col-md-6">#}
+{#<div class="panel panel-info">#}
+{#    <div class="panel-heading">持续集成</div>#}
+{#    <table class="table table-striped table-hover table-condensed">#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <td colspan="4">故障模块：无</td>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th>名称</th>#}
+{#          <th>状态</th>#}
+{#          <th>CI次数(周)</th>#}
+{#          <th>成功率</th>#}
+{#          <th>平均时间</th>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <tbody>#}
+{##}
+{#      </tbody>#}
+{#    </table>#}
+{#    </div>#}
+{#<div class="panel panel-info">#}
+{#    <div class="panel-heading">NEWLAB性能监控</div>#}
+{#    <table class="table table-striped table-hover table-condensed">#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th>接口类型</th>#}
+{#          <th>接口总数</th>#}
+{#          <th>失败数</th>#}
+{#          <th>结果</th>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <tbody>#}
+{#        <tr>#}
+{#          <td>高频接口</td>#}
+{#          <td>{{data.NEWLAB.HOT}}</td>#}
+{#          <td>{{data.NEWLAB.fail_hot}}</td>#}
+{#          <td><!--a href="/performance/detail?interface_type=HOT"-->#}
+{#              <a href="/get/interface?interface_type=HOT">#}
+{#              {% if data.NEWLAB.fail_hot == 0 %}#}
+{#              <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">#}
+{#              {% else %}#}
+{#              <img class="img-small" src="/static/normal/img/red.png" data-toggle="tooltip" data-placement="right" title="FAIL">#}
+{#              {% endif %}#}
+{#              </a></td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#          <td>页面接口</td>#}
+{#          <td>{{data.NEWLAB.WEB}}</td>#}
+{#          <td>{{data.NEWLAB.fail_web}}</td>#}
+{#          <td><!--a href="/performance/detail?interface_type=WEB"-->#}
+{#              <a href="/get/interface?interface_type=WEB">#}
+{#              {% if data.NEWLAB.fail_web == 0 %}#}
+{#              <img class="img-small" src="/static/normal/img/green.png" data-toggle="tooltip" data-placement="right" title="PASS">#}
+{#              {% else %}#}
+{#              <img class="img-small" src="/static/normal/img/red.png" data-toggle="tooltip" data-placement="right" title="FAIL">#}
+{#              {% endif %}#}
+{#          </a></td>#}
+{#        </tr>#}
+{#      </tbody>#}
+{#      {% if data.NEWLAB.fail %}#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th colspan="4">失败接口列表</th>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <thead>#}
+{#        <tr>#}
+{#          <th colspan="1">接口名</th>#}
+{#          <th colspan="2">失败时间</th>#}
+{#          <th colspan="1">链接</th>#}
+{#        </tr>#}
+{#      </thead>#}
+{#      <tbody>#}
+{#      {% for f in data.NEWLAB.fail_list %}#}
+{#        <tr>#}
+{#          <td colspan="1">{{f.desc}}</td>#}
+{#          <td colspan="2">{{f.runEndTime}}</td>#}
+{#          <td colspan="1"><a href="/performance?interface={{f.interface}}">详情</a></td>#}
+{#        </tr>#}
+{#      {% endfor %}#}
+{#      </tbody>#}
+{#      {% endif %}#}
+{#    </table>#}
+{#    </div>#}
+{#</div>#}
+{#</div>#}
+
+
+{% endblock %}
+{% block right %}
+
+{% endblock %}

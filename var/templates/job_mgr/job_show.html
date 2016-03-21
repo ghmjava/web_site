@@ -1,0 +1,381 @@
+{% extends "job_mgr/job_base.html" %}
+
+{% block script %}
+
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'echarts/build/dist/echarts.js' %}"></script>
+
+<script type="text/javascript">
+
+function myrefresh() 
+{ 
+       if ($("#joborder-dialog").css('display') == 'none')
+       {
+       	window.location.reload(); 
+       }
+       	
+} 
+var time = setTimeout('myrefresh()',30000); //指定30秒刷新一次 
+
+
+$(function () {
+{% for i in data.trees %}
+    var myChart{{k}};
+    // 路径配置
+    require.config({
+        paths: {
+            echarts: "{% static 'echarts/build/dist' %}"
+        }
+    });
+
+    // 使用
+    require(
+        [
+            'echarts',
+            'echarts/chart/tree' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function (ec) {
+            // 基于准备好的dom，初始化echarts图表
+            myChart{{i.id}} = ec.init(document.getElementById('{{i.id}}'));
+            myChart{{i.id}}.on(ecConfig.EVENT.CLICK, go_to_jenkins); //绑定点击函数
+            option = {
+                title : {
+                    text: ''
+                },
+                toolbox: {
+                    show : false,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+
+
+                series : [
+                    {
+                        name:'树图',
+                        type:'tree',
+                        orient: 'horizontal',  // vertical horizontal
+                        rootLocation: {x: 50 ,y: {{i.width_px}}/2 }, // 根节点位置  {x: 100, y: 'center'}
+                        clickable: true,
+                        nodePadding: 20,
+                        layerPadding: 150,
+                        hoverable: true,
+                        roam: false,
+                        symbolSize: 15,
+                        itemStyle: {
+                            normal: {
+                                color: '#4883b4',
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: "{b}",
+                                    textStyle: {
+                                        color: '#000',
+                                        fontSize: 12
+                                    }
+                                },
+                                lineStyle: {
+                                    color: '#81BEF7',
+                                    type: 'curve', // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+                                    width: 2,
+                                }
+                            },
+                            emphasis: {
+                                color: '#81BEF7',
+                                label: {
+                                    show: false
+                                },
+                                borderWidth: 0
+                            }
+                        },
+
+                        data: {{ i.chart_data|safe}}
+                        /*[
+                            {'name':'a', 'children':
+                                {'name':'b', 'children':[
+                                    {'name':'ab','woaosd':123},{'name':'abc', '123':213}
+                                    ]
+                                },
+                                {'name':'c', 'children':[
+                                    {'name':'ab'},{'name':'abc'}
+                                    ]
+                                }
+                            ],'a':'b'}
+                        ]*/
+                    },
+                ]
+            };
+
+            // 为echarts对象加载数据
+            myChart{{i.id}}.setOption(option);
+        }
+    );
+
+{% endfor %}
+
+//点击事件函数
+var ecConfig = require('echarts/config');
+function go_to_jenkins(param) {
+    /*var mes = '【' + param.type + '】';
+    if (typeof param.seriesIndex != 'undefined') {
+        mes += '  seriesIndex : ' + param.seriesIndex;
+        mes += '  dataIndex : ' + param.dataIndex;
+    }
+    if (param.type == 'hover') {
+        document.getElementById('hover-console').innerHTML = 'Event Console : ' + mes;
+    }
+    else {
+        document.getElementById('console').innerHTML = mes;
+    }*/
+    var job_id = param.value.id
+    
+    if(param.value.url.search('http') == -1){
+        alert("这个监控项的地址可能有问题哦！\n" + "地址是: " + param.value.url)
+    }else{
+        window.open(param.value.url)
+    }
+    /*
+    var bind_url = '/job/seq_conf?id=' + job_id 
+    $("#SetJobSeq").attr('src', bind_url)
+    $("#joborder-dialog").modal()
+    */
+}
+});
+// 修改subtask信息相关
+var alert_str = '<div class="alert alert-danger">content</div>'
+var create_subtask_data = {}
+var set_seq_data = {}
+
+var current_subtask_id // 用来记录当前点击的job数据哪个subtask
+
+
+
+
+
+function show_mark_fail_dialog(job_id, job_name, job_record_id, reason, user){
+    $("#markfile_title").html(job_name + " 标注失败原因")
+    $("#markfail_job_record_id").attr('value', job_record_id)
+    $("#markfail_job_id").attr('value', job_id)
+    $("#mark_user").html(user)
+    $("#fail_reason").text(reason)
+    $("#markfail_dialog").modal()
+
+}
+
+function send_fail_reason(){
+    var form_data ={}
+    form_data['id'] = $("#markfail_job_record_id").attr('value')
+    form_data['reason'] = $('#fail_reason').val()
+    $.post(
+        "/ci_mgr/save/job_reason",
+        JSON.stringify(form_data),
+        function(data, status){
+            if (status == 'success'){
+                $('#markfail_body').html('<div class="alert alert-success">发送成功</div>')
+                //alert("发送失败原因成功")
+            }else{
+                $('#markfail_body').html('<div class="alert alert-danger">发送失败</div>')
+                //alert("发送失败原因失败")
+            }
+            location.reload()
+        }
+    ).fail(function(e){ 
+        // Handle error here
+        $('#markfail_body').html('<div class="alert alert-danger">发送失败</div>')
+        //alert('发送失败原因失败')
+    });
+}
+
+
+
+
+
+function get_jobs(task_id){ // todo
+
+    $.get(
+        "/ci_mgr/get/sub_task_job?sub_task_id=" + task_id,
+        function(data, status){
+            var data = data.data
+            var i = 0;
+            while(true){
+                if(data[i].next != []){
+
+                }
+            }
+        }
+        );
+}
+
+
+
+
+
+
+
+function set_current_subtask(id){
+    current_subtask_id = id;
+}
+
+
+function visit_url(param){
+    var flag = arguments[1] ? arguments[1] : "&o=";    
+    var current_url = ""
+    var if_maodian = false
+    if(window.location.href.search('#') != -1){
+        if_maodian = true
+        current_url = window.location.href.substr(0, window.location.href.search('#'))
+    }
+    else{
+        current_url = window.location.href
+    }
+    url = current_url.split(flag)
+    if(url.length > 1){
+      url = url[0] + param;
+    }else{
+      url = url + param;
+    }
+    //window.parent.frames[1].location.href = url
+    if (if_maodian){
+        window.location.href = url + window.location.href.substr(window.location.href.search('#'))
+
+    }else{
+        window.location.href = url 
+    }
+}
+
+
+
+function show_bind_dialog(id) {
+    /*var mes = '【' + param.type + '】';
+    if (typeof param.seriesIndex != 'undefined') {
+        mes += '  seriesIndex : ' + param.seriesIndex;
+        mes += '  dataIndex : ' + param.dataIndex;
+    }
+    if (param.type == 'hover') {
+        document.getElementById('hover-console').innerHTML = 'Event Console : ' + mes;
+    }
+    else {
+        document.getElementById('console').innerHTML = mes;
+    }*/
+    var job_id = id
+    
+
+    var bind_url = '/job/seq_conf?id=' + job_id 
+    $("#SetJobSeq").attr('src', bind_url)
+    $("#joborder-dialog").modal()
+
+}
+
+
+</script>
+{% endblock %}
+
+{% block specify %}
+
+    <!-- Navigation -->
+<div class="col-md-12 col-lg-12 ">
+		 
+    <!--div class="row" style='width:{{data.row_len}}px;min-width:600px'>
+           <div style='display:block'>   
+	            <a class="btn btn-success btn-xs" href="/job/create"  style='margin-left:10px;margin-bottom:10px;float:right' target='_blank'>新建Job</a>
+	        </div>
+	</div-->
+    
+                  
+    <div class="row" >
+    <div class="col-md-12 col-lg-12 ">
+        <div class='panel panel-default'>       
+       	    <div class="panel-heading">
+       	    	<b> 监控项关系图 </b>  
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >标签</span></div>
+                <div class='job-label' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >成功</span></div>
+                <div class='job-success' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >失败</span></div>
+                <div class='job-fail' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >正在运行</span></div>
+                <div class='job-building-static' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >未运行</span></div>
+                <div class='job-notbuilt' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+                <div style="margin-top:4px;float:right;margin-bottom:10px;margin-right:5px" ><span >未绑定</span></div>
+                <div class='job-exclude' style="float:right;margin-bottom:10px;margin-right:5px" ></div>
+       	    </div>    
+        <div class="panel-body" >
+            <div style="padding-left:50px">
+            {% for i in data.trees %}
+                    
+                                   
+                 
+                    	<!--button class='btn btn-info btn-sm' style='float:right'>自动刷新</button-->
+                    	<div id="{{ i.id }}" style="height:{{i.width_px}}px">
+                    	</div>
+                    
+
+                
+            {% endfor %}
+                    <p class="help-block" style="float:left;margin-left:5px;margin-bottom:5px;">点击圆点去jenkins查看信息</p>
+            </div>
+        </div>
+        </div>     
+    </div>
+    </div>
+    {% if data.exclude|length != 0 %}
+    <div class="row" style='min-width:600px'>         	                  
+    <div class="col-md-12 col-lg-12 ">
+            <div class='panel panel-default'> 
+            	<div class="panel-heading"><b> 未加入关系图的监控项 </b></div>                   
+                <div class="panel-body" >
+                	<div  style='margin-bottom:10px;'>
+                	{% for i in data.exclude %}
+                		{% if i.flag == 1 %}
+                		<div class='job-exclude' style="float:left;margin-left:50px;margin-bottom:10px" onclick='show_bind_dialog("{{i.id}}")'></div>
+                		<div style="margin-top:4px;margin-left:5px;float:left;margin-bottom:10px" ><span >{{i.name}}</span></div>
+                		{% elif i.flag == 0 %}
+                		<div class='job-label' style="float:left;margin-left:50px;margin-bottom:10px" onclick='show_bind_dialog("{{i.id}}")'></div>
+                		<div style="margin-top:4px;margin-left:5px;float:left;margin-bottom:10px" ><span >{{i.name}}</span></div>
+                		{% endif %}
+                	{% endfor %}
+                	</div>
+
+                </div>
+            </div>
+                
+    </div>
+    </div>
+   	{% endif %}
+
+  
+
+
+
+    
+    
+
+
+    <div id="joborder-dialog"  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="javascript:$('#jobbind-dialog').modal('hide'); location.reload()">×</button>
+                    <h4 class="modal-title" id="task-dialog-label">设置Job顺序</h4>
+                </div>
+                <div class="modal-body " style='height:100%'>
+                    <iframe id='SetJobSeq' style='width:100%;height:200px;border:none'>
+                    </iframe>
+                </div>
+            <!-- /.modal-content -->
+            </div>
+        <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+    
+
+    
+
+
+</div>
+{% endblock %}
